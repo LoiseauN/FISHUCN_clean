@@ -7,6 +7,11 @@ ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 #Loading necessary data
 load(file=file.path(data_dir,"FB_vars.Rdata"))
 
+#Preparing data to impute. We delete Genus and Family because too many categories to predict
+lelz = FB_vars %>%
+  dplyr::select(-c(IUCN,Genus,Family,Env_1))%>%
+  head(500)
+
 #This function tests the missForest algorithm on your data without the NAs in order to see which variables we can estimate
 #Entry :
 #- A dataframe with species as rownames, traits as columns and NO NA
@@ -85,7 +90,42 @@ missForest_test = function(data_noNA){
   
 }
 
-
 test = missForest_test(FB_imp)
+
+#This function fills out missing data for variables for which the missforest performed well enough
+#Entry : 
+# - The data with species as rownames, traits as columns 
+# - A baseline value for minimum missForest performance
+# - The output from the missForest test function 
+#Output
+# A data frame where all traits fo rwhich missforest performance was good are imputed
+
+missForest_applied = function(data_tofill,baseline,mf_test){
+  
+  #Keeping only traits where missForest performed above baseline
+  mf_perf = mf_test %>%
+    rownames_to_column("trait")%>%
+    filter(V1>baseline)
+  
+  #Imputing data
+  impute = missForest(data_tofill,variablewise = T, verbose = T)
+  
+  #Data frame with imputed values for values where missForest performance is good
+  impute_data = impute$ximp %>%
+    dplyr::select(all_of(mf_perf$trait))%>%
+    rownames_to_column("species")
+  
+  #Data frames with missing values without the values we can impute with miss forest
+  NA_data = data_tofill %>%
+    dplyr::select(!all_of(mf_perf$trait))%>%
+    rownames_to_column("species")
+  
+  #Merge imputed data with NA data 
+  data_complete = NA_data %>%
+    left_join(impute_data,by="species")%>%
+    column_to_rownames("species")
+
+}
+
 
 
