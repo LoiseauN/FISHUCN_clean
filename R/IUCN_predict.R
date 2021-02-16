@@ -30,8 +30,6 @@ IUCN_predict = function(data_split,data_topredict,data_species){
       model_preds = list(data.frame(rank = paste(i,".",p),
                                      score$predictions))
       
-      return(model_preds)
-      
     })
     
   })
