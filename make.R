@@ -9,9 +9,6 @@
 #' @date 2021/02/17
 #' 
 
-setwd(here::here())
-devtools::document(setwd(here::here()))
-
 #-----------------Loading packages-------------------
 
 pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","ranger","caret")
