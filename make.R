@@ -1,25 +1,20 @@
 #Loading packages
-pkgs <- c("tidyverse","missForest","parallel","here")
+pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","ranger","caret")
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
-
-#Load all files from data folder
-load(file=file.path(data_dir,"dummy_dataset.Rdata"))
-load(file=file.path(data_dir,"dummy_dataset_C.Rdata"))
-load(file=file.path(data_dir,"dummy_dataset_NC.Rdata"))
-load(file=file.path(data_dir,"dummy_dataset_NA.Rdata"))
-load(file=file.path(data_dir,"dummy_dataset_noNA.Rdata"))
-load(file=file.path(data_dir,"dummy_dataset_predict.Rdata"))
-load(file=file.path(data_dir,"dummy_dataset_species.Rdata"))
+  
+#Loading all data
+path = (here::here("data"))
+setwd(path)
+files <- list.files(here::here("data"))
+lapply(files, load, envir=.GlobalEnv)
 
 #Loading all functions
-source(here::here("R","data_prep.R"))
-source(here::here("R","IUCN_test.R"))
-source(here::here("R","IUCN_predict.R"))
-source(here::here("R","missForest.R"))
-
-l
+path = (here::here("R"))
+setwd(path)
+files.source = list.files(here::here("R"))
+sapply(files.source, source)
 
 #Running code
 
