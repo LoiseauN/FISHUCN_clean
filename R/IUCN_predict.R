@@ -57,7 +57,7 @@ IUCN_consensus = function(data_predicted,splits,baseline){
     group_by(species)%>%
     count(score.predictions)%>%
     #Adding percentage of perdiction in each class
-    mutate(percentage=(n*100)/splits)%>%
+    mutate(percentage=(n*100)/(splits*10))%>%
     rename(IUCN="score.predictions")
   
   #Keeping only species where prediction is >80%

@@ -1,3 +1,10 @@
+#This function tries out the missforest on your complete data in order to see for which traits it performs well
+#For this we produce 20% of NA in dataset and try ou the missofrest using cross validation
+#Entry : 
+#Your data with species as rownames, traits as column names and no NA 
+#Output
+#A dataframe with R² or Accuracy from missForest cv according to the trait type 
+
 missForest_test = function(data_noNA){
   
   #Imputing 20% of NA in complete data 
