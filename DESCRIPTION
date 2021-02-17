@@ -1,0 +1,35 @@
+Package: FISHUCN
+Title: IUCN package
+Version: 1.0.0
+Authors@R: c(
+    person(given  = "Nicolas",
+           family = "Loiseau",
+           role   = c("aut", "cre"),
+           email  = "nicolas.loiseau1@gmail.com"),
+    person(given  = "Michele",
+           family = "Allegra",
+           role   = "aut",
+           email  = "micheleallegra85@gmail.com"),
+    person(given  = "Matthias",
+           family = "Grenie",
+           role   = "aut",
+           email  = "matthias.grenie@cefe.cnrs.fr"),
+    person(given  = "Nicolas",
+           family = "Casajus",
+           role   = "aut",
+           email  = "nicolas.casajus@fondationbiodiversite.fr"))
+Description: Package aims to estimate IUCN statuts of species using machine and deep learning algorithms
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Depends:
+    tidyverse,
+    ranger,
+    missForest,
+    parallel,
+    here,
+    tidymodels,
+    ranger,
+    caret

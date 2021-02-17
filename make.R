@@ -1,4 +1,19 @@
-#Loading packages
+#' Run the Entire Project
+#'
+#' This script reproduces all analyses and figures of the ___________ article.
+#'
+#' @author Raphaël SEGUIN, \email{raphael.seguin46@@gmail.com},
+#'         Nicolas LOISEAU, \email{nicolas.loiseau1@@gmail.com},
+#'         Valentine FLEURE, \email{valentine.fleure@@gmail.com},
+#'
+#' @date 2021/02/17
+#' 
+
+setwd(here::here())
+devtools::document(setwd(here::here()))
+
+#-----------------Loading packages-------------------
+
 pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","ranger","caret")
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
@@ -46,7 +61,6 @@ run_IUCN = IUCN_predict(split,dummy_dataset_predict,dummy_dataset_species)
 IUCN_final = IUCN_consensus(run_IUCN,length(split),50)
 
 #------------------Loading outputs----------------------
-
 
 path = (here::here("outputs"))
 setwd(path)

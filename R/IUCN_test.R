@@ -1,10 +1,14 @@
-#This function tests the IUCN model by running 10 models on each your downsampled splitted data
-#Entry : 
-#The output from the data_prep function
-#Output : a list with
-# - rel_inf : The variable importance of each of your traits
-# - preds : Three metrics to evaluate your model, Accuracy, Kappa and TSS
-# - Balanced_accuracy : How well your models performs across categories
+#' Test the model on complete data
+#'
+#' This functions tests the model on your data based on complete data using cross validation
+#'
+#' @param data_split The output from the data_prep function
+#' 
+#' @return A data frame with variable importance of each trait by permutation
+#' @return A data frame with model performance : accuracy, Kappa, TSS
+#' @return A data frame with Balanced accuracy across categoris
+#'
+#' @export
 
 IUCN_test = function(data_split){
   

@@ -1,9 +1,16 @@
-#This function creates a list of X downsampled versions of your complete data with even number of classified and non classified species
-#It will be used to train the models to predict on new data
-#Entry
-# - a dataframe with species as rownames, traits as columns and a IUCN column with all non classified species
-# - a dataframe with species as rownames, traits as column and a IUCN column with all classified species
-
+#' Split data into downsampled data for model
+#'
+#' This function downsamples your data to have even number of classified and non classified species into even bits based on your data
+#' This dataset will be used to train the model
+#'
+#' @param data_NC Your filled out data with no NA with all non classified species
+#' @param data_C Your filled out data with no NA with all classified species
+#' 
+#' @return A list with each downsampled dataframe from your data
+#'
+#' @export
+#' 
+#' 
 data_prep <- function(data_NC,data_C){
   
   #Variable with optimal number of folds for downsampling

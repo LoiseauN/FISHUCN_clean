@@ -1,3 +1,15 @@
+#' Generate plot of variable importance
+#'
+#' Based on the test of your model, this function generates a plot of variable importance based on permutation
+#'
+#' @param rel_inf Data frame with variable importance 
+#' 
+#' @return A plot in pdf format with the variable importance plot 
+#'
+#' @export
+#' 
+#' 
+
 var_imp = function(rel_inf){
   
   #Plot of variable importance
