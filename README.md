@@ -4,14 +4,14 @@ Estimation of IUCN classification of species using a consensus of machine and de
 
 ## Goal
 
-## Machine learning
+### Machine learning
 Evaluate performance of missForest to fill out mission values in your data, and run the missForest
 Evaluate performance of the machine learning model
 Estimate missing IUCN status of species based on consensus of 200 machine learning algorithms
 
-##Deep learning
+### Deep learning
 
-#Content
+## Content
 
 This repository is structured as follow:
 
@@ -36,7 +36,7 @@ contains all the figures stored in pdf format
 - :page_facing_up: &nbsp;[**make.R**](https://github.com/RaphSeguin/FISHUCN_clean/tree/master/make.R):
 master R script to run the entire project by calling each R script stored in the **analysis/** folder
 
-#Notes
+## Notes
 
 - All required packages will be installed (if necessary)
 - All required packages and R functions will be loaded
