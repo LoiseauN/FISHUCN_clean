@@ -66,6 +66,8 @@ missForest_test = function(data_noNA){
   
   return(tests_results_final)
   
+  save(tests_results_final, file = here::here("outputs", "tests_results_final.Rdata"))
+  
 }
 
 

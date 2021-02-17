@@ -13,7 +13,7 @@ who.remote <- function(who){
       
      data_dir <<- file.path("C:","Users","Admin","Documents","Stage","FISHUCN_clean","data")
      
-     results_dir <<- file.path("C:","Users","Admin","Documents","Stage","FISHUCN_clean","Output")
+     results_dir <<- file.path("C:","Users","Admin","Documents","Stage","FISHUCN_clean","outputs")
      
      script_dir <<- file.path("C:","Users","Admin","Documents","Stage","FISHUCN_clean","R")
      

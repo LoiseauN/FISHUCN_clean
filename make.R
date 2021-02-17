@@ -3,20 +3,29 @@ pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","ranger","care
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
-  
-#Loading all data
+
+
+#-----------------Loading all data---------------------
+
 path = (here::here("data"))
 setwd(path)
 files <- list.files(here::here("data"))
 lapply(files, load, envir=.GlobalEnv)
 
-#Loading all functions
+#-----------------Loading all functions---------------------
+
 path = (here::here("R"))
 setwd(path)
 files.source = list.files(here::here("R"))
 sapply(files.source, source)
 
-#Running code
+path = (here::here("analysis"))
+setwd(path)
+files.source = list.files(here::here("analysis"))
+sapply(files.source, source)
+
+
+#------------------Running code------------------------
 
 #Trying out missforest
 test_missForest = missForest_test(dummy_dataset_noNA)
@@ -35,3 +44,20 @@ run_IUCN = IUCN_predict(split,dummy_dataset_predict,dummy_dataset_species)
 
 #IUCN consensus (0.5 for this dummy dataset)
 IUCN_final = IUCN_consensus(run_IUCN,length(split),50)
+
+#------------------Loading outputs----------------------
+
+
+path = (here::here("outputs"))
+setwd(path)
+files <- list.files(here::here("outputs"))
+lapply(files, load, envir=.GlobalEnv)
+
+
+#-----------------Creating Figures----------------------
+
+#Figure of variable importance
+#Saved in Figures folder
+figure1 = var_imp(rel_inf)
+
+

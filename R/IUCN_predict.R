@@ -40,6 +40,7 @@ IUCN_predict = function(data_split,data_topredict,data_species){
   #Binding predictions with species information
   data_predicted = cbind(preds,data_species)
   
+  
 }
 
 #Based on the results of the IUCN predictions, let's calculate a consensus of all models based on a baseline you decide
@@ -63,6 +64,9 @@ IUCN_consensus = function(data_predicted,splits,baseline){
   #Keeping only species where prediction is >80%
   IUCN_final_preds = Predicted_percentage %>%
     filter(percentage>=baseline)
+  
+  save(IUCN_final_preds, file = here::here("outputs", "IUCN_final_preds.Rdata"))
+  
 }
 
 

@@ -78,6 +78,9 @@ IUCN_test = function(data_split){
     dplyr::summarize(Balanced_Accuracy=mean(Balanced_Accuracy))
   
   output = list(rel_inf,preds,preds_class)
+  
+  save(rel_inf, file = here::here("outputs", "rel_inf.RData"))
+  save(preds, file = here::here("outputs", "preds.RData"))
 
 
 }
