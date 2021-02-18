@@ -3,15 +3,26 @@
 #' This functions predicts the IUCN status of new species based on 200 models
 #'
 #' @param data_split The output from the data_prep function
-#' @param data_topredict A data frame with species as rownames, traits as columns and an empty IUCN column to predict
-#' @param data_species A data frame with species as column names in the same order as previous data frame, and a traits as column names
+#' @param data Your full data or the output from the miss forest function
 #'
 #' @return A data frame with the predicted status for each species for each loop
 #'
 #' @export
 
 
-IUCN_predict = function(data_split,data_topredict,data_species){
+IUCN_predict = function(data_split,data){
+  
+  #Species informations
+  data_species = data %>%
+    filter(is.na(IUCN))%>%
+    drop_na(-IUCN)%>%
+    dplyr::select(-IUCN) %>%
+    rownames_to_column("species")
+  
+  #Create data to predict on
+  data_topredict = data %>%
+    filter(is.na(IUCN))%>%
+    drop_na(-IUCN)
   
   #Creating x models based on the number of splits of downsampled data
   

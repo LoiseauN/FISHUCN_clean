@@ -11,7 +11,16 @@
 #' @export
 #' 
 #' 
-data_prep <- function(data_NC,data_C){
+data_prep <- function(data){
+  
+  #Create threatened and non threatened species
+  data_C = data %>%
+    filter(IUCN=="C")%>%
+    na.omit()
+  
+  data_NC = data %>%
+    filter(IUCN=="NC")%>%
+    na.omit()
   
   #Variable with optimal number of folds for downsampling
   x = floor(length(data_NC$IUCN)/length(data_C$IUCN))
