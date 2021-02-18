@@ -7,7 +7,7 @@
 missForest_test(data_noNA)
 }
 \arguments{
-\item{data_noNA}{Data without NA with species as rownames, traits as columns}
+\item{data_noNA}{Data without NA with species as rownames, traits as columns and NO IUCN COLUMN}
 }
 \value{
 A dataframe with R² or Accuracy from missForest cv according to the trait type

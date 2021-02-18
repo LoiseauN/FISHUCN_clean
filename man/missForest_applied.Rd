@@ -7,7 +7,7 @@
 missForest_applied(data_tofill, baseline, mf_test)
 }
 \arguments{
-\item{data_tofill}{Your data with the NA with species as rownames, traits as columns}
+\item{data_tofill}{Your data with the NA with species as rownames, traits as columns and the IUCN column}
 
 \item{baseline}{Between 0.5 and 1, baseline of how well the missForest performed to predict}
 
