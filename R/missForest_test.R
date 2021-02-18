@@ -2,7 +2,7 @@
 #'
 #' This functions tests the missForest on complete data using cross validation
 #' 
-#' @param data_noNA Data without NA with species as rownames, traits as columns and NO IUCN COLUMN
+#' @param data_noNA Data with species as rownames, traits as columns and IUCN column
 #' 
 #' @return A dataframe with R² or Accuracy from missForest cv according to the trait type 
 #'
@@ -10,7 +10,12 @@
 #' 
 #' 
 
-missForest_test = function(data_noNA){
+missForest_test = function(data){
+  
+  #Deleting NA in data for test of missForest and substracting IUCN column
+  data_noNA = data %>% 
+    dplyr::select(-IUCN)%>%
+    na.omit()
   
   #Get unique length of all the factor traits
   factor_length = data.frame()

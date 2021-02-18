@@ -36,12 +36,15 @@ setwd(path)
 files.source = list.files(here::here("analysis"))
 sapply(files.source, source)
 
+FB_vars = FB_vars %>%
+  select(-Env_1)
+
 
 #------------------Running code------------------------
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST 
 #Trying out missforest
-test_missForest = missForest_test(FB_vars_noNA)
+test_missForest = missForest_test(FB_vars)
 
 #Applying missforest
 run_missForest = missForest_applied(FB_vars_NA,0.6,test_missForest)
