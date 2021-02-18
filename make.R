@@ -40,22 +40,34 @@ sapply(files.source, source)
 #------------------Running code------------------------
 
 #Trying out missforest
-test_missForest = missForest_test(dummy_dataset_noNA)
+test_missForest = missForest_test(FB_vars_noNA)
 
 #Applying missforest
-run_missForest = missForest_applied(dummy_dataset_NA,0.9,test_missForest)
+run_missForest = missForest_applied(FB_vars_NA,0.6,test_missForest)
+
+#Create train data set with non classified species
+train_NC = create_train_NC(run_missForest)
+
+#Create train dataset with classified species
+train_C = create_train_C(run_missForest)
+
+#Create dataset with species to predict IUCN status on
+data_topredict = create_predict(run_missForest)
+
+#Create dataset with information for each species without IUCN status
+species = create_species(run_missForest)
 
 #Splitting data with NA filled out by missForest
-split = data_prep(dummy_dataset_NC,dummy_dataset_C)
+split = data_prep(train_NC,train_C)
 
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(split)
 
 #Running IUCN predictions
-run_IUCN = IUCN_predict(split,dummy_dataset_predict,dummy_dataset_species)
+run_IUCN = IUCN_predict(split,data_topredict,species)
 
 #IUCN consensus (0.5 for this dummy dataset)
-IUCN_final = IUCN_consensus(run_IUCN,length(split),50)
+IUCN_final = IUCN_consensus(run_IUCN,length(split),80)
 
 #------------------Loading outputs----------------------
 

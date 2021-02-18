@@ -26,4 +26,6 @@ IUCN_consensus = function(data_predicted,splits,baseline){
   
   save(IUCN_final_preds, file = here::here("outputs", "IUCN_final_preds.Rdata"))
   
+  return(IUCN_final_preds)
+  
 }
