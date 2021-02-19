@@ -36,9 +36,8 @@ setwd(path)
 files.source = list.files(here::here("analysis"))
 sapply(files.source, source)
 
-FB_vars = FB_vars %>%
+FB_vars= FB_vars %>%
   select(-Env_1)
-
 
 #------------------Running code------------------------
 
@@ -47,7 +46,7 @@ FB_vars = FB_vars %>%
 test_missForest = missForest_test(FB_vars)
 
 #Applying missforest
-run_missForest = missForest_applied(FB_vars_NA,0.6,test_missForest)
+run_missForest = missForest_applied(FB_vars,0.6,test_missForest)
 
 #ELSE GO DIRECTLY TO THIS STEP
 #Splitting data with NA filled out by missForest or with original data with no NA
