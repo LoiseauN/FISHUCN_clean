@@ -2,7 +2,7 @@
 #'
 #' This functions runs the missForest on your data based on its performance for each trait
 #' 
-#' @param data_tofill Your data with the NA with species as rownames, traits as columns and the IUCN column 
+#' @param data_tofill The output from the IUCN_predict function
 #' @param baseline Between 0.5 and 1, baseline of how well the missForest performed to predict
 #' @param mf_test The output from the missForest_test function
 #' 

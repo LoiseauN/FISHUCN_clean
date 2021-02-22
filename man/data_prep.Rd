@@ -4,7 +4,7 @@
 \alias{data_prep}
 \title{Split data into downsampled data for model}
 \usage{
-data_prep(data_NC, data_C)
+data_prep(data)
 }
 \arguments{
 \item{data_NC}{Your filled out data with no NA with all non classified species}

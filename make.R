@@ -11,7 +11,7 @@
 
 #-----------------Loading packages-------------------
 
-pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","ranger","caret")
+pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","ranger","caret","tuneRanger")
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
@@ -36,19 +36,24 @@ setwd(path)
 files.source = list.files(here::here("analysis"))
 sapply(files.source, source)
 
-FB_vars= FB_vars %>%
-  select(-Env_1)
-
 #------------------Running code------------------------
 
-#IF YOUR DATA HAS NA IN IT, RUN MISSFOREST 
+#PLEASE READ THIS : To run this, your data needs to be formatted as follows : 
+#Species as rownames
+#All traits as columns
+#A IUCN column as column with IUCN status (CR, EN, VU, LC, NT) and NA for species with no IUCN information
+
+#Convert IUCN data to T and NT 
+FB_IUCN = IUCN_divide(FB_vars)
+
+#IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
+
 #Trying out missforest
-test_missForest = missForest_test(FB_vars)
+test_missForest = missForest_test(FB_IUCN)
 
 #Applying missforest
-run_missForest = missForest_applied(FB_vars,0.6,test_missForest)
+run_missForest = missForest_applied(FB_IUCN,0.6,test_missForest)
 
-#ELSE GO DIRECTLY TO THIS STEP
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(run_missForest)
 

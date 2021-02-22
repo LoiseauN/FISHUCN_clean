@@ -2,7 +2,7 @@
 #'
 #' This functions tests the missForest on complete data using cross validation
 #' 
-#' @param data_noNA Data with species as rownames, traits as columns and IUCN column
+#' @param data The output from the IUCN predict function
 #' 
 #' @return A dataframe with R² or Accuracy from missForest cv according to the trait type 
 #'

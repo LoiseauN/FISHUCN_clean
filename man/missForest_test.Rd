@@ -4,10 +4,10 @@
 \alias{missForest_test}
 \title{Try out the missForest performance}
 \usage{
-missForest_test(data_noNA)
+missForest_test(data)
 }
 \arguments{
-\item{data_noNA}{Data without NA with species as rownames, traits as columns and NO IUCN COLUMN}
+\item{data}{The output from the IUCN predict function}
 }
 \value{
 A dataframe with R² or Accuracy from missForest cv according to the trait type

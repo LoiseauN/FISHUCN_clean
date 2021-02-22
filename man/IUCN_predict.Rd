@@ -4,14 +4,12 @@
 \alias{IUCN_predict}
 \title{Predict IUCN status running 200 models}
 \usage{
-IUCN_predict(data_split, data_topredict, data_species)
+IUCN_predict(data_split, data)
 }
 \arguments{
 \item{data_split}{The output from the data_prep function}
 
-\item{data_topredict}{A data frame with species as rownames, traits as columns and an empty IUCN column to predict}
-
-\item{data_species}{A data frame with species as column names in the same order as previous data frame, and a traits as column names}
+\item{data}{Your full data or the output from the miss forest function}
 }
 \value{
 A data frame with the predicted status for each species for each loop
