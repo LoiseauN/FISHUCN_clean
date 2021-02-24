@@ -21,8 +21,8 @@ ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
 path = (here::here("data"))
 setwd(path)
-files <- list.files(here::here("data"))
-lapply(files, load, envir=.GlobalEnv)
+files <- list.files(here::here("data"),pattern = ".rds")
+FB_vars = lapply(files, readRDS) %>% bind_rows()
 
 #-----------------Loading all functions---------------------
 
@@ -52,6 +52,7 @@ FB_IUCN = IUCN_divide(FB_vars)
 test_missForest = missForest_test(FB_IUCN)
 
 #Applying missforest
+#Virer les NA 
 run_missForest = missForest_applied(FB_IUCN,0.6,test_missForest)
 
 #Splitting data with NA filled out by missForest or with original data with no NA

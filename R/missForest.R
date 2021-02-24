@@ -47,6 +47,9 @@ missForest_applied = function(data_tofill,baseline,mf_test){
     for_merge = data_tofill_noIUCN %>%
       dplyr::select(all_of(over53$id))%>%
       rownames_to_column("species")
+    
+    warning("Some of your traits had more than 53 categories. These traits were filtered out during the missForest and then re-added to your data later")
+    
     #Else keep it as it is
   }else{
     data_prepped = data_tofill_noIUCN
@@ -57,6 +60,11 @@ missForest_applied = function(data_tofill,baseline,mf_test){
     rownames_to_column("trait")%>%
     filter(V1>baseline)
   
+  #Warning message if somes traits cannot be imputed
+  if(length(mf_perf)!=length(mf_test)){
+    warning("According to your baseline, the missForest performance was too low to impute some of your traits. Therefore, NAs are still present in
+            your data base. Rows with NAs will be deleted in order to run the model.")
+  }
   #Imputing data
   impute = missForest(data_prepped,variablewise = T, verbose = T)
   
@@ -74,7 +82,10 @@ missForest_applied = function(data_tofill,baseline,mf_test){
   data_complete = NA_data %>%
     left_join(impute_data,by="species")%>%
     left_join(for_merge,by="species")%>%
+    na.omit()%>%
     left_join(IUCN_formerge,by="species")%>%
     column_to_rownames("species")
   
 }
+  
+

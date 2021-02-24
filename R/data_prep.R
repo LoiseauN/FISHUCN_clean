@@ -15,11 +15,11 @@ data_prep <- function(data){
   
   #Create threatened and non threatened species
   data_Thr = data %>%
-    filter(IUCN=="Thr")%>%
+    dplyr::filter(IUCN=="Thr")%>%
     na.omit()
   
   data_NThr = data %>%
-    filter(IUCN=="NThr")%>%
+    dplyr::filter(IUCN=="NThr")%>%
     na.omit()
   
   #Variable with optimal number of folds for downsampling

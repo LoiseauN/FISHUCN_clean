@@ -29,15 +29,21 @@ missForest_test = function(data){
       factor_length = rbind(factor_length,data_frame)
     }
   }
+
   
   #IF any of the factors has over 53 categories filter it out of the data
   if(any(factor_length>53)){
+    
     
     over53 = factor_length %>%
       filter(length>53)
     
     data_prepped = data_noNA %>%
       select(-(all_of(over53$id)))
+    
+    warning("Some of your traits had more than 53 categories. These traits were filtered out during the missForest and then re-added to your data later")
+    
+    
   #Else keep it as it is
   }else{
     data_prepped = data_noNA

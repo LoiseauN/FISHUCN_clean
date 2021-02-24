@@ -15,7 +15,7 @@ IUCN_divide = function(data){
   
   #Check IUCN column is a factor
   
-  #data$IUCN = as.factor(data$IUCN)
+  data$IUCN = as.factor(data$IUCN)
   
   #Divide IUCN classification into two classes : Thr and NThr
   
