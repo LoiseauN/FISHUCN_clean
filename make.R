@@ -44,7 +44,7 @@ sapply(files.source, source)
 #A IUCN column as column with IUCN status (CR, EN, VU, LC, NT) and NA for species with no IUCN information
 
 #Convert IUCN data to T and NT 
-FB_IUCN = IUCN_divide(FB_vars)
+FB_IUCN = IUCN_split(FB_vars)
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
 
@@ -55,17 +55,23 @@ test_missForest = missForest_test(FB_IUCN)
 #Virer les NA 
 run_missForest = missForest_applied(FB_IUCN,0.6,test_missForest)
 
+#HERE WE HAVE TO CALL PYTHON SCRIPT TO EXPORT FOR PYTHON
+
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(run_missForest)
 
 #Trying out IUCN predictions
-test_IUCN = IUCN_test(split)
+test_IUCN = IUCN_test(split,10)
 
 #Running IUCN predictions
-run_IUCN = IUCN_predict(split,run_missForest)
+run_IUCN = IUCN_predict(split,run_missForest,10)
 
 #IUCN consensus (0.5 for this dummy dataset)
 IUCN_final = IUCN_consensus(run_IUCN,length(split),80)
+
+#THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
+
+#THEN FINAL FUNCTION THAT MAKES CONSENSUS OF BOTH METHODS
 
 #------------------Loading outputs----------------------
 

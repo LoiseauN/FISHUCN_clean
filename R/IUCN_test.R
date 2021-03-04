@@ -3,6 +3,7 @@
 #' This functions tests the model on your data based on complete data using cross validation
 #'
 #' @param data_split The output from the data_prep function
+#' @param loops The number of models to run on each downsampled dataset. Recommended : 10 or 100
 #' 
 #' @return A data frame with variable importance of each trait by permutation
 #' @return A data frame with model performance : accuracy, Kappa, TSS
@@ -10,11 +11,12 @@
 #'
 #' @export
 
-IUCN_test = function(data_split){
+IUCN_test = function(data_split,loops){
   
   ranger_loop = mclapply(1:length(data_split),function(i){
     
-    mclapply(1:10,function(p){
+    
+    mclapply(1:loops,function(p){
       
       #SHuffling data, then Splitting into training and test data
       split <- initial_split(data_split[[i]][sample(nrow(data_split[[i]])),], prop = 0.8)

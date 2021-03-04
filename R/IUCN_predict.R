@@ -4,13 +4,18 @@
 #'
 #' @param data_split The output from the data_prep function
 #' @param data Your full data or the output from the miss forest function
+#' @param loops The number of models to run on each downsampled dataset. Recommended : 10 or 100
 #'
 #' @return A data frame with the predicted status for each species for each loop
 #'
 #' @export
 
 
-IUCN_predict = function(data_split,data){
+IUCN_predict = function(data_split,data,loops){
+  
+  if (any(is.na(data[,!colnames(data)=="IUCN"]))) {
+    stop("Your traits still contain NAs. Please remove them to continue")
+  }
   
   #Species informations
   data_species = data %>%
@@ -28,7 +33,7 @@ IUCN_predict = function(data_split,data){
   
   ranger_loop = mclapply(1:length(data_split),function(i){
     
-    mclapply(1:10,function(p){
+    mclapply(1:loops,function(p){
       
       #Randomizing each sub dataframe 
       train <- data_split[[i]][sample(nrow(data_split[[i]])),]
