@@ -16,7 +16,6 @@ nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
-
 #-----------------Loading all data---------------------
 
 path = (here::here("data"))

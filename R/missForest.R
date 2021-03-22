@@ -10,6 +10,7 @@
 #'
 #' @export
 
+
 missForest_applied = function(data_tofill,baseline,mf_test){
   
   #Keeping IUCN status for merge
@@ -26,7 +27,7 @@ missForest_applied = function(data_tofill,baseline,mf_test){
   factor_length = data.frame()
   for (i in 1:length(data_tofill_noIUCN[,]))
   {
-    #If the trait is your factor the get the length
+    #If the trait is a factor the get the length
     if (is.factor(data_tofill_noIUCN[,i])==TRUE) 
     { 
       data_frame = data.frame(id = colnames(data_tofill_noIUCN[i]),
@@ -59,6 +60,9 @@ missForest_applied = function(data_tofill,baseline,mf_test){
   mf_perf = mf_test %>%
     rownames_to_column("trait")%>%
     filter(V1>baseline)
+  
+  data_prepped = data_prepped %>%
+    dplyr::select(one_of(mf_perf$trait))
   
   #Warning message if somes traits cannot be imputed
   if(length(mf_perf)!=length(mf_test)){
