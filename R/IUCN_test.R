@@ -11,10 +11,10 @@
 #'
 #' @export
 
-numCores <- detectCores()
+
 IUCN_test = function(data_split,loops){
   
-  ranger_loop = mclapply(1:length(data_split,mc.cores),function(i){
+  ranger_loop = mclapply(1:length(data_split),function(i){
     
     
     mclapply(1:loops,function(p){

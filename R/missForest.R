@@ -8,8 +8,7 @@
 #' 
 #' @return Your data with NAs filled out for traits where the missForest performed well
 #'
-#' @export
-
+#' @exports
 
 missForest_applied = function(data_tofill,baseline,mf_test){
   
@@ -42,7 +41,7 @@ missForest_applied = function(data_tofill,baseline,mf_test){
     over53 = factor_length %>%
       filter(length>53)
     
-    data_prepped = data_tofill_noIUCN %>%
+    data_final = data_tofill_noIUCN %>%
       dplyr::select(-(all_of(over53$id)))
     
     for_merge = data_tofill_noIUCN %>%
@@ -53,7 +52,7 @@ missForest_applied = function(data_tofill,baseline,mf_test){
     
     #Else keep it as it is
   }else{
-    data_prepped = data_tofill_noIUCN
+    data_final = data_tofill_noIUCN
   }
   
   #Keeping only traits where missForest performed above baseline
@@ -61,7 +60,11 @@ missForest_applied = function(data_tofill,baseline,mf_test){
     rownames_to_column("trait")%>%
     filter(V1>baseline)
   
-  data_prepped = data_prepped %>%
+  data_notfill = data_final %>%
+    dplyr::select(!one_of(mf_perf$trait))%>%
+    rownames_to_column("species")
+  
+  data_prepped = data_final %>%
     dplyr::select(one_of(mf_perf$trait))
   
   #Warning message if somes traits cannot be imputed
@@ -74,17 +77,11 @@ missForest_applied = function(data_tofill,baseline,mf_test){
   
   #Data frame with imputed values for values where missForest performance is good
   impute_data = impute$ximp %>%
-    dplyr::select(all_of(mf_perf$trait))%>%
-    rownames_to_column("species")
-  
-  #Data frames with missing values without the values we can impute with miss forest
-  NA_data = data_prepped %>%
-    dplyr::select(!all_of(mf_perf$trait))%>%
-    rownames_to_column("species")
-  
+    rownames_to_column("species")%>%
+    left_join(data_notfill,by="species")
+
   #Merge imputed data with NA data 
-  data_complete = NA_data %>%
-    left_join(impute_data,by="species")%>%
+  data_complete = impute_data %>%
     left_join(for_merge,by="species")%>%
     na.omit()%>%
     left_join(IUCN_formerge,by="species")%>%
