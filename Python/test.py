@@ -205,7 +205,7 @@ def predict(original_df, df_all_split, nb_run_per_split):
             for j in range(len(res_all)):
                 s = s + res_all[j][i]
             if s > s1 :
-                res_file.write(df_to_predict.iloc[i].name+ le.inverse_transform([1])[0] + ',' +
+                res_file.write(df_to_predict.iloc[i].name+ ',' + le.inverse_transform([1])[0] + ',' +
                             str(s*100/len(res_all))+'\n')
             elif s < s2 :
                 res_file.write(df_to_predict.iloc[i].name + ',' + le.inverse_transform([0])[0] + ',' +

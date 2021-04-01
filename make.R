@@ -35,6 +35,9 @@ setwd(path)
 files.source = list.files(here::here("analysis"))
 sapply(files.source, source)
 
+#-----------------Reproductibility---------------------
+set.seed(42)
+
 #------------------Running code------------------------
 
 #PLEASE READ THIS : To run this, your data needs to be formatted as follows : 
@@ -54,6 +57,7 @@ test_missForest = missForest_test(FB_IUCN)
 #Virer les NA 
 run_missForest = missForest_applied(FB_IUCN,0.6,test_missForest)
 
+save(run_missForest, file = "/home/vfleure/Documents/FISHUCN_clean/Python/data.RData")
 #HERE WE HAVE TO CALL PYTHON SCRIPT TO EXPORT FOR PYTHON
 
 #Splitting data with NA filled out by missForest or with original data with no NA
