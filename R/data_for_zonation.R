@@ -67,6 +67,25 @@ for (i in 1:nrow(FISHUCN)){
   
 }
 
+# Take the 
+FISHUCN$proba_select <- NA 
+
+for (i in 1:nrow(FISHUCN)){
+  print(i)
+  
+  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$proba_select[i] <- FISHUCN$percentage[i]}
+  
+  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$proba_select[i] <- FISHUCN$proba[i]}
+  
+  #Feel after
+  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$proba_select[i] <- NA}
+  
+  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$proba_select[i] <- NA}
+  
+}
+
+
+
 save(FISHUCN,file="FISHUCN.RData")
 
 
@@ -79,43 +98,22 @@ data_zonation <- data.frame(row.names = rownames(FB_vars),
 
 data_zonation$IUCN_alone <- NA
 
-data_zonation <- data_zonation[,c("species",
-                                  "Thr",
-                                  "NC",
-                                  "maxproba",
-                                  "IUCN_machine",
-                                  "IUCN_deep",
-                                  "IUCN_pred",
-                                  "IUCN_status")]
+# ----------  Change 
+for(i in 1:nrow(data_zonation)){ 
+ 
+   print(i)
+  
+if(is.na(data_zonation$IUCN[i])) data_zonation$IUCN_alone[i] <- NA  
+else if(data_zonation$IUCN[i] =="LC") data_zonation$IUCN_alone[i] <- "NThr"
+else if(data_zonation$IUCN[i] =="NT") data_zonation$IUCN_alone[i] <- "NThr"
+else if(data_zonation$IUCN[i] =="nt") data_zonation$IUCN_alone[i] <- "NThr"
+else if(data_zonation$IUCN[i] =="VU") data_zonation$IUCN_alone[i] <- "Thr"
+else if(data_zonation$IUCN[i] =="EN") data_zonation$IUCN_alone[i] <- "Thr"
+else if(data_zonation$IUCN[i] =="CR") data_zonation$IUCN_alone[i] <- "Thr"
 
-
-# ----------  Link with IUCN
-data_zonation$IUCN_last_pred  <- data_zonation$IUCN_status
-data_zonation$IUCN_alone <- data_zonation$IUCN_status
-
-data_zonation$IUCN_last_pred[data_zonation$IUCN_last_pred=="DD"] <- NA
-data_zonation$IUCN_last_pred[data_zonation$IUCN_last_pred=="LC"] <- "NonThreatened"
-data_zonation$IUCN_last_pred[data_zonation$IUCN_last_pred=="NT"] <- "NonThreatened"
-data_zonation$IUCN_last_pred[data_zonation$IUCN_last_pred=="nt"] <- "NonThreatened"
-data_zonation$IUCN_last_pred[data_zonation$IUCN_last_pred=="VU"] <- "Threatened"
-data_zonation$IUCN_last_pred[data_zonation$IUCN_last_pred=="EN"] <- "Threatened"
-data_zonation$IUCN_last_pred[data_zonation$IUCN_last_pred=="CR"] <- "Threatened"
-
-data_zonation$IUCN_alone[data_zonation$IUCN_alone=="DD"] <- NA
-data_zonation$IUCN_alone[data_zonation$IUCN_alone=="LC"] <- "NonThreatened"
-data_zonation$IUCN_alone[data_zonation$IUCN_alone=="NT"] <- "NonThreatened"
-data_zonation$IUCN_alone[data_zonation$IUCN_alone=="nt"] <- "NonThreatened"
-data_zonation$IUCN_alone[data_zonation$IUCN_alone=="VU"] <- "Threatened"
-data_zonation$IUCN_alone[data_zonation$IUCN_alone=="EN"] <- "Threatened"
-data_zonation$IUCN_alone[data_zonation$IUCN_alone=="CR"] <- "Threatened"
-
-
-data_zonation$IUCN_pred[data_zonation$IUCN_pred=="C"] <- "Threatened" 
-data_zonation$IUCN_pred[data_zonation$IUCN_pred=="NC"] <- "NonThreatened" 
-
-for(i in 1: nrow(data_zonation)){
-  if(is.na(data_zonation$IUCN_last_pred[i])) data_zonation$IUCN_last_pred[i] <- data_zonation$IUCN_pred[i]
 }
+
+
 
 
 #Function to rescale proba
