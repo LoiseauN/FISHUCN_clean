@@ -8,6 +8,12 @@
 #' @export
 #' 
 #' 
+#------------------Loading outputs----------------------
+
+path = (here::here("outputs"))
+setwd(path)
+files <- list.files(here::here("outputs"))
+lapply(files, load, envir=.GlobalEnv)
 
 #Data from Deep
 pred_deep <- read.csv2("res_inference_deep.csv",sep=",",header=T)
@@ -93,8 +99,8 @@ save(FISHUCN,file="FISHUCN.RData")
 #Last file to send in zonation
 load("FB_vars.RData")
 
-data_zonation <- data.frame(row.names = rownames(FB_vars),
-                            IUCN = FB_vars$IUCN) 
+data_zonation <- data.frame(species = rownames(FB_vars),
+                            IUCN_cat = FB_vars$IUCN) 
 
 data_zonation$IUCN_alone <- NA
 
@@ -103,17 +109,18 @@ for(i in 1:nrow(data_zonation)){
  
    print(i)
   
-if(is.na(data_zonation$IUCN[i])) data_zonation$IUCN_alone[i] <- NA  
-else if(data_zonation$IUCN[i] =="LC") data_zonation$IUCN_alone[i] <- "NThr"
-else if(data_zonation$IUCN[i] =="NT") data_zonation$IUCN_alone[i] <- "NThr"
-else if(data_zonation$IUCN[i] =="nt") data_zonation$IUCN_alone[i] <- "NThr"
-else if(data_zonation$IUCN[i] =="VU") data_zonation$IUCN_alone[i] <- "Thr"
-else if(data_zonation$IUCN[i] =="EN") data_zonation$IUCN_alone[i] <- "Thr"
-else if(data_zonation$IUCN[i] =="CR") data_zonation$IUCN_alone[i] <- "Thr"
+if(is.na(data_zonation$IUCN_cat[i])) data_zonation$IUCN_alone[i] <- NA  
+else if(data_zonation$IUCN_cat[i] =="LC") data_zonation$IUCN_alone[i] <- "NThr"
+else if(data_zonation$IUCN_cat[i] =="NT") data_zonation$IUCN_alone[i] <- "NThr"
+else if(data_zonation$IUCN_cat[i] =="nt") data_zonation$IUCN_alone[i] <- "NThr"
+else if(data_zonation$IUCN_cat[i] =="VU") data_zonation$IUCN_alone[i] <- "Thr"
+else if(data_zonation$IUCN_cat[i] =="EN") data_zonation$IUCN_alone[i] <- "Thr"
+else if(data_zonation$IUCN_cat[i] =="CR") data_zonation$IUCN_alone[i] <- "Thr"
 
 }
 
-
+# ----------  Change 
+data_zonation <- merge(data_zonation,FISHUCN,  by = "species")
 
 
 #Function to rescale proba
@@ -127,6 +134,8 @@ rescalex <- function(a,b,data){
 
 
 #Rescale prob for threatened predict 
+proba_select <
+
 rescale_threat <-  subset(data_zonation, data_zonation$IUCN_last_pred =="Threatened"& is.na(data_zonation$IUCN_alone))
 rescale_non_threat <-  subset(data_zonation, data_zonation$IUCN_last_pred =="NonThreatened"& is.na(data_zonation$IUCN_alone))
 
