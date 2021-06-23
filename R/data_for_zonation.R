@@ -53,7 +53,7 @@ for (i in 1:nrow(FISHUCN)){
   
   if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_machine[i])}
   
-  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict[i] <- "NA"}
+  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict[i] <- NA}
   
 }
 
@@ -63,13 +63,13 @@ FISHUCN$predict_consensus <- NA
 for (i in 1:nrow(FISHUCN)){
   print(i)
   
-  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict_consensus[i] <- "NA"}
+  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict_consensus[i] <- NA}
   
-  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict_consensus[i] <- "NA"}
+  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict_consensus[i] <- NA}
   
   if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict_consensus[i] <- as.character(FISHUCN$IUCN_machine[i])}
   
-  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict_consensus[i] <- "NA"}
+  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict_consensus[i] <- NA}
   
 }
 
@@ -120,9 +120,34 @@ else if(data_zonation$IUCN_cat[i] =="CR") data_zonation$IUCN_alone[i] <- "Thr"
 }
 
 # ----------  Change 
-data_zonation <- merge(data_zonation,FISHUCN,  by = "species")
+data_zonation <- merge(data_zonation,FISHUCN,  by = "species", all.x = T)
+data_zonation$proba_select <- as.numeric(data_zonation$proba_select)/100
 
+#keep only predicted and species already in IUCN 
 
+data_zonation$selected_species <- NA
+data_zonation$selected_species_consensus <- NA
+
+for(i in 1:nrow(data_zonation)){ 
+  
+  print(i)
+  
+  if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict[i])) 
+  data_zonation$selected_species[i] <- 1
+
+  if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict_consensus[i])) 
+    data_zonation$selected_species_consensus[i] <- 1
+  
+}
+  
+data_zonation_list <- list()
+  data_zonation_list[[1]] <- subset(data_zonation,data_zonation$selected_species == 1)[,-c(13:14)]
+  data_zonation_list[[2]] <- subset(data_zonation,data_zonation$selected_species_consensus == 1)[,-c(13:14)]
+  data_zonation_list[[3]] <- data_zonation[,-c(13:14)]
+  
+names(data_zonation_list) <- c("main", "sensibility1","sensibility2")
+  
+  
 #Function to rescale proba
 rescalex <- function(a,b,data){
   step1 <- data-min(data,na.rm=T)
@@ -132,17 +157,19 @@ rescalex <- function(a,b,data){
   res <- step4 + a
   return(res)}
 
+# SCENARIO 1: 
+# 1 for everyone
+for (i in length())
+data_zonation$scenario1 <- 1 
+#Rescale proba for scenario
 
-#Rescale prob for threatened predict 
-proba_select <
 
 rescale_threat <-  subset(data_zonation, data_zonation$IUCN_last_pred =="Threatened"& is.na(data_zonation$IUCN_alone))
 rescale_non_threat <-  subset(data_zonation, data_zonation$IUCN_last_pred =="NonThreatened"& is.na(data_zonation$IUCN_alone))
 
 rescale_threat$C <-  rescalex(a=2,b=5,data=rescale_threat$C)
 rescale_non_threat$NC <-  rescalex(a=1,b=2,data=1-rescale_non_threat$NC)
-# SCENARIO 1: 
-# 1 for everyone
+
 
 # SCENARIO 3  :  Weighted in function of the machine learning probability with negative influence for non threaten
 # NA  by IUCN and predit = 1.5 (for SM 2 and 1)
