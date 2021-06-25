@@ -265,9 +265,13 @@ data_final_zonation <- lapply(1: length(data_zonation_list), function(x){
 })
   
 names(data_final_zonation) <- c("main", "sensibility1","sensibility2")
-  boxplot(data_final_zonation[[1]]$scenario1_NoWeight,
+  a <- boxplot(data_final_zonation[[1]]$scenario1_NoWeight,
           data_final_zonation[[1]]$scenario2_IUCNalone,
           data_final_zonation[[1]]$scenario3_IUCN_and_Predict)
+  
+  b <- boxplot(data_final_zonation[[1]]$scenario1_NoWeight,
+               data_final_zonation[[1]]$scenario2_IUCNalone,
+               data_final_zonation[[1]]$scenario3_IUCN_and_Predict)
 
   
 
