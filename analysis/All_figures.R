@@ -74,8 +74,14 @@ ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
 ############################# Figure Results #########################################
 
 #Network
+addLevel <- function(x, newlevel=NULL) {
+  if(is.factor(x)) {
+    if (is.na(match(newlevel, levels(x))))
+      return(factor(x, levels=c(levels(x), newlevel)))
+  }
+  return(x)
+}
 
-data_final_zonation
 
 
 dat_network <- data.frame(data_final_zonation$main[,c("species","IUCN_alone","predict")])
@@ -97,8 +103,8 @@ dat_network<-as.data.frame(sapply(dat_network,
                                   to = c("Non Threatened")))
 
 not_in_model <- data.frame(species = rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]),
-           IUCN_alone= rep("<NA>", length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))),
-             predict=rep("<NA>", length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))))
+           IUCN_alone= rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))),
+             predict=rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))))
 
 
 
