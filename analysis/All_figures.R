@@ -25,27 +25,33 @@ amphibians_pic <- image_data("cd0cdc36-ecfa-414f-af87-1b5e0ec0c69b", size = "512
 data_4_taxa <- data.frame( taxa = c(rep("mammals", nrow(mammals_status$result)),
                                     rep("birds",nrow(birds_status$result)),
                                     rep("amphibians",nrow(amphibians_status$result)),
-                                    rep("fishes",nrow(FB_scrapped_final))),
+                                    rep("fishes",nrow(FB_vars))),
                            status = as.factor(c(mammals_status$result$category,
                                                 birds_status$result$category,
                                                 amphibians_status$result$category,
-                                                FB_scrapped_final$IUCN_status)))
+                                                as.character(FB_vars$IUCN))))
 
-levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR/cd", "LR/nt", "nt","NT")] <- "LC"
+levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR/cd", "LR/nt", "nt","NT", "LC")] <- "Non Threatened"
 
-data_4_taxa[is.na(data_4_taxa$status),]$status <- "DD"
+levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("DD",  "NA")] <- "No Status"
 
-levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR", "EN", "EW")] <- "VU"
+data_4_taxa[is.na(data_4_taxa$status),]$status <- "No Status"
+
+levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR", "EN", "EW","VU")] <- "Threatened"
 
 data_4_taxa <- subset(data_4_taxa,data_4_taxa$status != "EX")
+
+
 
 data_4_taxa <- as.matrix(table(data_4_taxa))
 data_4_taxa <- (data_4_taxa/apply(data_4_taxa,1,sum))*100
 
+
+
 data_4_taxa <- transform(data_4_taxa,
-                         status = factor(status, c("VU",
-                                                   "LC",
-                                                   "DD")))
+                         status = factor(status, c("Threatened",
+                                                   "Non Threatened",
+                                                   "No Status")))
 data_4_taxa <-na.omit(data_4_taxa)
 data_4_taxa <- transform(data_4_taxa,
                          taxa = factor(taxa, c("birds",
@@ -68,7 +74,11 @@ ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
 ############################# Figure Results #########################################
 
 #Network
-dat_network <- data.frame(preds_final[,c("species","IUCN_status","IUCN_machine","IUCN_deep","IUCN_pred")])
+
+data_final_zonation
+
+
+dat_network <- data.frame(data_final_zonation$main[,c("species","IUCN_alone","predict")])
 
 dat_network <- addLevel(dat_network, "Threatened")
 dat_network <- addLevel(dat_network, "Non Threatened")
@@ -79,33 +89,50 @@ for (i in 1:ncol(dat_network)){dat_network[,i] <- as.factor(as.character(dat_net
 
 
 dat_network<-as.data.frame(sapply(dat_network,
-                                  mapvalues, from = c("VU", "CR", "EN","C"), 
-                                  to = c("Threatened","Threatened","Threatened","Threatened")))
+                                  mapvalues, from = c("Thr"), 
+                                  to = c("Threatened")))
 
 dat_network<-as.data.frame(sapply(dat_network,
-                                  mapvalues, from = c("DD", "NA"), 
-                                  to = c("No Status","No Status")))
+                                  mapvalues, from = c("NThr"), 
+                                  to = c("Non Threatened")))
 
-dat_network<-as.data.frame(sapply(dat_network,
-                                  mapvalues, from = c("LC","NT","nt","NC"), 
-                                  to = c("Non Threatened","Non Threatened",
-                                         "Non Threatened","Non Threatened")))
-
-dat_network[is.na(dat_network)] <- "No Status"
+not_in_model <- data.frame(species = rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]),
+           IUCN_alone= rep("<NA>", length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))),
+             predict=rep("<NA>", length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))))
 
 
-dat_network$IUCN_final <-NA
+
+dat_network <- rbind(dat_network,not_in_model)
+#dat_network<-as.data.frame(sapply(dat_network,
+ #                                 mapvalues, from = c("LC","NT","nt","NC"), 
+  #                                to = c("Non Threatened","Non Threatened",
+   #                                      "Non Threatened","Non Threatened")))
+
+
+
+
+
+dat_network$IUCN_final <- NA
 
 for (i in 1:nrow (dat_network)){
-  if(dat_network$IUCN_status[i]!="No Status"){ dat_network$IUCN_final[i]=dat_network$IUCN_status[i]
+  if(is.na(dat_network$IUCN_alone[i])){ dat_network$IUCN_final[i]=dat_network$predict[i]
+  
   }else{
-    dat_network$IUCN_final[i]=dat_network$IUCN_pred[i]
+    
+    dat_network$IUCN_final[i]=dat_network$IUCN_alone[i]
+    
   }
 }
 
+dat_network<-as.data.frame(sapply(dat_network,
+                                  mapvalues, from = c(NA), 
+                                  to = c("No Status")))
+
+
+
 df <- data.frame('id' = rep(dat_network$species,2),
                  'stage' = as.factor(c(rep("Before Prediction",nrow(dat_network)), rep("After Prediction",nrow(dat_network)))),
-                 'group' = as.factor(c(dat_network$IUCN_status,dat_network$IUCN_final)))
+                 'group' = as.factor(c(dat_network$IUCN_alone,dat_network$IUCN_final)))
 df <- transform(df,
                 group = factor(group, rev(levels(group))))
 df <- transform(df,
