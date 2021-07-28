@@ -1,8 +1,10 @@
 # ---------- Load packages
-pkgs <- c("plyr","rredlist","ggplot2","viridis","hrbrthemes","rphylopic","scales","ggalluvial")
+pkgs <- c("plyr","rredlist","ggplot2","viridis","hrbrthemes","rphylopic","scales","ggalluvial",
+          "stringr","cluster","ggstatsplot","palmerpenguins","tidyverse","grid","gridExtra")
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
+
 
 # ---------- Load data
 load(file=file.path(results_dir,"preds_final.RData"))
@@ -21,7 +23,7 @@ amphibians_pic <- image_data("cd0cdc36-ecfa-414f-af87-1b5e0ec0c69b", size = "512
 
 
 
-############################# Figure 1 #########################################
+#'---------------------------------------------------------------------@Comparisonothertaxa
 data_4_taxa <- data.frame( taxa = c(rep("mammals", nrow(mammals_status$result)),
                                     rep("birds",nrow(birds_status$result)),
                                     rep("amphibians",nrow(amphibians_status$result)),
@@ -71,7 +73,7 @@ ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1)
 
 
-############################# Figure Results #########################################
+#'---------------------------------------------------------------------@ResultsPrediction
 
 #Network
 addLevel <- function(x, newlevel=NULL) {
@@ -135,7 +137,6 @@ dat_network<-as.data.frame(sapply(dat_network,
                                   to = c("No Status")))
 
 
-
 df <- data.frame('id' = rep(dat_network$species,2),
                  'stage' = as.factor(c(rep("Before Prediction",nrow(dat_network)), rep("After Prediction",nrow(dat_network)))),
                  'group' = as.factor(c(dat_network$IUCN_alone,dat_network$IUCN_final)))
@@ -158,19 +159,106 @@ plot_net <-
 
 plot_net
 
+#'---------------------------------------------------------------------@Protectionanalyses
+load("PctMPAFish.RData")
+PctMPAFish$species <- str_replace(PctMPAFish$species, "_", "-")
+
+data_protected <- dat_network
+PctMPAFish[is.na(PctMPAFish)] <- 0
+
+data_protected <- merge(data_protected,PctMPAFish,by="row.names",all.x = T)
+data_protected <- data_protected[,-c(1:2)]
+colnames(data_protected)[4]<- "species"
+data_protected$IUCN_final <- as.factor(data_protected$IUCN_final)
+
+plt <- ggstatsplot::ggbetweenstats(
+  data = data_protected,
+  x = IUCN_final,
+  y = AreaMPAI_IV,
+ )
+
+plt +
+  labs(
+    x = "IUCN Status",
+    y = "% cover MPA (I - IV)"
+    ) +
+  scale_color_manual(values=c("grey35", "forestgreen","firebrick1"))
 
 
-data(vaccinations)
-levels(vaccinations$response) <- rev(levels(vaccinations$response))
-ggplot(vaccinations,
-       aes(x = survey, stratum = response, alluvium = subject,
-           weight = freq,
-           fill = response, label = response)) +
-  geom_flow() +
-  geom_stratum(alpha = .5) +
-  geom_text(stat = "stratum", size = 3) +
-  theme(legend.position = "none") +
-  ggtitle("vaccination survey responses at three points in time")
+#'---------------------------------------------------------------------@zonationanalyses
+
+ggplot(Zrank_main, aes(x=rankMainSc2, y=rankMainSc3) ) +
+  geom_hex(bins = 100) +
+  scale_fill_continuous(type = "viridis") +
+  theme_bw() + xlab("IUCN only")+ ylab("IUCN + Predicted")
+
+
+ggplot(Zrank_main, aes(x=rankMainSc2, y=rankMainSc3, color = diff) ) +
+  geom_point() +
+  scale_color_continuous(type = "viridis",direction = -1) +
+  theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
+  geom_abline(slope=1, intercept = 0)
+  
+
+
+
+
+
+
+
+
+
+
+
+# MAP
+
+mask.full=raster("mask.full.tif")
+load("Zrank_main.RData")
+
+maskdiff = mask.full
+maskdiff[Zrank_main$ID] = Zrank_main$diff
+maskSc2 = mask.full
+maskSc2[Zrank_main$ID] = Zrank_main$rankMainSc2
+maskSc3 = mask.full
+maskSc3[Zrank_main$ID] = Zrank_main$rankMainSc3
+
+
+RankDiff <-as.data.frame(rasterToPoints(maskdiff))
+colnames(RankDiff)[3] = "Diff"
+DIFF_MAP <- ggplot() +
+  geom_tile(data=RankDiff,aes(x = x, y = y, fill = Diff))+
+  scale_fill_gradient2(low = "chartreuse4", midpoint = 0, mid = "yellow", high = "red", name = "Diffence") +
+  ggtitle("Main_diff IUCN/IUCN + Predict")+
+  theme_bw()
+
+
+RankSc2 <-as.data.frame(rasterToPoints(maskSc2))
+colnames(RankSc2)[3] = "Rank"
+IUCN_MAP <- ggplot() +
+  geom_tile(data=RankSc2,aes(x = x, y = y, fill = Rank))+
+  scale_fill_gradient2(low = "chartreuse4", mid = "yellow", high = "red", midpoint = median(Zrank_main$rankMainSc2))+
+  ggtitle("IUCN")+
+  theme_bw()+
+  xlab("")+ylab("")
+
+RankSc3<-as.data.frame(rasterToPoints(maskSc3))
+colnames(RankSc3)[3] = "Rank"
+IUCN_MAP_predict <- ggplot() +
+  geom_tile(data=RankSc2,aes(x = x, y = y, fill = Rank))+
+  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", midpoint = median(Zrank_main$rankMainSc2))+
+  ggtitle("IUCN + Predict")+
+  theme_bw()+
+  xlab("")+ylab("")
+
+grid.arrange(DIFF_MAP,IUCN_MAP,IUCN_MAP_predict,ncol =1)
+#Data for zonation
+#datazonation <- dat_network[,c("species","IUCN_status","IUCN_final")]
+#datazonation$species <- gsub("-", "_", datazonation$species)
+#save(datazonation,file="datazonation.RData")
+
+
+
+
 
 
 #Supplementary 
@@ -198,10 +286,3 @@ venn.diagram(
 )
 
 
-# MAP
-rasterFromXYZ()
-
-#Data for zonation
-datazonation <- dat_network[,c("species","IUCN_status","IUCN_final")]
-datazonation$species <- gsub("-", "_", datazonation$species)
-save(datazonation,file="datazonation.RData")
