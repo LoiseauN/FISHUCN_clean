@@ -24,3 +24,25 @@ var_imp = function(rel_inf){
                  width = 11.7, height = 8.3)
   
 }
+
+
+relativ_import_alphaS <- rel_inf %>%
+  arrange(importance.mod.) %>%
+  tail(20) %>%
+  mutate(rowname=factor(rowname, rowname)) %>%
+  ggplot( aes(x=rowname, y=importance.mod.) ) +
+  geom_segment( aes(x=rowname ,xend=rowname, y=0, yend=importance.mod.), color="grey") +
+  geom_point(size=3, color="#69b3a2") +
+  coord_flip() +
+  theme_bw() +
+  theme(
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    legend.position="none"
+  ) +
+  xlab("Variables") +
+  ylab("")+
+  ggtitle("Species Richness")
+
+
+

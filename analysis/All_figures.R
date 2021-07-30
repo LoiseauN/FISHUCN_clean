@@ -158,6 +158,15 @@ plot_net <-
   xlab("") +ylab("Number of species")
 
 plot_net
+#'---------------------------------------------------------------------@Importancevariable
+imp_var_plot <- ggplot(rel_inf, aes(x=reorder(rowname,importance.mod.), y=importance.mod.,fill=importance.mod.))+ 
+  geom_bar(stat="identity", position="dodge")+ coord_flip()+
+  labs(x="Variable importance by permutation",
+       y="")+
+  guides(fill=F)+
+  scale_fill_gradient(low="aquamarine", high="darkcyan")+
+  theme_bw()
+
 
 #'---------------------------------------------------------------------@Protectionanalyses
 load("PctMPAFish.RData")
@@ -199,6 +208,11 @@ ggplot(Zrank_main, aes(x=rankMainSc2, y=rankMainSc3, color = diff) ) +
   theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
   geom_abline(slope=1, intercept = 0)
   
+ggplot(Zrank_main, aes(x=rankMainSc2, y=log10(rankMainSc3+1), color = diff) ) +
+  geom_point() +
+  scale_color_continuous(type = "viridis",direction = -1) +
+  theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
+  geom_abline(slope=1, intercept = 0)
 
 
 
@@ -257,8 +271,36 @@ grid.arrange(DIFF_MAP,IUCN_MAP,IUCN_MAP_predict,ncol =1)
 #datazonation$species <- gsub("-", "_", datazonation$species)
 #save(datazonation,file="datazonation.RData")
 
+#TEST 5% 
+RankScTEST2<-as.data.frame(rasterToPoints(maskSc2))
+colnames(RankScTEST2)[3] = "Rank"
+RankScTEST2<- RankScTEST2[order(RankScTEST2$Rank,decreasing = T),]
+RankScTEST2$Rank[c(150000:646384)] <- 0
 
 
+
+IUCN_MAP <- ggplot() +
+  geom_tile(data=RankScTEST2,aes(x = x, y = y, fill = Rank))+
+  scale_fill_gradient2(low = "blue", high = "red")+
+  ggtitle("IUCN")+
+  theme_bw()+
+  xlab("")+ylab("")
+
+
+RankScTEST3<-as.data.frame(rasterToPoints(maskSc3))
+colnames(RankScTEST3)[3] = "Rank"
+RankScTEST3<- RankScTEST3[order(RankScTEST3$Rank,decreasing = T),]
+RankScTEST3$Rank[c(150000:646384)] <- 0
+
+
+IUCN_MAP_predict <- ggplot() +
+  geom_tile(data=RankScTEST3,aes(x = x, y = y, fill = Rank))+
+  scale_fill_gradient2(low = "blue", high = "red")+
+  ggtitle("IUCN + Predict")+
+  theme_bw()+
+  xlab("")+ylab("")
+
+grid.arrange(IUCN_MAP,IUCN_MAP_predict,ncol =1)
 
 
 
