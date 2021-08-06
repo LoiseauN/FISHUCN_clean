@@ -1,4 +1,4 @@
-#' Predict IUCN status running 200 models
+  #' Predict IUCN status running 200 models
 #'
 #' This functions predicts the IUCN status of new species based on 200 models
 #'

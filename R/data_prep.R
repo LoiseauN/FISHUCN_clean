@@ -43,5 +43,3 @@ data_prep <- function(data){
   })
   
 }
-
-data = run_missForest

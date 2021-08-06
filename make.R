@@ -11,7 +11,7 @@
 
 #-----------------Loading packages-------------------
 
-pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","ranger","caret","tuneRanger")
+pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","ranger","caret","tuneRanger","smoof","caper","RCurl","XML","tidyverse","pbmcapply","doParallel","rfishbase","beepr")
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
@@ -22,6 +22,11 @@ path = (here::here("data"))
 setwd(path)
 files <- list.files(here::here("data"),pattern = ".rds")
 FB_vars = lapply(files, readRDS) %>% bind_rows()
+
+path = (here::here("data"))
+setwd(path)
+files <- list.files(here::here("data"),pattern = ".RData")
+data_list = lapply(files, load, .GlobalEnv)
 
 #-----------------Loading all functions---------------------
 
@@ -40,10 +45,23 @@ set.seed(42)
 
 #------------------Running code------------------------
 
+setwd(here())
+
+#Scrap Data from Fishbase
+species_traits = FB_scrap()
+
+#ADD SAVE HERE
+save(species_traits, file = here("outputs/species_traits.RData"))
+
+#Selecting variables of interest
+prep_data 
+
 #PLEASE READ THIS : To run this, your data needs to be formatted as follows : 
 #Species as rownames
 #All traits as columns
 #A IUCN column as column with IUCN status (CR, EN, VU, LC, NT) and NA for species with no IUCN information
+
+FB_vars = FB_vars %>% dplyr::select(-Vul)
 
 #Convert IUCN data to T and NT 
 FB_IUCN = IUCN_split(FB_vars)
@@ -54,11 +72,9 @@ FB_IUCN = IUCN_split(FB_vars)
 test_missForest = missForest_test(FB_IUCN)
 
 #Applying missforest
-#Virer les NA 
 run_missForest = missForest_applied(FB_IUCN,0.6,test_missForest)
 
-save(run_missForest, file = "/home/vfleure/Documents/FISHUCN_clean/Python/data.RData")
-#HERE WE HAVE TO CALL PYTHON SCRIPT TO EXPORT FOR PYTHON
+save(run_missForest, file = here("outputs/data_noNA.Rdata"))
 
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(run_missForest)
@@ -83,8 +99,8 @@ setwd(path)
 files <- list.files(here::here("outputs"))
 lapply(files, load, envir=.GlobalEnv)
 
-
 #-----------------Creating Figures----------------------
+
 
 #Figure of variable importance
 #Saved in Figures folder

@@ -30,7 +30,6 @@ missForest_test = function(data){
     }
   }
 
-  
   #IF any of the factors has over 53 categories filter it out of the data
   if(any(factor_length>53)){
     

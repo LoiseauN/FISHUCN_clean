@@ -16,6 +16,7 @@ IUCN_split = function(data){
   #Check IUCN column is a factor
   
   data$IUCN = as.factor(data$IUCN)
+
   
   #Check if NA is in dataset
   
