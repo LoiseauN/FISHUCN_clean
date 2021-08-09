@@ -11,7 +11,9 @@
 
 #-----------------Loading packages-------------------
 
-pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","ranger","caret","tuneRanger","smoof","caper","RCurl","XML","tidyverse","pbmcapply","doParallel","rfishbase","beepr")
+pkgs <- c("tidyverse","missForest","parallel","here","tidymodels",
+          "ranger","caret","tuneRanger","smoof","caper","RCurl","XML","tidyverse",
+          "pbmcapply","doParallel","rfishbase","beepr","arm")
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
@@ -26,6 +28,11 @@ FB_vars = lapply(files, readRDS) %>% bind_rows()
 path = (here::here("data"))
 setwd(path)
 files <- list.files(here::here("data"),pattern = ".RData")
+data_list = lapply(files, load, .GlobalEnv)
+
+path = (here::here("outputs"))
+setwd(path)
+files <- list.files(here::here("outputs"),pattern = ".RData")
 data_list = lapply(files, load, .GlobalEnv)
 
 #-----------------Loading all functions---------------------
@@ -45,7 +52,8 @@ set.seed(42)
 
 #------------------Running code------------------------
 
-setwd(here())
+setwd(here::here())
+
 
 #Scrap Data from Fishbase
 species_traits = FB_scrap()

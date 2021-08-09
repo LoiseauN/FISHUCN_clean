@@ -8,7 +8,7 @@ prep_data = function(distribution,speciestraits,elasmo){
 #Getting Family and genus information
 family_genus = rfishbase::load_taxa() %>%
   dplyr::select(Species,Genus,Family)%>%
-  rename(species="Species") %>%
+  dplyr::rename(species="Species") %>%
   collect()
 
 #Adapting to our data
