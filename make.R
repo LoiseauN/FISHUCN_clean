@@ -18,6 +18,7 @@ nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
+
 #-----------------Loading all data---------------------
 
 path = (here::here("data"))
@@ -54,7 +55,6 @@ set.seed(42)
 
 setwd(here::here())
 
-
 #Scrap Data from Fishbase
 species_traits = FB_scrap()
 
@@ -62,27 +62,31 @@ species_traits = FB_scrap()
 save(species_traits, file = here("outputs/species_traits.RData"))
 
 #Selecting variables of interest
-prep_data 
+FB_scrapped = prep_data(FishDistribArea,species_traits,FamilyElasmo)
 
 #PLEASE READ THIS : To run this, your data needs to be formatted as follows : 
 #Species as rownames
 #All traits as columns
 #A IUCN column as column with IUCN status (CR, EN, VU, LC, NT) and NA for species with no IUCN information
 
-FB_vars = FB_vars %>% dplyr::select(-Vul)
+FB_vars = FB_scrapped %>% dplyr::select(-c(Trophic_Level,DepthRangeComDeep,LongevityWild,Importance,CommonLength))
 
 #Convert IUCN data to T and NT 
 FB_IUCN = IUCN_split(FB_vars)
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
-
 #Trying out missforest
+#HERE ADD OPTION THAT DELETES TEMPORARILY THE VARIABLES IF THEY HAVE TOO MANY NAs
 test_missForest = missForest_test(FB_IUCN)
 
 #Applying missforest
 run_missForest = missForest_applied(FB_IUCN,0.6,test_missForest)
 
 save(run_missForest, file = here("outputs/data_noNA.Rdata"))
+
+# #HERE ADD FUNCTION TO SELECT VARIABLES
+# data_model = run_missForest %>%
+#   dplyr::select()
 
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(run_missForest)

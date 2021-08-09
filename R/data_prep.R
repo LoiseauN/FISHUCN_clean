@@ -12,16 +12,16 @@
 #' 
 #' 
 #' 
-#' 
+data = run_missForest 
 data_prep <- function(data){
   
   #Create threatened and non threatened species
   data_Thr = data %>%
-    dplyr::filter(IUCN=="Thr")%>%
+    dplyr::filter(IUCN=="C")%>%
     na.omit()
   
   data_NThr = data %>%
-    dplyr::filter(IUCN=="NThr")%>%
+    dplyr::filter(IUCN=="NC")%>%
     na.omit()
   
   #Variable with optimal number of folds for downsampling

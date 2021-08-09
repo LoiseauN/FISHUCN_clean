@@ -12,6 +12,8 @@
 
 missForest_test = function(data){
   
+  data=FB_IUCN
+  
   #Deleting NA in data for test of missForest and substracting IUCN column
   data_noNA = data %>% 
     dplyr::select(-IUCN)%>%
@@ -19,8 +21,8 @@ missForest_test = function(data){
   
   #Get unique length of all the factor traits
   factor_length = data.frame()
-  for (i in 1:length(data_noNA[,]))
-  {
+  i = 10
+  for (i in 1:length(data_noNA[,])){
     #If the trait is your factor the get the length
     if (is.factor(data_noNA[,i])==TRUE) 
     { 
@@ -38,7 +40,7 @@ missForest_test = function(data){
       filter(length>53)
     
     data_prepped = data_noNA %>%
-      select(-(all_of(over53$id)))
+      dplyr::select(-(all_of(over53$id)))
     
     warning("Some of your traits had more than 53 categories. These traits were filtered out during the missForest and then re-added to your data later")
     

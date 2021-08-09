@@ -63,7 +63,7 @@ IUCN_test = function(data_split,loops){
     flatten_df() %>%
     #Recuperating column names
     unnest(cols=c())%>%
-    rename(Balanced_Accuracy="Balanced Accuracy")%>%
+    dplyr::rename(Balanced_Accuracy="Balanced Accuracy")%>%
     #Keeping only variables and their importance
     dplyr::select(Accuracy:TSS)%>%
     na.omit()%>%
@@ -78,7 +78,7 @@ IUCN_test = function(data_split,loops){
     flatten_df() %>%
     #Recuperating column names
     unnest(cols=c())%>%
-    rename(Balanced_Accuracy="Balanced Accuracy")%>%
+    dplyr::rename(Balanced_Accuracy="Balanced Accuracy")%>%
     #Keeping only variables and their importance
     dplyr::select(Balanced_Accuracy)%>%
     na.omit()%>%

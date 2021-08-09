@@ -25,15 +25,6 @@ IUCN_split = function(data){
   or delete them from your data set to run the model.")
   }
   
-  
-  #Divide IUCN classification into two classes : Thr and NThr
-  
-  data_output = data %>%
-    rownames_to_column("species")%>%
-    mutate(IUCN = ifelse(IUCN == "LC" |IUCN == "NT" | IUCN == "nt","NThr","Thr"),
-           IUCN = as.factor(IUCN))%>%
-    column_to_rownames("species")
-  
-  return(data_output)
+  return(data)
   
 }
