@@ -6,10 +6,12 @@ elasmo = FamilyElasmo
 prep_data = function(distribution,speciestraits,elasmo){
 
 #Getting Family and genus information
-family_genus = rfishbase::load_taxa() %>%
+family_genus = rfishbase:: load_taxa() %>%
   dplyr::select(Species,Genus,Family)%>%
-  dplyr::rename(species="Species") %>%
+  dplyr::rename(species="Species")%>%
   collect()
+
+
 
 #Adapting to our data
 family_genus$species <- gsub(" ","-",family_genus$species)
