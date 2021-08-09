@@ -11,7 +11,7 @@ family_genus = rfishbase:: load_taxa() %>%
   dplyr::rename(species="Species")%>%
   collect()
 
-
+gitcreds_set()
 
 #Adapting to our data
 family_genus$species <- gsub(" ","-",family_genus$species)
