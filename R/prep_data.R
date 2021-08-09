@@ -11,7 +11,11 @@ family_genus = rfishbase:: load_taxa() %>%
   dplyr::rename(species="Species")%>%
   collect()
 
-gitcreds_set()
+
+
+usethis::use_git_config(user.name = "RaphSeguin", user.email = "raphael.seguin@etu.umontpellier.fr")
+
+
 
 #Adapting to our data
 family_genus$species <- gsub(" ","-",family_genus$species)
