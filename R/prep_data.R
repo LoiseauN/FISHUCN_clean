@@ -71,7 +71,7 @@ FB_vars = FB_scrapped %>%
   dplyr::select(-IUCN_status)%>%
   column_to_rownames("species")%>%
   #Filter out species that are numbers with no information at all
-  filter_all(any_vars(! is.na(.)))
+  filter_all(any_vars(!is.na(.)))
 
 return(FB_vars)
 

@@ -23,7 +23,7 @@ FB_scrap = function(){
   
   return(temp_traits)
   
-},mc.cores=6)
+},mc.cores=8)
 
 species_traits <- do.call(rbind,species_traits)
 

@@ -10,24 +10,23 @@
 #' 
 #' 
 
-missForest_test = function(data){
-  
-  data=FB_IUCN
-  
+data = FB_IUCN
+fulldata = FB_vars
+missForest_test = function(data,fulldata){
+
   #Deleting NA in data for test of missForest and substracting IUCN column
   data_noNA = data %>% 
     dplyr::select(-IUCN)%>%
     na.omit()
-  
+
   #Get unique length of all the factor traits
   factor_length = data.frame()
-  i = 10
-  for (i in 1:length(data_noNA[,])){
+  for (i in 1:length(fulldata[,])){
     #If the trait is your factor the get the length
-    if (is.factor(data_noNA[,i])==TRUE) 
+    if (is.factor(fulldata[,i])==TRUE) 
     { 
-      data_frame = data.frame(id = colnames(data_noNA[i]),
-                              length = length(unique(data_noNA[,i])))
+      data_frame = data.frame(id = colnames(fulldata[i]),
+                              length = length(unique(fulldata[,i])))
       factor_length = rbind(factor_length,data_frame)
     }
   }
@@ -35,9 +34,8 @@ missForest_test = function(data){
   #IF any of the factors has over 53 categories filter it out of the data
   if(any(factor_length>53)){
     
-    
     over53 = factor_length %>%
-      filter(length>53)
+      filter(length>=53)
     
     data_prepped = data_noNA %>%
       dplyr::select(-(all_of(over53$id)))
@@ -53,7 +51,7 @@ missForest_test = function(data){
   #Imputing 20% of NA in complete data 
   data_NA = data_prepped %>%
     prodNA(0.2)
-  
+
   #Now let's impute missing values using missForest
   data_mf = missForest(data_NA,verbose=T,variablewise=T)
   
