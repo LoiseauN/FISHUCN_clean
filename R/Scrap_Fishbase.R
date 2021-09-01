@@ -260,7 +260,7 @@ get_fishbase_data <- function(x="Regalecus-glesne"){
     } # end of ifelse 
     
     ##### Trophic level
-    w_TL <- which(sapply(lapply(a1,xmlValue), function(x){regexec(pattern="Troph", x)[[1]][1]})>0)
+    w_TL <- which(sapply(lapply(a1,xmlValue), function(x){regexec(pattern="Trophic Level", x)[[1]][1]})>0)
     if(length(w_TL)==0){
       Trophic_Level=NA; TL_var=NA
     } else {
@@ -269,8 +269,6 @@ get_fishbase_data <- function(x="Regalecus-glesne"){
       TL_var <- TL[3] 	
       Trophic_Level <- TL[2]	
     }# end of ifelse
-    
-    test = rfishbase::ecology(version="19.04")
     
     rm(a1) 
     

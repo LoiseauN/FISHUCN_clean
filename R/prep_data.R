@@ -1,10 +1,14 @@
 prep_data = function(distribution,speciestraits,elasmo){
 
-distribution = FishDistribArea
-speciestraits  = species_traits
-elasmo = FamilyElasmo
-  
 distribution = distribution %>% mutate(species = gsub("_", "-", species))
+
+#Extracting Trophic level
+TrophicLevel = rfishbase::ecology(version="19.04",fields=c("Species","FoodTroph")) %>%
+  dplyr::rename(species="Species") %>%
+  collect()
+
+#Adapting to our data
+TrophicLevel$species <- gsub(" ","-",TrophicLevel$species)
 
 #Getting Family and genus information
 family_genus = rfishbase:: load_taxa(version="19.04") %>%
@@ -30,11 +34,12 @@ FB_scrapped = speciestraits %>%
   left_join(distribution,by="species")%>%
   left_join(family_genus,by="species")%>%
   left_join(fishbasecomm,by="species") %>%
+  left_join(TrophicLevel, by ="species") %>%
   filter(!(Family %in% elasmo$Family))
 
 #Keeping variables we need for machine learning
 FB_vars = FB_scrapped %>%
-  dplyr::select(c(species,Max_length,Env_1,Env_2,Climate,Resilience,Vul,Trophic_Level,Repro.Mode,DistrArea,IUCN_status,
+  dplyr::select(c(species,Max_length,Env_1,Env_2,Climate,Resilience,Vul,FoodTroph,Repro.Mode,DistrArea,IUCN_status,
                   Depth_max,Repro.Fertil,Genus,Family,PriceCateg,Importance, LongevityWild,BodyShapeI,Length,CommonLength,
                   DepthRangeDeep,DepthRangeComDeep, Aquarium))%>%
   mutate(Max_length = arm::rescale(log(Max_length+1)),
@@ -43,7 +48,7 @@ FB_vars = FB_scrapped %>%
          Climate = as.factor(Climate),
          Resilience = as.factor(Resilience),
          Vul = arm::rescale(log(Vul+1)),
-         Trophic_Level = arm::rescale(log(as.numeric(Trophic_Level)+1)),
+         FoodTroph = arm::rescale(log(as.numeric(FoodTroph)+1)),
          Repro.Mode = as.factor(Repro.Mode),
          DistrArea = arm::rescale(log(DistrArea+1)),
          IUCN_status = as.factor(IUCN_status),
