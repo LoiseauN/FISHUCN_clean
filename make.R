@@ -58,6 +58,7 @@ setwd(here::here())
 #Scrap Data from Fishbase
 species_traits = FB_scrap()
 
+species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 #ADD SAVE HERE
 save(species_traits,file = "outputs/species_traits.RData")
 
@@ -82,7 +83,7 @@ test_missForest = missForest_test(FB_IUCN,FB_vars)
 #Applying missforest
 run_missForest = missForest_applied(FB_IUCN,0.6,test_missForest)
 
-save(run_missForest, file = here("outputs/data_noNA.Rdata"))
+save(run_missForest, file = "outputs/data_noNA.Rdata")
 
 # #HERE ADD FUNCTION TO SELECT VARIABLES
 # data_model = run_missForest %>%
