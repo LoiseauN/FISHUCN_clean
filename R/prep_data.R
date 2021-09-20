@@ -1,5 +1,11 @@
-prep_data = function(distribution,speciestraits,elasmo){
 
+
+prep_data = function(distribution,speciestraits,elasmo){
+  #example
+  #distribution <- FishDistribArea_all
+  #speciestraits <- species_traits
+  #elasmo <- FamilyElasmo
+  
 distribution = distribution %>% mutate(species = gsub("_", "-", species))
 
 #Extracting Trophic level
@@ -37,11 +43,24 @@ FB_scrapped = speciestraits %>%
   left_join(TrophicLevel, by ="species") %>%
   filter(!(Family %in% elasmo$Family))
 
+
+#
+trait_sup <- data.frame(species = rownames(Fish_trait_Metawebproject),
+                        FoodTroph = Fish_trait_Metawebproject$FoodTroph,
+                        DepthRangeShallow = Fish_trait_Metawebproject$DepthRangeShallow,
+                        DepthRangeDeep = Fish_trait_Metawebproject$DepthRangeDeep,
+                        Schooling= Fish_trait_Metawebproject$Schooling)
+
+
+FB_scrapped <- FB_scrapped[,!colnames(FB_scrapped) %in% c("FoodTroph","Depth_max","DepthRangeDeep","DepthRangeComDeep")]
+
+FB_scrapped <- merge(FB_scrapped,trait_sup,by="species")
+
 #Keeping variables we need for machine learning
 FB_vars = FB_scrapped %>%
   dplyr::select(c(species,Max_length,Env_1,Env_2,Climate,Resilience,Vul,FoodTroph,Repro.Mode,DistrArea,IUCN_status,
-                  Depth_max,Repro.Fertil,Genus,Family,PriceCateg,Importance, LongevityWild,BodyShapeI,Length,CommonLength,
-                  DepthRangeDeep,DepthRangeComDeep, Aquarium))%>%
+                  Repro.Fertil,Genus,Family,PriceCateg,Importance, LongevityWild,BodyShapeI,Length,CommonLength,
+                  DepthRangeDeep,DepthRangeShallow, Aquarium,Schooling)) %>% #Depth_max,
   mutate(Max_length = arm::rescale(log(Max_length+1)),
          Env_1 = as.factor(Env_1),
          Env_2 = as.factor(Env_2),
@@ -53,16 +72,17 @@ FB_vars = FB_scrapped %>%
          DistrArea = arm::rescale(log(DistrArea+1)),
          IUCN_status = as.factor(IUCN_status),
          Repro.Fertil = as.factor(Repro.Fertil),
-         Depth_max = arm::rescale(log(Depth_max+1)),
+         #Depth_max = arm::rescale(log(Depth_max+1)),
          Genus = as.factor(Genus),
          Family= as.factor(Family),
+         Schooling = as.factor(Schooling),
          PriceCateg = as.factor(PriceCateg),
          Aquarium = as.factor(Aquarium),
          Importance = as.factor(Importance),
          LongevityWild = arm::rescale(log(as.numeric(LongevityWild)+1)),
          BodyShapeI = as.factor(BodyShapeI),
          DepthRangeDeep = arm::rescale(log(as.numeric(DepthRangeDeep)+1)),
-         DepthRangeComDeep = arm::rescale(log(as.numeric(DepthRangeComDeep)+1)),
+         DepthRangeShallow = arm::rescale(log(as.numeric(DepthRangeShallow)+1)),
          Length =  arm::rescale(log(as.numeric(Length)+1)),
          CommonLength = arm::rescale(log(as.numeric(CommonLength)+1)))%>%
   #Convert DD to NA

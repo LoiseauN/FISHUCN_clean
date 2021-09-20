@@ -6,10 +6,11 @@
 FB_scrap = function(){
   
   nameVar <- colnames(get_fishbase_data("Dermatopsis-multiradiatus"))
-  species_traits <- pbmclapply(1:nrow(FishDistribArea), function (i){  #nrow(FishDistribArea)
+  
+  species_traits <- pbmclapply(1:nrow(FishDistribArea_all), function (i){  #nrow(FishDistribArea_all)
   
   #Saving actual species into a string
-  sp = FishDistribArea[i,"species"]
+  sp = FishDistribArea_all[i,"species"]
   
   sp = str_replace(sp, "_", "-")
   
