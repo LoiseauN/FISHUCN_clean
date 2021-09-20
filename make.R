@@ -63,14 +63,15 @@ species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 save(species_traits,file = "outputs/species_traits.RData")
 
 #Selecting variables of interest
-FB_scrapped = prep_data(FishDistribArea,species_traits,FamilyElasmo)
+FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
+
 
 #PLEASE READ THIS : To run this, your data needs to be formatted as follows : 
 #Species as rownames
 #All traits as columns
 #A IUCN column as column with IUCN status (CR, EN, VU, LC, NT) and NA for species with no IUCN information
 
-FB_vars = FB_scrapped %>% dplyr::select(-c(DepthRangeComDeep,LongevityWild,Importance,CommonLength))
+FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,CommonLength)) #LongevityWild
 
 #Convert IUCN data to T and NT 
 FB_IUCN = IUCN_split(FB_vars)
