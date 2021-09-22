@@ -40,9 +40,10 @@ FB_scrapped = speciestraits %>%
   left_join(distribution,by="species")%>%
   left_join(family_genus,by="species")%>%
   left_join(fishbasecomm,by="species") %>%
-  left_join(TrophicLevel, by ="species") %>%
+  #left_join(TrophicLevel, by ="species") %>%
   filter(!(Family %in% elasmo$Family))
 
+FB_scrapped <- unique(FB_scrapped)
 
 #
 trait_sup <- data.frame(species = rownames(Fish_trait_Metawebproject),
@@ -50,11 +51,16 @@ trait_sup <- data.frame(species = rownames(Fish_trait_Metawebproject),
                         DepthRangeShallow = Fish_trait_Metawebproject$DepthRangeShallow,
                         DepthRangeDeep = Fish_trait_Metawebproject$DepthRangeDeep,
                         Schooling= Fish_trait_Metawebproject$Schooling)
+trait_sup$species = gsub("_","-",trait_sup$species)
 
 
 FB_scrapped <- FB_scrapped[,!colnames(FB_scrapped) %in% c("FoodTroph","Depth_max","DepthRangeDeep","DepthRangeComDeep")]
 
-FB_scrapped <- merge(FB_scrapped,trait_sup,by="species")
+#FB_scrapped <- merge(FB_scrapped,trait_sup,by="species",all=T)
+
+FB_scrapped = FB_scrapped %>%
+   left_join(trait_sup,by="species")%>%
+  column_to_rownames("species")
 
 #Keeping variables we need for machine learning
 FB_vars = FB_scrapped %>%
@@ -94,10 +100,10 @@ FB_vars = FB_scrapped %>%
          IUCN = as.factor(IUCN))%>%
   #Deleting IUCN status column 
   dplyr::select(-IUCN_status)%>%
-  column_to_rownames("species")%>%
-  #Filter out species that are numbers with no information at all
+    #Filter out species that are numbers with no information at all
   filter_all(any_vars(!is.na(.)))
 
+  
 return(FB_vars)
 
 }

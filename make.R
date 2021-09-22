@@ -59,6 +59,7 @@ setwd(here::here())
 species_traits = FB_scrap()
 
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
+
 #ADD SAVE HERE
 save(species_traits,file = "outputs/species_traits.RData")
 
