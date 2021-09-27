@@ -5,7 +5,7 @@
 #' @param data Your data with species as rownames, traits as column names and the IUCN column. 
 #' In this column, Species with no info are labelled NA and the others according to their status: CR,LC,NT...
 #' 
-#' @return Your dataframe with IUCN column transformed into two categories : NT and T. Thr corresponds to species 
+#' @return Your dataframe with IUCN column transformed into two categories : NThr and Thr corresponds to species 
 #' in CR, EN or VU category and NThr species in LC or NT category 
 #'
 #' @export

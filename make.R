@@ -70,12 +70,23 @@ FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
 #PLEASE READ THIS : To run this, your data needs to be formatted as follows : 
 #Species as rownames
 #All traits as columns
-#A IUCN column as column with IUCN status (CR, EN, VU, LC, NT) and NA for species with no IUCN information
 
 FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,CommonLength)) #LongevityWild
 
+#Get IUCN status
+#IUCN_status <- get_iucn_status(FB_vars)
+#save(IUCN_status,file = "outputs/IUCN_status.RData")
+
+IUCN_status$species <- gsub("_","-",IUCN_status$species)
+
+#Get IUCN status
+FB_vars <- FB_vars %>% left_join(IUCN_status,by = "species")
+colnames(FB_vars)[23] <- "IUCN"
+
 #Convert IUCN data to T and NT 
 FB_IUCN = IUCN_split(FB_vars)
+#FB_IUCN <- FB_IUCN[,-22]
+#FB_vars <- FB_vars[,-22]
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
 #Trying out missforest
