@@ -10,6 +10,10 @@
 #' 
 #' 
 
+
+data = FB_IUCN
+fulldata = FB_final
+
 missForest_test = function(data,fulldata){
 
   #Deleting NA in data for test of missForest and substracting IUCN column
@@ -47,11 +51,17 @@ missForest_test = function(data,fulldata){
   }
   
   #Imputing 20% of NA in complete data 
+  
+
+  
   data_NA = data_prepped %>%
     prodNA(0.2)
+  
+  data_NA$PriceCateg[data_NA$PriceCateg == ""] <- NA
+  data_NA$BodyShapeI[data_NA$BodyShapeI == ""] <- NA
+  data_NA$Aquarium[data_NA$Aquarium == ""] <- NA
 
-  #Now let's impute missing values using missForest
-  data_mf = missForest(data_NA,verbose=T,variablewise=T)
+  data_mf = missForest(test,verbose=T,variablewise=T) 
   
   #Dataframe with all predictions
   preds = data_mf$ximp
