@@ -10,10 +10,6 @@
 #' 
 #' 
 
-
-data = FB_IUCN
-fulldata = FB_final
-
 missForest_test = function(data,fulldata){
 
   #Deleting NA in data for test of missForest and substracting IUCN column

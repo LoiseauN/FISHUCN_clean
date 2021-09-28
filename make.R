@@ -63,6 +63,7 @@ species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 #ADD SAVE HERE
 save(species_traits,file = "outputs/species_traits.RData")
 
+
 #Selecting variables of interest
 FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
 
@@ -76,8 +77,6 @@ FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,CommonLength)) #LongevityW
 #IUCN_status <- get_iucn_status(FB_vars)
 #save(IUCN_status,file = "outputs/IUCN_status.RData")
 
-
-load("outputs/IUCN_status.Rdata")
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
 #Get IUCN status
