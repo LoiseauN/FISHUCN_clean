@@ -66,7 +66,6 @@ save(species_traits,file = "outputs/species_traits.RData")
 #Selecting variables of interest
 FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
 
-
 #PLEASE READ THIS : To run this, your data needs to be formatted as follows : 
 #Species as rownames
 #All traits as columns
@@ -77,21 +76,28 @@ FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,CommonLength)) #LongevityW
 #IUCN_status <- get_iucn_status(FB_vars)
 #save(IUCN_status,file = "outputs/IUCN_status.RData")
 
-IUCN_status$species <- gsub("_","-",IUCN_status$species)
+
+load("outputs/IUCN_status.Rdata")
+IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
 #Get IUCN status
-FB_vars <- FB_vars %>% left_join(IUCN_status,by = "species")
-colnames(FB_vars)[23] <- "IUCN"
+FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IUCN = "IUCN_status") %>% column_to_rownames("species")
+
+#SOME TRANSFORMATION TO INCLUDE IN ONE OF THE FUNCTIONS
+FB_final$Common_length = as.numeric(FB_final$Common_length)
+FB_final$IUCN = as.factor(FB_final$IUCN)
 
 #Convert IUCN data to T and NT 
-FB_IUCN = IUCN_split(FB_vars)
+FB_IUCN = IUCN_split(FB_final)
 #FB_IUCN <- FB_IUCN[,-22]
 #FB_vars <- FB_vars[,-22]
+
+
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
 #Trying out missforest
 #HERE ADD OPTION THAT DELETES TEMPORARILY THE VARIABLES IF THEY HAVE TOO MANY NAs
-test_missForest = missForest_test(FB_IUCN,FB_vars)
+test_missForest = missForest_test(FB_IUCN,FB_final)
 
 #Applying missforest
 run_missForest = missForest_applied(FB_IUCN,0.6,test_missForest)
@@ -131,5 +137,3 @@ lapply(files, load, envir=.GlobalEnv)
 #Figure of variable importance
 #Saved in Figures folder
 figure1 = var_imp(rel_inf)
-
-
