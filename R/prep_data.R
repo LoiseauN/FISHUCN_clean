@@ -11,11 +11,15 @@ distribution = distribution %>% mutate(species = gsub("_", "-", species))
 
 #Extracting Trophic level
 #TrophicLevel = rfishbase::ecology(version="19.04",fields=c("Species","FoodTroph")) %>%
-#  dplyr::rename(species="Species") %>%
-#  collect()
+ #  dplyr::rename(species="Species") %>%
+  # collect()""
+
+TrophicLevel = rfishbase::estimate(version="19.04",fields=c("Species","Troph","K")) %>%
+  dplyr::rename(species="Species") %>%
+  collect()
 
 #Adapting to our data
-#TrophicLevel$species <- gsub(" ","-",TrophicLevel$species)
+TrophicLevel$species <- gsub(" ","-",TrophicLevel$species)
 
 #Getting Family and genus information
 family_genus = rfishbase:: load_taxa(version="19.04") %>%
@@ -49,6 +53,7 @@ FB_scrapped = speciestraits %>%
   rownames_to_column("species")%>%
   left_join(distribution,by="species")%>%
  left_join(family_genus,by="species")%>%
+  left_join(TrophicLevel, by ="species")%>%
   filter(!(Family %in% elasmo$Family))
 
 FB_scrapped$species <- gsub("-","_",FB_scrapped$species )
@@ -57,7 +62,6 @@ FB_scrapped$species <- gsub("-","_",FB_scrapped$species )
 
 #
 trait_sup <- data.frame(species = rownames(Fish_trait_Metawebproject),
-                        FoodTroph = Fish_trait_Metawebproject$FoodTroph,
                         DepthRangeShallow = Fish_trait_Metawebproject$DepthRangeShallow,
                         DepthRangeDeep = Fish_trait_Metawebproject$DepthRangeDeep,
                         Schooling= Fish_trait_Metawebproject$Schooling,
@@ -69,30 +73,30 @@ trait_sup <- data.frame(species = rownames(Fish_trait_Metawebproject),
                         BodyShapeI= Fish_trait_Metawebproject$BodyShapeI)
 
 
-FB_scrapped <- FB_scrapped[,!colnames(FB_scrapped) %in% c("FoodTroph","Depth_max","DepthRangeDeep","DepthRangeComDeep")]
+FB_scrapped <- FB_scrapped[,!colnames(FB_scrapped) %in% c("Depth_max","DepthRangeDeep","DepthRangeComDeep")]
 
 FB_scrapped = FB_scrapped %>%
    left_join(trait_sup,by="species")
 
 #Keeping variables we need for machine learning
 FB_vars = FB_scrapped %>%
-  dplyr::select(c(species,Max_length,Env_1,Env_2,Climate,Resilience,Vul,FoodTroph,Repro.Mode,DistrArea,
-                  Repro.Fertil,Genus,Family,PriceCateg,Importance, LongevityWild,BodyShapeI,Length,Common_length,
-                  DepthRangeDeep,DepthRangeShallow, Aquarium,Schooling)) %>% #Depth_max,
+  dplyr::select(c(species,Max_length,Env_1,Env_2,Climate,Resilience,Vul,Troph,Repro.Mode,DistrArea,
+                  Repro.Fertil,Genus,Family,PriceCateg,Importance, LongevityWild,BodyShapeI,Length,
+                  DepthRangeDeep,DepthRangeShallow, Aquarium,K)) %>% #Depth_max,
   mutate(Max_length = arm::rescale(log(Max_length+1)),
          Env_1 = as.factor(Env_1),
          Env_2 = as.factor(Env_2),
          Climate = as.factor(Climate),
          Resilience = as.factor(Resilience),
          Vul = arm::rescale(log(Vul+1)),
-         FoodTroph = arm::rescale(log(as.numeric(FoodTroph)+1)),
+         FoodTroph = arm::rescale(log(as.numeric(Troph)+1)),
          Repro.Mode = as.factor(Repro.Mode),
          DistrArea = arm::rescale(log(DistrArea+1)),
          Repro.Fertil = as.factor(Repro.Fertil),
          #Depth_max = arm::rescale(log(Depth_max+1)),
          Genus = as.factor(Genus),
          Family= as.factor(Family),
-         Schooling = as.factor(Schooling),
+         K = arm::rescale(log(as.numeric(K)+1)),
          PriceCateg = as.factor(PriceCateg),
          Aquarium = as.factor(Aquarium),
          Importance = as.factor(Importance),
@@ -100,8 +104,7 @@ FB_vars = FB_scrapped %>%
          BodyShapeI = as.factor(BodyShapeI),
          DepthRangeDeep = arm::rescale(log(as.numeric(DepthRangeDeep)+1)),
          DepthRangeShallow = arm::rescale(log(as.numeric(DepthRangeShallow)+1)),
-         Length =  arm::rescale(log(as.numeric(Length)+1)),
-         CommonLength = arm::rescale(log(as.numeric(Common_length)+1)))%>%
+         Length =  arm::rescale(log(as.numeric(Length)+1)))%>%
   mutate(PriceCateg = na_if(PriceCateg,"unknown"))%>%
   filter_all(any_vars(!is.na(.)))
 

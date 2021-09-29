@@ -77,7 +77,7 @@ FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
 #Species as rownames
 #All traits as columns
 
-FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,CommonLength)) #LongevityWild
+FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,LongevityWild)) #
 
 #Get IUCN status
 #IUCN_status <- get_iucn_status(FB_vars)
@@ -90,14 +90,12 @@ IUCN_status$species <- gsub("-","_",IUCN_status$species)
 FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IUCN = "IUCN_status") %>% column_to_rownames("species")
 
 #SOME TRANSFORMATION TO INCLUDE IN ONE OF THE FUNCTIONS
-FB_final$Common_length = as.numeric(FB_final$Common_length)
+#FB_final$Common_length = as.numeric(FB_final$Common_length)
 FB_final$IUCN = as.factor(FB_final$IUCN)
 
 #Sorting out some problems with data 
-FB_final$PriceCateg[FB_final$PriceCateg == ""] <- NA
-FB_final$BodyShapeI[FB_final$BodyShapeI == ""] <- NA
-FB_final$Aquarium[FB_final$Aquarium == ""] <- NA
-FB_final$Env_1[FB_final$Env_1 == ""] <- NA
+
+FB_final[FB_final==""]<-NA
 
 #Convert IUCN data to T and NT 
 FB_IUCN = IUCN_split(FB_final)
