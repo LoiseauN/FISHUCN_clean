@@ -52,12 +52,9 @@ missForest_test = function(data,fulldata){
   
   data_NA = data_prepped %>%
     prodNA(0.2)
-  
-  data_NA$PriceCateg[data_NA$PriceCateg == ""] <- NA
-  data_NA$BodyShapeI[data_NA$BodyShapeI == ""] <- NA
-  data_NA$Aquarium[data_NA$Aquarium == ""] <- NA
 
-  data_mf = missForest(test,verbose=T,variablewise=T) 
+
+  data_mf = missForest(data_NA,verbose=T,variablewise=T) 
   
   #Dataframe with all predictions
   preds = data_mf$ximp

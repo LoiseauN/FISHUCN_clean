@@ -10,6 +10,8 @@
 #'
 #' @exports
 
+
+
 missForest_applied = function(data_tofill,baseline,mf_test){
   
   #Keeping IUCN status for merge
@@ -72,6 +74,7 @@ missForest_applied = function(data_tofill,baseline,mf_test){
     warning("According to your baseline, the missForest performance was too low to impute some of your traits. Therefore, NAs are still present in
             your data base. Rows with NAs will be deleted in order to run the model.")
   }
+  
   #Imputing data
   impute = missForest(data_prepped,variablewise = T, verbose = T)
   
@@ -83,6 +86,8 @@ missForest_applied = function(data_tofill,baseline,mf_test){
   #Merge imputed data with NA data 
   data_complete = impute_data %>%
     left_join(for_merge,by="species")%>%
+    #Don't keep variables with too many NA and not used in the model that missforest can't predict 
+    dplyr::select(-c(LongevityWild)) %>%
     na.omit()%>%
     left_join(IUCN_formerge,by="species")%>%
     column_to_rownames("species")

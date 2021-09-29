@@ -36,6 +36,12 @@ setwd(path)
 files <- list.files(here::here("outputs"),pattern = ".RData")
 data_list = lapply(files, load, .GlobalEnv)
 
+path = (here::here("outputs"))
+setwd(path)
+files <- list.files(here::here("outputs"),pattern = ".Rdata")
+data_list = lapply(files, load, .GlobalEnv)
+
+
 #-----------------Loading all functions---------------------
 
 path = (here::here("R"))
@@ -77,6 +83,7 @@ FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,CommonLength)) #LongevityW
 #IUCN_status <- get_iucn_status(FB_vars)
 #save(IUCN_status,file = "outputs/IUCN_status.RData")
 
+
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
 #Get IUCN status
@@ -86,11 +93,16 @@ FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IU
 FB_final$Common_length = as.numeric(FB_final$Common_length)
 FB_final$IUCN = as.factor(FB_final$IUCN)
 
+#Sorting out some problems with data 
+FB_final$PriceCateg[FB_final$PriceCateg == ""] <- NA
+FB_final$BodyShapeI[FB_final$BodyShapeI == ""] <- NA
+FB_final$Aquarium[FB_final$Aquarium == ""] <- NA
+FB_final$Env_1[FB_final$Env_1 == ""] <- NA
+
 #Convert IUCN data to T and NT 
 FB_IUCN = IUCN_split(FB_final)
 #FB_IUCN <- FB_IUCN[,-22]
 #FB_vars <- FB_vars[,-22]
-
 
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
