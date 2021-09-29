@@ -88,7 +88,6 @@ missForest_applied = function(data_tofill,baseline,mf_test){
     left_join(for_merge,by="species")%>%
     #Don't keep variables with too many NA and not used in the model that missforest can't predict 
     #TO CHECK AT THE END!!
-    dplyr::select(-c(DepthRangeDeep,DepthRangeShallow)) %>%
     na.omit()%>%
     left_join(IUCN_formerge,by="species")%>%
     column_to_rownames("species")

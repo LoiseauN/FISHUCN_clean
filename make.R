@@ -109,16 +109,16 @@ FB_IUCN = IUCN_split(FB_final)
 test_missForest = missForest_test(FB_IUCN,FB_final)
 
 #Applying missforest
-run_missForest = missForest_applied(FB_IUCN,0.6,test_missForest)
+data_noNA = missForest_applied(FB_IUCN,0.6,test_missForest)
 
-save(run_missForest, file = "outputs/data_noNA.Rdata")
+save(data_noNA., file = "outputs/data_noNA.Rdata")
 
 # #HERE ADD FUNCTION TO SELECT VARIABLES
-# data_model = run_missForest %>%
-#   dplyr::select()
+data_model = data_noNA. %>%
+   dplyr::select(-c(Vul,Length))
 
 #Splitting data with NA filled out by missForest or with original data with no NA
-split = data_prep(run_missForest)
+split = data_prep(data_model)
 
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(split,10)
