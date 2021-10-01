@@ -13,6 +13,10 @@
 
 IUCN_predict = function(data_split,data,loops){
   
+  data_split = split
+  data= run_missForest
+  loops = 10
+  
   if (any(is.na(data[,!colnames(data)=="IUCN"]))) {
     stop("Your traits still contain NAs. Please remove them to continue")
   }
