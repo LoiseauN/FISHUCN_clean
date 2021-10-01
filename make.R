@@ -111,10 +111,10 @@ test_missForest = missForest_test(FB_IUCN,FB_final)
 #Applying missforest
 data_noNA = missForest_applied(FB_IUCN,0.6,test_missForest)
 
-save(data_noNA., file = "outputs/data_noNA.Rdata")
+save(data_noNA, file = "outputs/data_noNA.Rdata")
 
 # #HERE ADD FUNCTION TO SELECT VARIABLES
-data_model = data_noNA. %>%
+data_model = data_noNA %>%
    dplyr::select(-c(Vul,Length))
 
 #Splitting data with NA filled out by missForest or with original data with no NA
@@ -127,7 +127,10 @@ test_IUCN = IUCN_test(split,10)
 run_IUCN = IUCN_predict(split,run_missForest,10)
 
 #IUCN consensus (0.5 for this dummy dataset)
-IUCN_final = IUCN_consensus(run_IUCN,length(split),80)
+IUCN_final_consensus = IUCN_consensus(run_IUCN,length(split),80)
+
+#IUCN complementarity 
+IUCN_final_consensus = IUCN_consensus(run_IUCN,length(split),80)
 
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
 
