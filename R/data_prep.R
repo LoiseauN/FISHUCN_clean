@@ -12,7 +12,6 @@
 #' 
 #' 
 
-data = run_missForest
 data_prep <- function(data){
   
   #Create threatened and non threatened species

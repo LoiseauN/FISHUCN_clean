@@ -124,12 +124,9 @@ split = data_prep(data_model)
 test_IUCN = IUCN_test(split,10)
 
 #Running IUCN predictions
-run_IUCN = IUCN_predict(split,run_missForest,10)
+run_IUCN = IUCN_predict(split,data_model,10)
 
 #IUCN consensus (0.5 for this dummy dataset)
-IUCN_final_consensus = IUCN_consensus(run_IUCN,length(split),80)
-
-#IUCN complementarity 
 IUCN_final_consensus = IUCN_consensus(run_IUCN,length(split),80)
 
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
