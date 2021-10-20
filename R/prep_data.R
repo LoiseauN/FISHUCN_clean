@@ -1,4 +1,4 @@
-
+species <- "Arcos-nudus"
 
 prep_data = function(distribution,speciestraits,elasmo){
   #example
@@ -48,6 +48,7 @@ family_genus$species <- gsub(" ","-",family_genus$species)
 #  left_join(fishbasecomm,by="species") %>%
   #left_join(TrophicLevel, by ="species") %>%
 #  filter(!(Family %in% elasmo$Family))
+
 
 FB_scrapped = speciestraits %>%
   rownames_to_column("species")%>%
