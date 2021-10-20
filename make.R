@@ -67,7 +67,7 @@ species_traits = FB_scrap()
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 
 #ADD SAVE HERE
-save(species_traits,file = "outputs/species_traits.RData")
+save(species_traits,file = here::here("outputs/species_traits.RData"))
 
 
 #Selecting variables of interest
@@ -77,7 +77,9 @@ FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
 #Species as rownames
 #All traits as columns
 
-FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,LongevityWild)) #
+FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,LongevityWild)) %>%   
+  left_join(DepthRange,by="species")
+  #
 
 #Get IUCN status
 #IUCN_status <- get_iucn_status(FB_vars)
@@ -87,7 +89,9 @@ FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,LongevityWild)) #
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
 #Get IUCN status
-FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IUCN = "IUCN_status") %>% column_to_rownames("species")
+FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IUCN = "IUCN_status")# %>% column_to_rownames("species")
+
+
 
 #SOME TRANSFORMATION TO INCLUDE IN ONE OF THE FUNCTIONS
 #FB_final$Common_length = as.numeric(FB_final$Common_length)

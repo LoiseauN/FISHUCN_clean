@@ -317,8 +317,11 @@ get_fishbase_data <- function(x="Regalecus-glesne"){
     Length_weight <- data.frame(a="A_verifier",b="A_verifier",Length_type="A_verifier",n="A_verifier")
     Max_length=Common_length=Resilience=depth_max=depth_min=env_1=env_2=depth_min_us=Climate=climate=depth_max_us=Price=Trophic_Level=IUCN_status=IUCN_status=temp_min=temp_max=Vul= "A_verifier"
     
-    res <- data.frame(c(Max_length= Max_length,Common_length=Common_length,Depth_min=depth_min,Depth_max=depth_max,Depth_min_us=depth_min_us,Depth_max_us=depth_max_us,Env_1=env1,Env_2=env2,Climate=climate,Price=Price,Length_weight,
-                        Resilience=Resilience,Vul=Vul,Trophic_Level=Trophic_Level,IUCN_status=IUCN_status,Temp_min=temp_min,Temp_max=temp_max, Repro.Mode=Repro.Mode, Repro.Fertil=Repro.Fertil, Repro.MatingT=Repro.MatingT, Repro.SpawnFreq=Repro.SpawnFreq, Repro.ParentCare=Repro.ParentCare, Egg.Shape=Egg.Shape, Egg.Attrib=Egg.Attrib, Egg.Color=Egg.Color, Larvae.LenghtAtBirth, Larvae.PlaceDevelop, Larvae.YolkSac))
+    res <- data.frame(c(Max_length= Max_length,Common_length=Common_length,Env_1=env1,Env_2=env2,Climate=climate,Price=Price,Length_weight,#Depth_min=depth_min,Depth_max=depth_max,Depth_min_us=depth_min_us,Depth_max_us=depth_max_us,
+                        Resilience=Resilience,Vul=Vul,Trophic_Level=Trophic_Level,IUCN_status=IUCN_status,Temp_min=temp_min,Temp_max=temp_max, 
+                        Repro.Mode=Repro.Mode, Repro.Fertil=Repro.Fertil, Repro.MatingT=Repro.MatingT, Repro.SpawnFreq=Repro.SpawnFreq, 
+                        Repro.ParentCare=Repro.ParentCare, Egg.Shape=Egg.Shape, Egg.Attrib=Egg.Attrib, Egg.Color=Egg.Color, Larvae.LenghtAtBirth, 
+                        Larvae.PlaceDevelop, Larvae.YolkSac))
     rownames(res)=x  
   }
   
