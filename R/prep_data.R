@@ -1,4 +1,3 @@
-species <- "Arcos-nudus"
 
 prep_data = function(distribution,speciestraits,elasmo){
   #example

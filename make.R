@@ -89,7 +89,7 @@ FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,LongevityWild)) %>%
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
 #Get IUCN status
-FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IUCN = "IUCN_status")# %>% column_to_rownames("species")
+FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IUCN = "IUCN_status") %>% column_to_rownames("species")
 
 
 
