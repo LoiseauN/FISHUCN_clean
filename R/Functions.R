@@ -1,63 +1,4 @@
-who.remote <- function(who){
-  #VF = Valentine 
-  #RS = Raphael
-  #NL = Nicolas
-  #NL_Home = Nicolas  
-  #if (who %in% "LV") {
-  #  data_dir <-
-  # results_dir <-
-  #script_dir <-
-  #} 
-  
-  if (who %in% "RS") {
-    
-    data_dir <<- file.path("C:","Users","Admin","Documents","Stage","FISHUCN","data")
-    
-    results_dir <<- file.path("C:","Users","Admin","Documents","Stage","FISHUCN","Output")
-    
-    script_dir <<- file.path("C:","Users","Admin","Documents","Stage","FISHUCN","R")
-    
-    fig_dir <<- file.path("C:","Users","Admin","Documents","Stage","FISHUCN","Figures")
-  } 
-  
-  if (who %in% "NL_Home") {
-    
-    data_dir <<- file.path("~/Documents/FISHUCN/FISHUCN/data")
-    
-    results_dir <<- file.path("~/Documents/FISHUCN/FISHUCN/Output")
-    
-    script_dir <<- file.path("~/Documents/FISHUCN/FISHUCN/R")
-    
-    fig_dir <<- file.path("~/Documents/FISHUCN/FISHUCN/Figures")
-  }
-  
-  if (who %in% "NL") {
-    
-    data_dir <<- file.path("~/Documents/Postdoc MARBEC/FISHUCN/FISHUCN/data")
-    
-    results_dir <<- file.path("~/Documents/Postdoc MARBEC/FISHUCN/FISHUCN/Output")
-    
-    script_dir <<- file.path("~/Documents/Postdoc MARBEC/FISHUCN/FISHUCN/R")
-    
-    fig_dir <<- file.path("~/Documents/Postdoc MARBEC/FISHUCN/FISHUCN/Figures")
-  }
-  
-  if (who %in% "VF") {
-    
-    data_dir <<- file.path()
-    
-    results_dir <<- file.path()
-    
-    script_dir <<- file.path()
-    
-    fig_dir <<- file.path()
-  }
-  
-}
-
-who.remote("RS")
-who.remote("NL_Home")
-who.remote("NL")
+#------------------addLevel Function----------------------
 
 #Fonction to add new level in factor variable
 addLevel <- function(x, newlevel=NULL) {
@@ -67,3 +8,15 @@ addLevel <- function(x, newlevel=NULL) {
   }
   return(x)
 }
+
+
+#------------------Rescale Function----------------------
+
+#Function to rescale proba
+rescalex <- function(a,b,data){
+  step1 <- data-min(data,na.rm=T)
+  step2 <- b-a
+  step3 <- max(data,na.rm=T)-min(data,na.rm=T)
+  step4 <- (step1*step2)/step3
+  res <- step4 + a
+  return(res)}

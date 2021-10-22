@@ -9,16 +9,7 @@
 #' 
 #' 
 #' 
-#------------------Rescale Function----------------------
 
-#Function to rescale proba
-rescalex <- function(a,b,data){
-  step1 <- data-min(data,na.rm=T)
-  step2 <- b-a
-  step3 <- max(data,na.rm=T)-min(data,na.rm=T)
-  step4 <- (step1*step2)/step3
-  res <- step4 + a
-  return(res)}
 
 #------------------Loading outputs----------------------
 path = (here::here("outputs"))
@@ -28,7 +19,7 @@ lapply(files, load, envir=.GlobalEnv)
 
 #Data from Deep
 pred_deep <- read.csv2("res_inference_deep.csv",sep=",",header=T)
-pred_deep <- subset(pred_deep,pred_deep$proba>=75)
+pred_deep <- subset(pred_deep,pred_deep$proba>=80)
 
 #Data from machine
 load("res_inference_machine.RData")

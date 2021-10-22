@@ -10,24 +10,71 @@
 #'
 #' @export
 
-IUCN_consensus = function(data_predicted,splits,baseline){
+IUCN_complementarity = function(data_machine,data_deep){
+#Merge Data
+FISHUCN <- merge(pred_deep,pred_mach,by="species",all=T)
+colnames(FISHUCN) <- c("species", "IUCN_deep","proba", "IUCN_machine","n","percentage")
+
+#Highlight consensus or not between deeplearing and machine learning
+FISHUCN$agree <- NA
+for (i in 1:nrow(FISHUCN)){
+  print(i)
+  if(is.na(FISHUCN$IUCN_deep[i]) & !is.na(FISHUCN$IUCN_machine[i])) {FISHUCN$agree[i] <- "ONLY_MACHINE"}
   
-  #Model predictions according to class
-  Predicted_percentage= data_predicted %>%
-    group_by(species)%>%
-    count(score.predictions)%>%
-    #Adding percentage of perdiction in each class
-    dplyr::mutate(percentage=(n*100)/(splits*10))%>%
-    rename(IUCN="score.predictions")
+  else if(!is.na(FISHUCN$IUCN_deep[i]) & is.na(FISHUCN$IUCN_machine[i])){FISHUCN$agree[i] <- "ONLY_DEEP"}
   
-  save(Predicted_percentage, file = here("outputs","Predicted_percentage.Rdata"))
+  else if(FISHUCN$IUCN_deep[i]==FISHUCN$IUCN_machine[i]){FISHUCN$agree[i] <- "AGREE"}
   
-  #Keeping only species where prediction is >80%
-  IUCN_final_preds = Predicted_percentage %>%
-    filter(percentage>=baseline)
-  
-  save(IUCN_final_preds, file = here::here("outputs", "IUCN_final_preds.Rdata"))
-  
-  return(IUCN_final_preds)
+  else{FISHUCN$agree[i] <- "NOT AGREE"}
   
 }
+
+
+#Predict with the complementary approach
+FISHUCN$predict <- NA
+for (i in 1:nrow(FISHUCN)){
+  print(i)
+  
+  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_machine[i])}
+  
+  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_deep[i])}
+  
+  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_machine[i])}
+  
+  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict[i] <- NA}
+  
+}
+
+
+#Predict with the consensus
+FISHUCN$predict_consensus <- NA
+for (i in 1:nrow(FISHUCN)){
+  print(i)
+  
+  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict_consensus[i] <- NA}
+  
+  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict_consensus[i] <- NA}
+  
+  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict_consensus[i] <- as.character(FISHUCN$IUCN_machine[i])}
+  
+  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict_consensus[i] <- NA}
+  
+}
+
+# Take the 
+FISHUCN$proba_select <- NA 
+
+for (i in 1:nrow(FISHUCN)){
+  print(i)
+  
+  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$proba_select[i] <- FISHUCN$percentage[i]}
+  
+  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$proba_select[i] <- FISHUCN$proba[i]}
+  
+  #Feel after
+  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$proba_select[i] <- NA}
+  
+  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$proba_select[i] <- NA}
+  
+}
+

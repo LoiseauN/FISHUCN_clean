@@ -13,36 +13,38 @@
 var_imp = function(rel_inf){
   
   #Plot of variable importance
-  ggplot(rel_inf,aes(importance.mod.,reorder(rowname,importance.mod.),fill=rowname))+
-    geom_bar(stat='identity')+
-    scale_fill_viridis_d(name="Variable")+
-    labs(x="Variable importance by permutation",
-         y="")+
-    theme_bw()
+  tot <- sum(rel_inf[,2])
   
+  for (i in 1:nrow(rel_inf)){
+    rel_inf[i,2] <- (rel_inf[i,2]/tot)*100
+    
+  }
+  
+  rel_inf %>%
+    arrange(importance.mod.) %>%
+    tail(20) %>%
+    mutate(rowname=factor(rowname, rowname)) %>%
+    ggplot( aes(x=rowname, y=importance.mod.) ) +
+    geom_segment( aes(x=rowname ,xend=rowname, y=0, yend=importance.mod.), color="grey") +
+    geom_point(size=3, color="#69b3a2") +
+    coord_flip() +
+    theme_bw() +
+    theme(
+      panel.grid.minor.y = element_blank(),
+      panel.grid.major.y = element_blank(),
+      legend.position="none"
+    ) +
+    xlab("Variables") +
+    ylab("")+
+    ggtitle("Species Richness")
+
   ggsave(file = here::here("figures", "Figure1.pdf"), 
                  width = 11.7, height = 8.3)
   
 }
 
 
-relativ_import_alphaS <- rel_inf %>%
-  arrange(importance.mod.) %>%
-  tail(20) %>%
-  mutate(rowname=factor(rowname, rowname)) %>%
-  ggplot( aes(x=rowname, y=importance.mod.) ) +
-  geom_segment( aes(x=rowname ,xend=rowname, y=0, yend=importance.mod.), color="grey") +
-  geom_point(size=3, color="#69b3a2") +
-  coord_flip() +
-  theme_bw() +
-  theme(
-    panel.grid.minor.y = element_blank(),
-    panel.grid.major.y = element_blank(),
-    legend.position="none"
-  ) +
-  xlab("Variables") +
-  ylab("")+
-  ggtitle("Species Richness")
+relativ_import_alphaS <- 
 
 
 

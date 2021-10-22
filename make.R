@@ -91,8 +91,6 @@ IUCN_status$species <- gsub("-","_",IUCN_status$species)
 #Get IUCN status
 FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IUCN = "IUCN_status") %>% column_to_rownames("species")
 
-
-
 #SOME TRANSFORMATION TO INCLUDE IN ONE OF THE FUNCTIONS
 #FB_final$Common_length = as.numeric(FB_final$Common_length)
 FB_final$IUCN = as.factor(FB_final$IUCN)
@@ -131,7 +129,7 @@ test_IUCN = IUCN_test(split,10)
 run_IUCN = IUCN_predict(split,data_model,10)
 
 #IUCN consensus (0.5 for this dummy dataset)
-IUCN_final_consensus = IUCN_consensus(run_IUCN,length(split),80)
+IUCN_final_machine = IUCN_machine(run_IUCN,length(split),80)
 
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
 
