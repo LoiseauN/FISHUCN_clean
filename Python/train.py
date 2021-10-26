@@ -5,6 +5,7 @@ import torch
 import math
 import pyreadr
 import joblib
+from pathlib import Path
 from sklearn import preprocessing
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
@@ -12,24 +13,30 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 class Model(nn.Module):
     def __init__(self, input_size):
         super().__init__()
-
-
         self.hidden = nn.Linear(input_size, 256)
-
         self.output = nn.Linear(256, 2)
-
-
         self.sigmoid = nn.Sigmoid()
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
-
         x = self.hidden(x)
         x = self.sigmoid(x)
         x = self.output(x)
         x = self.softmax(x)
-
         return x
+
+def prepare_data(data): # Remove all species without IUCN status and label encoder for categorical data
+    le = preprocessing.LabelEncoder()
+    num_cols = data._get_numeric_data().columns
+    cat_cols = list(set(data.columns) - set(num_cols))
+    del cat_cols[cat_cols.index('IUCN')]
+    for category in cat_cols:
+        data[category] = le.fit_transform(data[category])
+        joblib.dump(le, str(Path('./Label_Encoder/le_')) + category + '.joblib')
+    data_no_na = data.dropna()
+    data_no_na['IUCN']=le.fit_transform(data_no_na['IUCN'])
+    joblib.dump(le, str(Path('./Label_Encoder/le_IUCN.joblib')))
+    return data_no_na
 
 def split(data):
     data = data.sample(frac=1).reset_index(drop=True)
@@ -48,22 +55,7 @@ def split(data):
         split.append(s)  
     return(split)
 
-def prepare_data(data):
-    le = preprocessing.LabelEncoder()
-    num_cols = data._get_numeric_data().columns
-    cat_cols = list(set(data.columns) - set(num_cols))
-    del cat_cols[cat_cols.index('IUCN')]
-    for category in cat_cols:
-        data[category] = le.fit_transform(data[category])
-        joblib.dump(le, '/home/vfleure/Documents/FISHUCN_clean/Python/Label_Encoder/le_' + 
-            category + '.joblib')
-    data_no_na = data.dropna()
-    data_no_na['IUCN']=le.fit_transform(data_no_na['IUCN'])
-    joblib.dump(le, '/home/vfleure/Documents/FISHUCN_clean/Python/Label_Encoder/le_IUCN.joblib')
-    return data_no_na
-
-
-def train(df_all_split, nb_run_per_split): 
+def train(df_all_split, nb_run_per_split): # Train XX models for accuracy with 80/20 
     inputs = df_all_split[0].columns
     inputs = inputs.delete(inputs =='IUCN')
     targets = ['IUCN']
@@ -124,8 +116,7 @@ def train(df_all_split, nb_run_per_split):
 
     return (sum(acc_total)/len(acc_total))
 
-
-def predict(original_df, df_all_split, nb_run_per_split):
+def predict(original_df, df_all_split, nb_run_per_split): # Train XX model with 100% and predict
 
     inputs = df_all_split[0].columns
     inputs = inputs.delete(inputs =='IUCN')
@@ -136,8 +127,7 @@ def predict(original_df, df_all_split, nb_run_per_split):
     cat_cols = list(set(original_df.columns) - set(num_cols))
     del cat_cols[cat_cols.index('IUCN')]
     for category in cat_cols:
-        le = joblib.load('/home/vfleure/Documents/FISHUCN_clean/Python/Label_Encoder/le_' + 
-            category + '.joblib')
+        le = joblib.load(str(Path('./Label_Encoder/le_')) + category + '.joblib')
         original_df[category] = le.fit_transform(original_df[category])
         
     df_to_predict = original_df[original_df["IUCN"].isnull()]
@@ -191,35 +181,32 @@ def predict(original_df, df_all_split, nb_run_per_split):
             res_all.append(res)
 
     # 80% threshold calculation
-    nb_model = len(res_all)
+    nb_model = len(res_all) # res_all = nbr models
     s1 = nb_model * 80 / 100
     s2 = nb_model * 20 / 100
 
     # Results to csv file
     
-    le = joblib.load('/home/vfleure/Documents/FISHUCN_clean/Python/Label_Encoder/le_IUCN.joblib')
-    with open ('/home/vfleure/Documents/FISHUCN_clean/outputs/res_inference_deep.csv', 'w') as res_file :
-        res_file.write('species,IUCN,proba\n')
-        for i in range(len(res_all[1])):
+    res = pd.DataFrame(columns = ['species', 'IUCN', 'percentage'])
+    le = joblib.load(str(Path('./Label_Encoder/le_IUCN.joblib')))
+    for i in range(len(res_all[1])):
             s = 0
             for j in range(len(res_all)):
                 s = s + res_all[j][i]
             if s > s1 :
-                res_file.write(df_to_predict.iloc[i].name+ ',' + le.inverse_transform([1])[0] + ',' +
-                            str(s*100/len(res_all))+'\n')
+                res.loc[len(res)] = [df_to_predict.iloc[i].name, le.inverse_transform([1])[0], s*100/len(res_all)]
             elif s < s2 :
-                res_file.write(df_to_predict.iloc[i].name + ',' + le.inverse_transform([0])[0] + ',' +
-                            str(100-(s*100/len(res_all)))+'\n')
+                res.loc[len(res)] = [df_to_predict.iloc[i].name, le.inverse_transform([0])[0], 100-(s*100/len(res_all))]
             else :
-                res_file.write(df_to_predict.iloc[i].name+',NaN,'+
-                            str(max(s*100/len(res_all),100-(s*100/len(res_all))))+'\n')
+                res.loc[len(res)] = [df_to_predict.iloc[i].name, 'NaN',max(s*100/len(res_all),100-(s*100/len(res_all)))]
 
+    pyreadr.write_rdata('../outputs/IUCN_preds_deep.RData', res, df_name='IUCN_preds_deep')
 
-
-data = pyreadr.read_r('/home/vfleure/Documents/FISHUCN_clean/Python/data.RData')
+data = pyreadr.read_r(Path('../outputs/data_noNA.Rdata'))
 for key, value in data.items(): 
     data = value
 data_no_na = prepare_data(data)
 splits = split(data_no_na)
-predict(data, splits, 10)
 acc = train(splits, 10)
+print(acc)
+predict(data, splits, 10)
