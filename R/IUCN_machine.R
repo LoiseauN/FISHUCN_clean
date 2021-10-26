@@ -1,4 +1,4 @@
-#' Consensus of IUCN status based on the 200 models
+#' Machine learning prediction
 #'
 #' This functions calculates the consensus of the 200 models based on a specified baseline
 #'
@@ -13,7 +13,7 @@
 IUCN_machine = function(data_predicted,splits,baseline){
   #data_predicted <- run_IUCN
   #splits<- length(split)
-  #baseline <- 70
+  #baseline <- 80
   
   #Model predictions according to class
   Predicted_percentage= data_predicted %>%
@@ -26,11 +26,15 @@ IUCN_machine = function(data_predicted,splits,baseline){
   save(Predicted_percentage, file = "outputs/Predicted_percentage.Rdata")
   
   #Keeping only species where prediction is >80%
-  IUCN_final_preds = Predicted_percentage %>%
+  IUCN_machine_preds = Predicted_percentage %>%
     filter(percentage>=baseline)
   
-  save(IUCN_final_preds, file = here::here("outputs", "IUCN_final_preds.Rdata"))
+  save(IUCN_machine_preds, file = here::here("outputs", "IUCN_machine_preds.Rdata"))
   
-  return(IUCN_final_preds)
+  return(IUCN_machine_preds)
   
 }
+
+
+
+

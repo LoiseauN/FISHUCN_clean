@@ -11,70 +11,73 @@
 #' @export
 
 IUCN_complementarity = function(data_machine,data_deep){
+  
+  #data_machine <- IUCN_preds_machine_final
+  #data_deep <- IUCN_preds_deep_final
+  
+  
 #Merge Data
-FISHUCN <- merge(pred_deep,pred_mach,by="species",all=T)
-colnames(FISHUCN) <- c("species", "IUCN_deep","proba", "IUCN_machine","n","percentage")
+all_predict <- merge(data_deep,data_machine,by="species",all=T)
+colnames(all_predict) <- c("species", "IUCN_deep","proba", "IUCN_machine","n","percentage")
 
 #Highlight consensus or not between deeplearing and machine learning
-FISHUCN$agree <- NA
-for (i in 1:nrow(FISHUCN)){
-  print(i)
-  if(is.na(FISHUCN$IUCN_deep[i]) & !is.na(FISHUCN$IUCN_machine[i])) {FISHUCN$agree[i] <- "ONLY_MACHINE"}
+all_predict$agree <- NA
+for (i in 1:nrow(all_predict)){
+
+  if(is.na(all_predict$IUCN_deep[i]) & !is.na(all_predict$IUCN_machine[i])) {all_predict$agree[i] <- "ONLY_MACHINE"}
   
-  else if(!is.na(FISHUCN$IUCN_deep[i]) & is.na(FISHUCN$IUCN_machine[i])){FISHUCN$agree[i] <- "ONLY_DEEP"}
+  else if(!is.na(all_predict$IUCN_deep[i]) & is.na(all_predict$IUCN_machine[i])){all_predict$agree[i] <- "ONLY_DEEP"}
   
-  else if(FISHUCN$IUCN_deep[i]==FISHUCN$IUCN_machine[i]){FISHUCN$agree[i] <- "AGREE"}
+  else if(all_predict$IUCN_deep[i]==all_predict$IUCN_machine[i]){all_predict$agree[i] <- "AGREE"}
   
-  else{FISHUCN$agree[i] <- "NOT AGREE"}
+  else{all_predict$agree[i] <- "NOT AGREE"}
   
 }
 
 
 #Predict with the complementary approach
-FISHUCN$predict <- NA
-for (i in 1:nrow(FISHUCN)){
-  print(i)
+all_predict$predict_complementary <- NA
+for (i in 1:nrow(all_predict)){
+
+  if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
   
-  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_machine[i])}
+  if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_deep[i])}
   
-  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_deep[i])}
+  if(all_predict$agree[i] == "AGREE"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
   
-  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_machine[i])}
-  
-  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict[i] <- NA}
+  if(all_predict$agree[i] == "NOT AGREE"){all_predict$predict_complementary[i] <- NA}
   
 }
 
 
 #Predict with the consensus
-FISHUCN$predict_consensus <- NA
-for (i in 1:nrow(FISHUCN)){
-  print(i)
+all_predict$predict_consensus <- NA
+for (i in 1:nrow(all_predict)){
+
+  if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_consensus[i] <- NA}
   
-  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict_consensus[i] <- NA}
+  if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_consensus[i] <- NA}
   
-  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict_consensus[i] <- NA}
+  if(all_predict$agree[i] == "AGREE"){all_predict$predict_consensus[i] <- as.character(all_predict$IUCN_machine[i])}
   
-  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict_consensus[i] <- as.character(FISHUCN$IUCN_machine[i])}
-  
-  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict_consensus[i] <- NA}
+  if(all_predict$agree[i] == "NOT AGREE"){all_predict$predict_consensus[i] <- NA}
   
 }
 
 # Take the 
-FISHUCN$proba_select <- NA 
+all_predict$proba_select <- NA 
 
-for (i in 1:nrow(FISHUCN)){
-  print(i)
+for (i in 1:nrow(all_predict)){
   
-  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$proba_select[i] <- FISHUCN$percentage[i]}
+  if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$proba_select[i] <- all_predict$percentage[i]}
   
-  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$proba_select[i] <- FISHUCN$proba[i]}
+  if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$proba_select[i] <- all_predict$proba[i]}
   
   #Feel after
-  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$proba_select[i] <- NA}
+  if(all_predict$agree[i] == "AGREE"){all_predict$proba_select[i] <- NA}
   
-  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$proba_select[i] <- NA}
+  if(all_predict$agree[i] == "NOT AGREE"){all_predict$proba_select[i] <- NA}
   
+  return(all_predict)
 }
-
+}
