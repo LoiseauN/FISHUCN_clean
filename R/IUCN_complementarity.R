@@ -15,69 +15,68 @@ IUCN_complementarity = function(data_machine,data_deep){
   #data_machine <- IUCN_preds_machine_final
   #data_deep <- IUCN_preds_deep_final
   
+  #Merge Data
+  all_predict <- merge(data_deep,data_machine,by="species",all=T)
+  colnames(all_predict) <- c("species", "IUCN_deep","proba", "IUCN_machine","n","percentage")
   
-#Merge Data
-all_predict <- merge(data_deep,data_machine,by="species",all=T)
-colnames(all_predict) <- c("species", "IUCN_deep","proba", "IUCN_machine","n","percentage")
-
-#Highlight consensus or not between deeplearing and machine learning
-all_predict$agree <- NA
-for (i in 1:nrow(all_predict)){
-
-  if(is.na(all_predict$IUCN_deep[i]) & !is.na(all_predict$IUCN_machine[i])) {all_predict$agree[i] <- "ONLY_MACHINE"}
+  #Highlight consensus or not between deeplearing and machine learning
+  all_predict$agree <- NA
+  for (i in 1:nrow(all_predict)){
+    
+    if(is.na(all_predict$IUCN_deep[i]) & !is.na(all_predict$IUCN_machine[i])) {all_predict$agree[i] <- "ONLY_MACHINE"}
+    
+    else if(!is.na(all_predict$IUCN_deep[i]) & is.na(all_predict$IUCN_machine[i])){all_predict$agree[i] <- "ONLY_DEEP"}
+    
+    else if(all_predict$IUCN_deep[i]==all_predict$IUCN_machine[i]){all_predict$agree[i] <- "AGREE"}
+    
+    else{all_predict$agree[i] <- "NOT AGREE"}
+    
+  }
   
-  else if(!is.na(all_predict$IUCN_deep[i]) & is.na(all_predict$IUCN_machine[i])){all_predict$agree[i] <- "ONLY_DEEP"}
   
-  else if(all_predict$IUCN_deep[i]==all_predict$IUCN_machine[i]){all_predict$agree[i] <- "AGREE"}
+  #Predict with the complementary approach
+  all_predict$predict_complementary <- NA
+  for (i in 1:nrow(all_predict)){
+    
+    if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
+    
+    if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_deep[i])}
+    
+    if(all_predict$agree[i] == "AGREE"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
+    
+    if(all_predict$agree[i] == "NOT AGREE"){all_predict$predict_complementary[i] <- NA}
+    
+  }
   
-  else{all_predict$agree[i] <- "NOT AGREE"}
+  #Predict with the consensus
+  all_predict$predict_consensus <- NA
+  for (i in 1:nrow(all_predict)){
+    
+    if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_consensus[i] <- NA}
+    
+    if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_consensus[i] <- NA}
+    
+    if(all_predict$agree[i] == "AGREE"){all_predict$predict_consensus[i] <- as.character(all_predict$IUCN_machine[i])}
+    
+    if(all_predict$agree[i] == "NOT AGREE"){all_predict$predict_consensus[i] <- NA}
+    
+  }
   
-}
-
-
-#Predict with the complementary approach
-all_predict$predict_complementary <- NA
-for (i in 1:nrow(all_predict)){
-
-  if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
+  # Take the 
+  all_predict$proba_select <- NA 
   
-  if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_deep[i])}
-  
-  if(all_predict$agree[i] == "AGREE"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
-  
-  if(all_predict$agree[i] == "NOT AGREE"){all_predict$predict_complementary[i] <- NA}
-  
-}
-
-
-#Predict with the consensus
-all_predict$predict_consensus <- NA
-for (i in 1:nrow(all_predict)){
-
-  if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_consensus[i] <- NA}
-  
-  if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_consensus[i] <- NA}
-  
-  if(all_predict$agree[i] == "AGREE"){all_predict$predict_consensus[i] <- as.character(all_predict$IUCN_machine[i])}
-  
-  if(all_predict$agree[i] == "NOT AGREE"){all_predict$predict_consensus[i] <- NA}
-  
-}
-
-# Take the 
-all_predict$proba_select <- NA 
-
-for (i in 1:nrow(all_predict)){
-  
-  if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$proba_select[i] <- all_predict$percentage[i]}
-  
-  if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$proba_select[i] <- all_predict$proba[i]}
-  
-  #Feel after
-  if(all_predict$agree[i] == "AGREE"){all_predict$proba_select[i] <- NA}
-  
-  if(all_predict$agree[i] == "NOT AGREE"){all_predict$proba_select[i] <- NA}
-  
+  for (i in 1:nrow(all_predict)){
+    
+    if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$proba_select[i] <- all_predict$percentage[i]}
+    
+    if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$proba_select[i] <- all_predict$proba[i]}
+    
+    #IF AGREE WE PUT PROBA == 100
+    if(all_predict$agree[i] == "AGREE"){all_predict$proba_select[i] <- 100}
+    
+    if(all_predict$agree[i] == "NOT AGREE"){all_predict$proba_select[i] <- NA}
+    
+   
+  }
   return(all_predict)
-}
 }

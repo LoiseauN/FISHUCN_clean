@@ -99,30 +99,30 @@ save(FISHUCN,file="FISHUCN.RData")
 
 
 #Last file to send in zonation
-load("FB_vars.RData")
+load("FB_final.RData")
 
-data_zonation <- data.frame(species = rownames(FB_vars),
-                            IUCN_cat = FB_vars$IUCN) 
+data_zonation <- data.frame(species = rownames(FB_final),
+                            IUCN_cat = FB_final$IUCN) 
 
 data_zonation$IUCN_alone <- NA
 
 # ----------  Change 
-for(i in 1:nrow(data_zonation)){ 
+#for(i in 1:nrow(data_zonation)){ 
  
-   print(i)
+#   print(i)
   
-if(is.na(data_zonation$IUCN_cat[i])) data_zonation$IUCN_alone[i] <- NA  
-else if(data_zonation$IUCN_cat[i] =="LC") data_zonation$IUCN_alone[i] <- "NThr"
-else if(data_zonation$IUCN_cat[i] =="NT") data_zonation$IUCN_alone[i] <- "NThr"
-else if(data_zonation$IUCN_cat[i] =="nt") data_zonation$IUCN_alone[i] <- "NThr"
-else if(data_zonation$IUCN_cat[i] =="VU") data_zonation$IUCN_alone[i] <- "Thr"
-else if(data_zonation$IUCN_cat[i] =="EN") data_zonation$IUCN_alone[i] <- "Thr"
-else if(data_zonation$IUCN_cat[i] =="CR") data_zonation$IUCN_alone[i] <- "Thr"
+#if(is.na(data_zonation$IUCN_cat[i])) data_zonation$IUCN_alone[i] <- NA  
+#else if(data_zonation$IUCN_cat[i] =="LC") data_zonation$IUCN_alone[i] <- "NThr"
+#else if(data_zonation$IUCN_cat[i] =="NT") data_zonation$IUCN_alone[i] <- "NThr"
+#else if(data_zonation$IUCN_cat[i] =="nt") data_zonation$IUCN_alone[i] <- "NThr"
+#else if(data_zonation$IUCN_cat[i] =="VU") data_zonation$IUCN_alone[i] <- "Thr"
+#else if(data_zonation$IUCN_cat[i] =="EN") data_zonation$IUCN_alone[i] <- "Thr"
+#else if(data_zonation$IUCN_cat[i] =="CR") data_zonation$IUCN_alone[i] <- "Thr"
 
-}
+#}
 
 # ----------  Change 
-data_zonation <- merge(data_zonation,FISHUCN,  by = "species", all.x = T)
+data_zonation <- merge(data_zonation,all_predict,  by = "species", all.x = T)
 data_zonation$proba_select <- as.numeric(data_zonation$proba_select)/100
 
 # Remove three line problem

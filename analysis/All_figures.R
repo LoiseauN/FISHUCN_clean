@@ -5,9 +5,9 @@ nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
-
+all_predict
 # ---------- Load data
-load(file=file.path(results_dir,"preds_final.RData"))
+load(file=file.path(results_dir,"all_predict.RData"))
 
 #With package rredlist extract status
 mammals_status <- rl_comp_groups("mammals", key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
@@ -27,19 +27,19 @@ amphibians_pic <- image_data("cd0cdc36-ecfa-414f-af87-1b5e0ec0c69b", size = "512
 data_4_taxa <- data.frame( taxa = c(rep("mammals", nrow(mammals_status$result)),
                                     rep("birds",nrow(birds_status$result)),
                                     rep("amphibians",nrow(amphibians_status$result)),
-                                    rep("fishes",nrow(FB_vars))),
+                                    rep("fishes",nrow(FB_final))),
                            status = as.factor(c(mammals_status$result$category,
                                                 birds_status$result$category,
                                                 amphibians_status$result$category,
-                                                as.character(FB_vars$IUCN))))
+                                                as.character(FB_final$IUCN))))
 
-levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR/cd", "LR/nt", "nt","NT", "LC")] <- "Non Threatened"
+levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR/cd", "LR/nt", "nt","NT", "LC","NThr")] <- "Non Threatened"
 
 levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("DD",  "NA")] <- "No Status"
 
 data_4_taxa[is.na(data_4_taxa$status),]$status <- "No Status"
 
-levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR", "EN", "EW","VU")] <- "Threatened"
+levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR", "EN", "EW","VU","Thr")] <- "Threatened"
 
 data_4_taxa <- subset(data_4_taxa,data_4_taxa$status != "EX")
 
