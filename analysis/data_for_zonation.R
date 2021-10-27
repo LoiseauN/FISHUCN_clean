@@ -148,17 +148,17 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
   data_zonation$scenario2_IUCNalone <- NA
   data_zonation$scenario3_IUCN_and_Predict <- NA
   
-data_zonation$selected_species <- NA
+data_zonation$selected_species_complementary <- NA
 data_zonation$selected_species_consensus <- NA
 
 for(i in 1:nrow(data_zonation)){ 
   
   print(i)
   
-  if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict[i])) 
-  data_zonation$selected_species[i] <- 1
-
   if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict_complementary[i])) 
+  data_zonation$selected_species_complementary[i] <- 1
+
+  if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict_consensus[i])) 
     data_zonation$selected_species_consensus[i] <- 1
   
   
