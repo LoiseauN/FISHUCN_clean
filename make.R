@@ -98,7 +98,7 @@ FB_final$IUCN = as.factor(FB_final$IUCN)
 #Sorting out some problems with data 
 
 FB_final[FB_final==""]<-NA
-
+FB_final <- FB_final[rowSums(is.na(FB_final)) != 23, ]
 #Convert IUCN data to T and NT 
 FB_IUCN = IUCN_split(FB_final)
 #FB_IUCN <- FB_IUCN[,-22]

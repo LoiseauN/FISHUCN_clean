@@ -99,7 +99,6 @@ save(FISHUCN,file="FISHUCN.RData")
 
 
 #Last file to send in zonation
-load("FB_final.RData")
 
 data_zonation <- data.frame(species = rownames(FB_final),
                             IUCN_cat = FB_final$IUCN) 
@@ -125,15 +124,11 @@ data_zonation$IUCN_alone <- NA
 data_zonation <- merge(data_zonation,all_predict,  by = "species", all.x = T)
 data_zonation$proba_select <- as.numeric(data_zonation$proba_select)/100
 
-# Remove three line problem
-data_zonation <- data_zonation[!data_zonation$species %in% c("1102","152","194"),]
 
-
-
-  rescale_threat <-  subset(data_zonation, data_zonation$predict =="Thr" & is.na(data_zonation$IUCN_alone))
-  rescale_non_threat <-  subset(data_zonation, data_zonation$predict =="NThr" & is.na(data_zonation$IUCN_alone))
-  rescale_threat$proba_rescale <-  rescalex(a=2,b=5,data=rescale_threat$proba_select)
-  rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$proba_select)
+rescale_threat <-  subset(data_zonation, data_zonation$predict_complementary =="Thr" & is.na(data_zonation$IUCN_alone))
+rescale_non_threat <-  subset(data_zonation, data_zonation$predict_complementary =="NThr" & is.na(data_zonation$IUCN_alone))
+rescale_threat$proba_rescale <-  rescalex(a=2,b=5,data=rescale_threat$proba_select)
+rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$proba_select)
   
   rescale_data <- data.frame(species = c(rescale_threat$species ,
                                          rescale_non_threat$species),
@@ -163,12 +158,13 @@ for(i in 1:nrow(data_zonation)){
   if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict[i])) 
   data_zonation$selected_species[i] <- 1
 
-  if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict_consensus[i])) 
+  if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict_complementary[i])) 
     data_zonation$selected_species_consensus[i] <- 1
+  
+  
   
 }
   
-
 
 data_zonation_list <- list()
 #keep only predicted and species already in IUCN 
@@ -181,7 +177,6 @@ data_zonation_list <- list()
   
 names(data_zonation_list) <- c("main", "sensibility1","sensibility2")
   
-
 
 # SCENARIO 3  :  Weighted in function of the machine learning probability with negative influence for non threaten
 # NA  by IUCN and predit = 2 (for SM 2 and 1)
