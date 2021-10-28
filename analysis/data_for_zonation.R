@@ -103,7 +103,7 @@ save(FISHUCN,file="FISHUCN.RData")
 data_zonation <- data.frame(species = rownames(FB_final),
                             IUCN_cat = FB_final$IUCN) 
 
-data_zonation$IUCN_alone <- NA
+#data_zonation$IUCN_alone <- NA
 
 # ----------  Change 
 #for(i in 1:nrow(data_zonation)){ 
@@ -125,8 +125,8 @@ data_zonation <- merge(data_zonation,all_predict,  by = "species", all.x = T)
 data_zonation$proba_select <- as.numeric(data_zonation$proba_select)/100
 
 
-rescale_threat <-  subset(data_zonation, data_zonation$predict_complementary =="Thr" & is.na(data_zonation$IUCN_alone))
-rescale_non_threat <-  subset(data_zonation, data_zonation$predict_complementary =="NThr" & is.na(data_zonation$IUCN_alone))
+rescale_threat <-  subset(data_zonation, data_zonation$predict_complementary =="Thr" & is.na(data_zonation$IUCN_cat))
+rescale_non_threat <-  subset(data_zonation, data_zonation$predict_complementary =="NThr" & is.na(data_zonation$IUCN_cat))
 rescale_threat$proba_rescale <-  rescalex(a=2,b=5,data=rescale_threat$proba_select)
 rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$proba_select)
   
@@ -141,39 +141,40 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
   
 #--- Prepare for scenario  
   
-  
-  # SCENARIO 1: 
-  # 1 for everyone
-  data_zonation$scenario1_NoWeight <- 1
-  data_zonation$scenario2_IUCNalone <- NA
-  data_zonation$scenario3_IUCN_and_Predict <- NA
-  
-data_zonation$selected_species_complementary <- NA
-data_zonation$selected_species_consensus <- NA
+data_zonation$selected_species_IUCNonly <- NA
+data_zonation$selected_species_complementary_W_IUCN <- NA
+data_zonation$selected_species_consensus_W_IUCN <- NA
 
 for(i in 1:nrow(data_zonation)){ 
   
   print(i)
   
-  if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict_complementary[i])) 
-  data_zonation$selected_species_complementary[i] <- 1
+  if(!is.na(data_zonation$IUCN_cat[i])) data_zonation$selected_species_IUCNonly <- NA
 
-  if(!is.na(data_zonation$IUCN_alone[i]) | !is.na(data_zonation$predict_consensus[i])) 
-    data_zonation$selected_species_consensus[i] <- 1
+  if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
+  data_zonation$selected_species_complementary_W_IUCN[i] <- 1
+ 
+
+  if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
+    data_zonation$selected_species_consensus_W_IUCN[i] <- 1
+  }
   
-  
-  
-}
-  
+# SCENARIO 1: 
+# 1 for everyone
+data_zonation$scenario1_NoWeight <- 1
+data_zonation$scenario2_IUCNalone <- NA
+data_zonation$scenario3_IUCN_and_Predict_complementarity <- NA
+data_zonation$scenario3_IUCN_and_Predict_consensus <- NA
 
 data_zonation_list <- list()
 #keep only predicted and species already in IUCN 
-  data_zonation_list[[1]] <- subset(data_zonation,data_zonation$selected_species == 1)[,-c(11,17:18)]
-  #keep only predicted and species already in IUCN with consensus
-  data_zonation_list[[2]] <- subset(data_zonation,data_zonation$selected_species_consensus == 1)[,-c(10,17:18)]
-  colnames(data_zonation_list[[2]])[10] <- "predict"
-   #all species
-  data_zonation_list[[3]] <- data_zonation[,-c(11,17:18)]
+  data_zonation_list[[1]] <- subset(data_zonation,data_zonation$selected_species == 1)
+  
+#keep only predicted and species already in IUCN with consensus
+  data_zonation_list[[2]] <- subset(data_zonation,data_zonation$selected_species_consensus == 1)
+  
+#all species
+  data_zonation_list[[3]] <- data_zonation
   
 names(data_zonation_list) <- c("main", "sensibility1","sensibility2")
   
@@ -195,11 +196,11 @@ data_final_zonation <- lapply(1: length(data_zonation_list), function(x){
    
     print(i)
     
-    if(data$IUCN_alone[i] %in% "Thr"){
+    if(data$IUCN_cat[i] %in% "Thr"){
       data$scenario2_IUCNalone[i] <- 6
       data$scenario3_IUCN_and_Predict[i] <-  6 }
     
-     else if (data$IUCN_alone[i] %in% "NThr"){
+     else if (data$IUCN_cat[i] %in% "NThr"){
       data$scenario2_IUCNalone[i] <- 1
       data$scenario3_IUCN_and_Predict[i] <- 1
     }
