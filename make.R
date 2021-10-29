@@ -77,9 +77,10 @@ FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
 #Species as rownames
 #All traits as columns
 
-FB_vars = FB_scrapped %>% dplyr::select(-c(Importance,LongevityWild)) %>%   
-  left_join(DepthRange,by="species")
-  #
+FB_vars = FB_scrapped %>%   
+  left_join(DepthRange,by="species") %>% 
+  mutate(Depth_min = log10(Depth_min+1),
+         Depth_max = log10(Depth_max+1))
 
 #Get IUCN status
 #IUCN_status <- get_iucn_status(FB_vars)
@@ -114,10 +115,6 @@ test_missForest = missForest_test(FB_IUCN,FB_final)
 data_noNA = missForest_applied(FB_IUCN,0.6,test_missForest)
 
 save(data_noNA, file = "outputs/data_noNA.Rdata")
-
-# #HERE ADD FUNCTION TO SELECT VARIABLES
-data_model = data_noNA %>%
-   dplyr::select(-c(Vul,Length))
 
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_model)
