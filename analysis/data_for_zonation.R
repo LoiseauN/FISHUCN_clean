@@ -149,7 +149,7 @@ for(i in 1:nrow(data_zonation)){
   
   print(i)
   
-  if(!is.na(data_zonation$IUCN_cat[i])) data_zonation$selected_species_IUCNonly <- NA
+  if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
 
   if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
   data_zonation$selected_species_complementary_W_IUCN[i] <- 1
@@ -159,106 +159,73 @@ for(i in 1:nrow(data_zonation)){
     data_zonation$selected_species_consensus_W_IUCN[i] <- 1
   }
   
+data_zonation$weight_zonation_IUCN_and_Predict <- NA
+data_zonation$weight_zonation_IUCN_alone <- NA
+data_zonation$scenario1_NoWeight <- 1
+
+
+
 # SCENARIO 1: 
 # 1 for everyone
-data_zonation$scenario1_NoWeight <- 1
-data_zonation$scenario2_IUCNalone <- NA
-data_zonation$scenario3_IUCN_and_Predict_complementarity <- NA
-data_zonation$scenario3_IUCN_and_Predict_consensus <- NA
 
-data_zonation_list <- list()
-#keep only predicted and species already in IUCN 
-  data_zonation_list[[1]] <- subset(data_zonation,data_zonation$selected_species == 1)
-  
-#keep only predicted and species already in IUCN with consensus
-  data_zonation_list[[2]] <- subset(data_zonation,data_zonation$selected_species_consensus == 1)
-  
-#all species
-  data_zonation_list[[3]] <- data_zonation
-  
-names(data_zonation_list) <- c("main", "sensibility1","sensibility2")
-  
 
-# SCENARIO 3  :  Weighted in function of the machine learning probability with negative influence for non threaten
+# SCENARIO 2  :  Weighted in function of the machine learning probability with negative influence for non threaten
 # NA  by IUCN and predit = 2 (for SM 2 and 1)
-# NonThreatened by IUCN = 1 or if both model AGREE
+# NonThreatened by IUCN  = 1 
 # NonThreatened predit = 2-probability
 # Threatened by IUCN = 6
 # Threatened predit = 2 + probability (range between 2 and 5)
-# or 5 if both model AGREE
 
 
-data_final_zonation <- lapply(1: length(data_zonation_list), function(x){
+#data_final_zonation <- lapply(1: length(data_zonation_list), function(x){
   
-  data <- data_zonation_list[[x]]
-  
-  for(i in 1:nrow(data)){
+  for(i in 1:nrow(data_zonation)){
    
     print(i)
     
-    if(data$IUCN_cat[i] %in% "Thr"){
-      data$scenario2_IUCNalone[i] <- 6
-      data$scenario3_IUCN_and_Predict[i] <-  6 }
-    
-     else if (data$IUCN_cat[i] %in% "NThr"){
-      data$scenario2_IUCNalone[i] <- 1
-      data$scenario3_IUCN_and_Predict[i] <- 1
-    }
+    if(data_zonation$IUCN_cat[i] %in% "Thr"){
+      data_zonation$weight_zonation_IUCN_alone[i] <- 6
+      data_zonation$weight_zonation_IUCN_and_Predict[i] <-  6  
+      }
+
+     else if (data_zonation$IUCN_cat[i] %in% "NThr"){
+       data_zonation$weight_zonation_IUCN_alone[i] <- 1
+       data_zonation$weight_zonation_IUCN_and_Predict[i] <- 1
+      }
 
     else{ 
     #Non information at all
-    if(is.na(data$predict[i])){
+    if(is.na(data_zonation$predict_complementary[i])){
       
-      data$scenario2_IUCNalone[i] <- 2
-      data$scenario3_IUCN_and_Predict[i] <- 2 # ou 1.5 
-    
+      data_zonation$weight_zonation_IUCN_alone[i] <- 2
+      data_zonation$weight_zonation_IUCN_and_Predict[i] <- 2 # ou 1.5 
+      
     }
     
-      else if(data$predict[i] %in% "NThr"){
+      else if(data_zonation$predict_complementary[i] %in% "NThr"){
       
       #Non Threatened predict par model
-      if (!data$agree[i]  %in% "AGREE"){ 
-        data$scenario2_IUCNalone[i] <- 1
-        data$scenario3_IUCN_and_Predict[i] <- data[data$species %in% data$species[i],]$proba_rescale
-        
+        data_zonation$weight_zonation_IUCN_alone[i] <- 1
+        data_zonation$weight_zonation_IUCN_and_Predict[i] <- data_zonation[data_zonation$species %in% data_zonation$species[i],]$proba_rescale
+    }
+    
+      else if(data_zonation$predict_complementary[i] %in% "Thr"){
+      
+        data_zonation$weight_zonation_IUCN_alone[i] <- 1
+        data_zonation$weight_zonation_IUCN_and_Predict[i] <- data_zonation[data_zonation$species %in% data_zonation$species[i],]$proba_rescale
+
+         }
+    
       }
-      else { 
-          
-          data$scenario2_IUCNalone[i] <- 1
-          data$scenario3_IUCN_and_Predict[i] <- 1
-       }
-    }
     
-      else if(data$predict[i] %in% "Thr"){
-      
-      if (!data$agree[i]  %in% "AGREE"){ 
-      
-        data$scenario2_IUCNalone[i] <- 1
-        data$scenario3_IUCN_and_Predict[i] <- data[data$species %in% data$species[i],]$proba_rescale
-      
-        } 
-      
-      else { 
-          
-          data$scenario2_IUCNalone[i] <- 1
-          data$scenario3_IUCN_and_Predict[i] <- 5
-          
-        }
-    }
+    }  
+  
     
-  }
-  }  
-  return(data)
-})
-  
-names(data_final_zonation) <- c("main", "sensibility1","sensibility2")
-  a <- boxplot(data_final_zonation[[1]]$scenario1_NoWeight,
-          data_final_zonation[[1]]$scenario2_IUCNalone,
-          data_final_zonation[[1]]$scenario3_IUCN_and_Predict)
-  
-  b <- boxplot(data_final_zonation[[1]]$scenario1_NoWeight,
-               data_final_zonation[[1]]$scenario2_IUCNalone,
-               data_final_zonation[[1]]$scenario3_IUCN_and_Predict)
+ boxplot(data_zonation$scenario1_NoWeight,
+        data_zonation$weight_zonation_IUCN_alone,
+        data_zonation$weight_zonation_IUCN_and_Predict)
+
+
 
   
 

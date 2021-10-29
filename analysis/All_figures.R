@@ -86,7 +86,7 @@ addLevel <- function(x, newlevel=NULL) {
 
 
 
-dat_network <- data.frame(data_final_zonation$main[,c("species","IUCN_alone","predict")])
+dat_network <- data.frame(data_zonation[,c("species","IUCN_cat","predict_complementary")])
 
 dat_network <- addLevel(dat_network, "Threatened")
 dat_network <- addLevel(dat_network, "Non Threatened")
@@ -104,13 +104,7 @@ dat_network<-as.data.frame(sapply(dat_network,
                                   mapvalues, from = c("NThr"), 
                                   to = c("Non Threatened")))
 
-not_in_model <- data.frame(species = rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]),
-           IUCN_alone= rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))),
-             predict=rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))))
 
-
-
-dat_network <- rbind(dat_network,not_in_model)
 #dat_network<-as.data.frame(sapply(dat_network,
  #                                 mapvalues, from = c("LC","NT","nt","NC"), 
   #                                to = c("Non Threatened","Non Threatened",
@@ -123,23 +117,24 @@ dat_network <- rbind(dat_network,not_in_model)
 dat_network$IUCN_final <- NA
 
 for (i in 1:nrow (dat_network)){
-  if(is.na(dat_network$IUCN_alone[i])){ dat_network$IUCN_final[i]=dat_network$predict[i]
+  if(is.na(dat_network$IUCN_cat[i])){ dat_network$IUCN_final[i]=dat_network$predict[i]
   
   }else{
     
-    dat_network$IUCN_final[i]=dat_network$IUCN_alone[i]
+    dat_network$IUCN_final[i]=dat_network$IUCN_cat[i]
     
   }
 }
 
 dat_network<-as.data.frame(sapply(dat_network,
-                                  mapvalues, from = c(NA), 
-                                  to = c("No Status")))
+                                  mapvalues, from = c(NA,"NaN"), 
+                                  to = c("No Status","No Status")))
 
 
-df <- data.frame('id' = rep(dat_network$species,2),
-                 'stage' = as.factor(c(rep("Before Prediction",nrow(dat_network)), rep("After Prediction",nrow(dat_network)))),
-                 'group' = as.factor(c(dat_network$IUCN_alone,dat_network$IUCN_final)))
+df <- data.frame(id = rep(dat_network$species,2),
+                 stage = as.factor(c(rep("Before Prediction",nrow(dat_network)), rep("After Prediction",nrow(dat_network)))),
+                 group = as.factor(c(dat_network$IUCN_cat,dat_network$IUCN_final)))
+
 df <- transform(df,
                 group = factor(group, rev(levels(group))))
 df <- transform(df,
@@ -149,8 +144,8 @@ plot_net <-
   ggplot(df, aes(x = stage, stratum = group, alluvium = id, fill = group, label = stage)) +
   scale_x_discrete(expand = c(.15, .15)) +
   geom_flow(color="white") +
-  scale_fill_manual(values = c("firebrick1", "forestgreen", "grey35"), name = "IUCN status", 
-                    guide = guide_legend(reverse = TRUE))+
+  scale_fill_manual(values = c("firebrick1", "forestgreen", "grey35","pink"), name = "IUCN status", 
+                    guide = guide_legend(reverse = TRUE)) +
   geom_stratum(alpha = 1,color="white") +
   geom_text(stat = "stratum",
             aes(label = percent(after_stat(prop), accuracy = .1)))+
