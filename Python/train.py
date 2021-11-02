@@ -38,7 +38,7 @@ def prepare_data(data): # Remove all species without IUCN status and label encod
     joblib.dump(le, str(Path('./Label_Encoder/le_IUCN.joblib')))
     return data_no_na
 
-def split(data):
+def split(data): # Create balanced database 
     data = data.sample(frac=1).reset_index(drop=True)
     df0 = data.loc[data["IUCN"] == 0]
     df1 = data.loc[data["IUCN"] == 1]
@@ -185,8 +185,6 @@ def predict(original_df, df_all_split, nb_run_per_split): # Train XX model with 
     s1 = nb_model * 80 / 100
     s2 = nb_model * 20 / 100
 
-    # Results to csv file
-    
     res = pd.DataFrame(columns = ['species', 'IUCN', 'percentage'])
     le = joblib.load(str(Path('./Label_Encoder/le_IUCN.joblib')))
     for i in range(len(res_all[1])):
