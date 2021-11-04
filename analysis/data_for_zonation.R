@@ -121,8 +121,12 @@ data_zonation <- data.frame(species = rownames(FB_final),
 #}
 
 # ----------  Change 
-data_zonation <- merge(data_zonation,all_predict,  by = "species", all.x = T)
+data_zonation<- data_zonation %>%
+  left_join(all_predict,by="species")
 data_zonation$proba_select <- as.numeric(data_zonation$proba_select)/100
+
+
+
 
 
 rescale_threat <-  subset(data_zonation, data_zonation$predict_complementary =="Thr" & is.na(data_zonation$IUCN_cat))
@@ -135,30 +139,34 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
                             proba_rescale = c(rescale_threat$proba_rescale ,
                                               rescale_non_threat$proba_rescale))
   
+  data_zonation<- data_zonation %>%
+    left_join(rescale_data,by="species")
 
-  data_zonation <- merge(data_zonation,rescale_data, by = "species", all.x = T)
 
   
 #--- Prepare for scenario  
   
-data_zonation$selected_species_IUCNonly <- NA
-data_zonation$selected_species_complementary_W_IUCN <- NA
-data_zonation$selected_species_consensus_W_IUCN <- NA
+#data_zonation$selected_species_IUCNonly <- NA
+#data_zonation$selected_species_complementary_W_IUCN <- NA
+#data_zonation$selected_species_consensus_W_IUCN <- NA
 
-for(i in 1:nrow(data_zonation)){ 
+#for(i in 1:nrow(data_zonation)){ 
   
-  print(i)
+ # print(i)
   
-  if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
+ #if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
 
-  if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
-  data_zonation$selected_species_complementary_W_IUCN[i] <- 1
+  #if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
+  #data_zonation$selected_species_complementary_W_IUCN[i] <- 1
  
 
-  if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
-    data_zonation$selected_species_consensus_W_IUCN[i] <- 1
-  }
+  #if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
+  #  data_zonation$selected_species_consensus_W_IUCN[i] <- 1
+  #}
   
+
+
+
 data_zonation$weight_zonation_IUCN_and_Predict <- NA
 data_zonation$weight_zonation_IUCN_alone <- NA
 data_zonation$scenario1_NoWeight <- 1
