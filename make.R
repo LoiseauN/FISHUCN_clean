@@ -72,6 +72,7 @@ save(species_traits,file = here::here("outputs/species_traits.RData"))
 
 #Selecting variables of interest
 FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
+save(FB_scrapped,file = here::here("outputs/FB_scrapped.RData"))
 
 #PLEASE READ THIS : To run this, your data needs to be formatted as follows : 
 #Species as rownames
@@ -117,24 +118,21 @@ data_noNA = missForest_applied(FB_IUCN,0.6,test_missForest)
 save(data_noNA, file = "outputs/data_noNA.Rdata")
 
 #Splitting data with NA filled out by missForest or with original data with no NA
-split = data_prep(data_model)
+split = data_prep(data_noNA)
 
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(split,10)
 
 #Running IUCN predictions
-run_IUCN = IUCN_predict(split,data_model,10)
+run_IUCN = IUCN_predict(split,data_noNA,10)
 
 #IUCN consensus (0.5 for this dummy dataset)
 IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),80)
 
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
-
 IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,80)
 
 #THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY OF BOTH METHODS
-
-
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)
   
 
@@ -152,4 +150,4 @@ lapply(files, load, envir=.GlobalEnv)
 
 #Figure of variable importance
 #Saved in Figures folder
-figure1 = var_imp(rel_inf)
+figure1 = var_imp(test_IUCN[[1]])
