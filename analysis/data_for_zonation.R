@@ -146,23 +146,23 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
   
 #--- Prepare for scenario  
   
-#data_zonation$selected_species_IUCNonly <- NA
-#data_zonation$selected_species_complementary_W_IUCN <- NA
-#data_zonation$selected_species_consensus_W_IUCN <- NA
+data_zonation$selected_species_IUCNonly <- NA
+data_zonation$selected_species_complementary_W_IUCN <- NA
+data_zonation$selected_species_consensus_W_IUCN <- NA
 
-#for(i in 1:nrow(data_zonation)){ 
+for(i in 1:nrow(data_zonation)){ 
   
- # print(i)
+ print(i)
   
- #if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
+if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
 
-  #if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
-  #data_zonation$selected_species_complementary_W_IUCN[i] <- 1
+  if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
+  data_zonation$selected_species_complementary_W_IUCN[i] <- 1
  
 
-  #if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
-  #  data_zonation$selected_species_consensus_W_IUCN[i] <- 1
-  #}
+  if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
+    data_zonation$selected_species_consensus_W_IUCN[i] <- 1
+  }
   
 
 
@@ -234,10 +234,13 @@ data_zonation$scenario1_NoWeight <- 1
         data_zonation$weight_zonation_IUCN_and_Predict)
 
 
-
+ test <- subset(data_zonation,data_zonation$selected_species_IUCNonly==1)
+ boxplot(test$scenario1_NoWeight,
+         test$weight_zonation_IUCN_alone,
+         test$weight_zonation_IUCN_and_Predict)
   
 
-save(data_final_zonation,file= here::here("outputs","data_final_zonation.RData"))
+save(data_zonation,file= here::here("outputs","data_zonation.RData"))
 
 
 
