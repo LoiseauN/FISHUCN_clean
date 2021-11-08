@@ -125,16 +125,18 @@ test_IUCN = IUCN_test(split,10)
 
 #Running IUCN predictions
 run_IUCN = IUCN_predict(split,data_noNA,10)
+save(run_IUCN,file = "outputs/run_IUCN.Rdata")
 
 #IUCN consensus (0.5 for this dummy dataset)
-IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),80)
+IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),75)
 
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
-IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,80)
+IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,75)
 
 #THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY OF BOTH METHODS
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)
-  
+
+save(all_predict,file = "outputs/all_predict.Rdata")
 
 #THEN  FUNCTION THAT MAKES CONSENSUS OF BOTH METHODS FOR SUPPLEMENTARY
 

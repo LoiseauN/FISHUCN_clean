@@ -18,12 +18,13 @@ files <- list.files(here::here("outputs"))
 lapply(files, load, envir=.GlobalEnv)
 
 #Data from Deep
-pred_deep <- read.csv2("res_inference_deep.csv",sep=",",header=T)
-pred_deep <- subset(pred_deep,pred_deep$proba>=80)
+#pred_deep <- read.csv2("res_inference_deep.csv",sep=",",header=T)
+#pred_deep <- subset(pred_deep,pred_deep$proba>=80)
 
 #Data from machine
-load("res_inference_machine.RData")
-pred_mach <- subset(res_inference_machine,res_inference_machine$percentage>=80)
+#load("res_inference_machine.RData")
+#pred_mach <- subset(res_inference_machine,res_inference_machine$percentage>=80)
+
 
 #Merge Data
 FISHUCN <- merge(pred_deep,pred_mach,by="species",all=T)
