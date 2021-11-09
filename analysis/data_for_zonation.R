@@ -17,88 +17,6 @@ setwd(path)
 files <- list.files(here::here("outputs"))
 lapply(files, load, envir=.GlobalEnv)
 
-#Data from Deep
-#pred_deep <- read.csv2("res_inference_deep.csv",sep=",",header=T)
-#pred_deep <- subset(pred_deep,pred_deep$proba>=80)
-
-#Data from machine
-#load("res_inference_machine.RData")
-#pred_mach <- subset(res_inference_machine,res_inference_machine$percentage>=80)
-
-
-#Merge Data
-FISHUCN <- merge(pred_deep,pred_mach,by="species",all=T)
-colnames(FISHUCN) <- c("species", "IUCN_deep","proba", "IUCN_machine","n","percentage")
-
-#Highlight consensus or not between deeplearing and machine learning
-FISHUCN$agree <- NA
-for (i in 1:nrow(FISHUCN)){
-  print(i)
-  if(is.na(FISHUCN$IUCN_deep[i]) & !is.na(FISHUCN$IUCN_machine[i])) {FISHUCN$agree[i] <- "ONLY_MACHINE"}
-  
-  else if(!is.na(FISHUCN$IUCN_deep[i]) & is.na(FISHUCN$IUCN_machine[i])){FISHUCN$agree[i] <- "ONLY_DEEP"}
-  
-  else if(FISHUCN$IUCN_deep[i]==FISHUCN$IUCN_machine[i]){FISHUCN$agree[i] <- "AGREE"}
-  
-  else{FISHUCN$agree[i] <- "NOT AGREE"}
-  
-}
-
-
-#Predict with the complementary approach
-FISHUCN$predict <- NA
-for (i in 1:nrow(FISHUCN)){
-  print(i)
-  
-  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_machine[i])}
-  
-  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_deep[i])}
-  
-  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_machine[i])}
-  
-  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict[i] <- NA}
-  
-}
-
-
-#Predict with the consensus
-FISHUCN$predict_consensus <- NA
-for (i in 1:nrow(FISHUCN)){
-  print(i)
-  
-  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict_consensus[i] <- NA}
-  
-  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict_consensus[i] <- NA}
-  
-  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict_consensus[i] <- as.character(FISHUCN$IUCN_machine[i])}
-  
-  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict_consensus[i] <- NA}
-  
-}
-
-# Take the 
-FISHUCN$proba_select <- NA 
-
-for (i in 1:nrow(FISHUCN)){
-  print(i)
-  
-  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$proba_select[i] <- FISHUCN$percentage[i]}
-  
-  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$proba_select[i] <- FISHUCN$proba[i]}
-  
-  #Feel after
-  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$proba_select[i] <- NA}
-  
-  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$proba_select[i] <- NA}
-  
-}
-
-
-
-save(FISHUCN,file="FISHUCN.RData")
-
-
-
 #Last file to send in zonation
 
 data_zonation <- data.frame(species = rownames(FB_final),
@@ -125,10 +43,6 @@ data_zonation <- data.frame(species = rownames(FB_final),
 data_zonation<- data_zonation %>%
   left_join(all_predict,by="species")
 data_zonation$proba_select <- as.numeric(data_zonation$proba_select)/100
-
-
-
-
 
 rescale_threat <-  subset(data_zonation, data_zonation$predict_complementary =="Thr" & is.na(data_zonation$IUCN_cat))
 rescale_non_threat <-  subset(data_zonation, data_zonation$predict_complementary =="NThr" & is.na(data_zonation$IUCN_cat))
@@ -235,10 +149,17 @@ data_zonation$scenario1_NoWeight <- 1
         data_zonation$weight_zonation_IUCN_and_Predict)
 
 
- test <- subset(data_zonation,data_zonation$selected_species_IUCNonly==1)
- boxplot(test$scenario1_NoWeight,
-         test$weight_zonation_IUCN_alone,
-         test$weight_zonation_IUCN_and_Predict)
+ IUCNonly <- subset(data_zonation,data_zonation$selected_species_IUCNonly==1)
+ IUCNonly <- IUCNonly[,c("species","weight_zonation_IUCN_alone")]
+ 
+ IUCNandpredict <- subset(data_zonation,data_zonation$selected_species_complementary_W_IUCN==1)
+ IUCNandpredict <- IUCNandpredict[,c("species","weight_zonation_IUCN_and_Predict")]
+
+ NoWeight <- subset(data_zonation,data_zonation$selected_species_complementary_W_IUCN==1)
+ NoWeight <- NoWeight[,c("species","scenario1_NoWeight")] 
+ 
+ save(data_zonation,file= here::here("outputs","data_zonation.RData"))
+ 
  
  test <- subset(data_zonation,data_zonation$selected_species_complementary_W_IUCN==1)
  boxplot(test$scenario1_NoWeight,
@@ -248,6 +169,102 @@ data_zonation$scenario1_NoWeight <- 1
   
 
 save(data_zonation,file= here::here("outputs","data_zonation.RData"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Data from Deep
+#pred_deep <- read.csv2("res_inference_deep.csv",sep=",",header=T)
+#pred_deep <- subset(pred_deep,pred_deep$proba>=80)
+
+#Data from machine
+#load("res_inference_machine.RData")
+#pred_mach <- subset(res_inference_machine,res_inference_machine$percentage>=80)
+
+
+
+
+#Merge Data
+FISHUCN <- merge(pred_deep,pred_mach,by="species",all=T)
+colnames(FISHUCN) <- c("species", "IUCN_deep","proba", "IUCN_machine","n","percentage")
+
+#Highlight consensus or not between deeplearing and machine learning
+FISHUCN$agree <- NA
+for (i in 1:nrow(FISHUCN)){
+  print(i)
+  if(is.na(FISHUCN$IUCN_deep[i]) & !is.na(FISHUCN$IUCN_machine[i])) {FISHUCN$agree[i] <- "ONLY_MACHINE"}
+  
+  else if(!is.na(FISHUCN$IUCN_deep[i]) & is.na(FISHUCN$IUCN_machine[i])){FISHUCN$agree[i] <- "ONLY_DEEP"}
+  
+  else if(FISHUCN$IUCN_deep[i]==FISHUCN$IUCN_machine[i]){FISHUCN$agree[i] <- "AGREE"}
+  
+  else{FISHUCN$agree[i] <- "NOT AGREE"}
+  
+}
+
+
+#Predict with the complementary approach
+FISHUCN$predict <- NA
+for (i in 1:nrow(FISHUCN)){
+  print(i)
+  
+  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_machine[i])}
+  
+  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_deep[i])}
+  
+  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict[i] <- as.character(FISHUCN$IUCN_machine[i])}
+  
+  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict[i] <- NA}
+  
+}
+
+
+#Predict with the consensus
+FISHUCN$predict_consensus <- NA
+for (i in 1:nrow(FISHUCN)){
+  print(i)
+  
+  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$predict_consensus[i] <- NA}
+  
+  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$predict_consensus[i] <- NA}
+  
+  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$predict_consensus[i] <- as.character(FISHUCN$IUCN_machine[i])}
+  
+  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$predict_consensus[i] <- NA}
+  
+}
+
+# Take the 
+FISHUCN$proba_select <- NA 
+
+for (i in 1:nrow(FISHUCN)){
+  print(i)
+  
+  if(FISHUCN$agree[i] == "ONLY_MACHINE") {FISHUCN$proba_select[i] <- FISHUCN$percentage[i]}
+  
+  if(FISHUCN$agree[i] == "ONLY_DEEP"){FISHUCN$proba_select[i] <- FISHUCN$proba[i]}
+  
+  #Feel after
+  if(FISHUCN$agree[i] == "AGREE"){FISHUCN$proba_select[i] <- NA}
+  
+  if(FISHUCN$agree[i] == "NOT AGREE"){FISHUCN$proba_select[i] <- NA}
+  
+}
+
+
+
+save(FISHUCN,file="FISHUCN.RData")
 
 
 
