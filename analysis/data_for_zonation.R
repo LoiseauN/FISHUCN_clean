@@ -155,10 +155,12 @@ data_zonation$scenario1_NoWeight <- 1
  IUCNandpredict <- subset(data_zonation,data_zonation$selected_species_complementary_W_IUCN==1)
  IUCNandpredict <- IUCNandpredict[,c("species","weight_zonation_IUCN_and_Predict")]
 
- NoWeight <- subset(data_zonation,data_zonation$selected_species_complementary_W_IUCN==1)
+ NoWeight <- subset(data_zonation,data_zonation$selected_species_IUCNonly==1)
  NoWeight <- NoWeight[,c("species","scenario1_NoWeight")] 
  
- save(data_zonation,file= here::here("outputs","data_zonation.RData"))
+ 
+ data_final_zonation <-list(IUCNonly,IUCNandpredict,NoWeight)
+ save(data_final_zonation,file= here::here("outputs","data_final_zonation.RData"))
  
  
  test <- subset(data_zonation,data_zonation$selected_species_complementary_W_IUCN==1)

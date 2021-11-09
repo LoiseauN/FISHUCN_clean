@@ -138,6 +138,8 @@ all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_fin
 
 save(all_predict,file = "outputs/all_predict.Rdata")
 
+
+
 #THEN  FUNCTION THAT MAKES CONSENSUS OF BOTH METHODS FOR SUPPLEMENTARY
 
 #------------------Loading outputs----------------------

@@ -7,7 +7,7 @@ ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
 all_predict
 # ---------- Load data
-load(file=file.path(results_dir,"all_predict.RData"))
+load(file=file.path("outputs","all_predict.RData"))
 
 #With package rredlist extract status
 mammals_status <- rl_comp_groups("mammals", key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
@@ -153,16 +153,11 @@ plot_net <-
   xlab("") +ylab("Number of species")
 
 plot_net
-#'---------------------------------------------------------------------@Importancevariable
-imp_var_plot <- ggplot(rel_inf, aes(x=reorder(rowname,importance.mod.), y=importance.mod.,fill=importance.mod.))+ 
-  geom_bar(stat="identity", position="dodge")+ coord_flip()+
-  labs(x="Variable importance by permutation",
-       y="")+
-  guides(fill=F)+
-  scale_fill_gradient(low="aquamarine", high="darkcyan")+
-  theme_bw()
 
-
+#'---------------------------------------------------------------------@Percentagegainmodel
+#'
+#'
+#'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
 #'---------------------------------------------------------------------@Protectionanalyses
 load("PctMPAFish.RData")
 PctMPAFish$species <- str_replace(PctMPAFish$species, "_", "-")

@@ -1,10 +1,11 @@
 #Phylogenie
 
 library(stringr)
-tree <- ape::read.tree("Reef_fish_all.tacted.newick.tre")
 
-tree$tip.label<-  str_replace(tree$tip.label, "_", "-")
-set_fish <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.character(rownames(FB_vars)))])
+tree <- ape::read.tree(here::here("data","Reef_fish_all.tacted.newick.tre"))
+
+#tree$tip.label<-  str_replace(tree$tip.label, "_", "-")
+set_fish <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.character(FB_vars$species))])
 
 
 
@@ -12,7 +13,7 @@ set_fish <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.char
 
 #' ---------------------------------------------------------------------------- @Speciesperstatus
 
-dat_phylo <- data.frame(species = rownames(FB_vars),
+dat_phylo <- data.frame(species = FB_vars$species,
                   family = FB_vars$Family,
                   Threatened_IUCN = rep(NA,nrow(FB_vars)),
                   Threatened_predicted = rep(NA,nrow(FB_vars)),
@@ -31,11 +32,11 @@ colnames(dat_phylo)[1:2] <- c("label","group")
 
 for(i in 1:nrow(dat_phylo)){
   print(i)
-  if(dat_network$IUCN_alone[i] == "Non Threatened"){dat_phylo$Non_Threatened_IUCN[i] <- 1}
-  if(dat_network$predict[i] == "Non Threatened"){dat_phylo$Non_Threatened_predicted[i] <- 1}
+  if(dat_network$IUCN_cat[i] == "Non Threatened"){dat_phylo$Non_Threatened_IUCN[i] <- 1}
+  if(dat_network$predict_complementary[i] == "Non Threatened"){dat_phylo$Non_Threatened_predicted[i] <- 1}
 
-  if(dat_network$IUCN_alone[i] == "Threatened"){dat_phylo$Threatened_IUCN[i] <- 1}
-  if(dat_network$predict[i] == "Threatened"){dat_phylo$Threatened_predicted[i] <- 1}
+  if(dat_network$IUCN_cat[i] == "Threatened"){dat_phylo$Threatened_IUCN[i] <- 1}
+  if(dat_network$predict_complementary[i] == "Threatened"){dat_phylo$Threatened_predicted[i] <- 1}
   
   if(dat_network$IUCN_final[i] == "No Status") {dat_phylo$Unpredicted[i] <- 1}
   

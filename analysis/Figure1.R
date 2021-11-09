@@ -35,8 +35,7 @@ var_imp = function(rel_inf){
       legend.position="none"
     ) +
     xlab("Variables") +
-    ylab("")+
-    ggtitle("Species Richness")
+    ylab("")
 
   ggsave(file = here::here("figures", "Figure1.pdf"), 
                  width = 11.7, height = 8.3)
