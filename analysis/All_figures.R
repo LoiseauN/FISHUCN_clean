@@ -5,7 +5,6 @@ nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
-all_predict
 # ---------- Load data
 load(file=file.path("outputs","all_predict.RData"))
 
@@ -61,7 +60,7 @@ data_4_taxa <- transform(data_4_taxa,
                                                "amphibians",
                                                "fishes")))
 
-ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) + 
+fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) + 
   geom_bar(position="stack", stat="identity",color="grey20") +
   scale_fill_manual(values = c("firebrick1", "forestgreen", "grey35"), name = "IUCN status", 
                     guide = guide_legend(reverse = TRUE))+
@@ -72,6 +71,7 @@ ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   add_phylopic(amphibians_pic,x = 3, y = 50, ysize = 10, alpha = 1)+
   add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1)
 
+ggsave(file = here::here("figures/fig1.png"),width = 12, height = 12, units= "in",dpi= 300)
 
 #'---------------------------------------------------------------------@ResultsPrediction
 
@@ -152,7 +152,8 @@ plot_net <-
   theme_bw()+
   xlab("") +ylab("Number of species")
 
-plot_net
+ggsave(file = here::here("figures/fig2.png"),width = 12, height = 12, units= "in",dpi= 300)
+
 
 #'---------------------------------------------------------------------@Percentagegainmodel
 #'
@@ -194,22 +195,11 @@ fig_rank_hex <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2) ) +
 ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
 
 fig_rank <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2, color = diff) ) +
-  geom_point() +
+  geom_point(size=0.7) + 
   scale_color_continuous(type = "viridis",direction = -1) +
   theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
   geom_abline(slope=1, intercept = 0)
 ggsave(file = here::here("figures/fig_rank.png"),width = 12, height = 12, units= "in",dpi= 300)
-
-
-
-ggplot(Zrank_main, aes(x=rankMainSc2, y=log10(rankMainSc3+1), color = diff) ) +
-  geom_point() +
-  scale_color_continuous(type = "viridis",direction = -1) +
-  theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
-  geom_abline(slope=1, intercept = 0)
-
-
-
 
 
 # MAP
@@ -252,7 +242,9 @@ IUCN_MAP_predict <- ggplot() +
   theme_bw()+
   xlab("")+ylab("")
 
-grid.arrange(DIFF_MAP,IUCN_MAP,IUCN_MAP_predict,ncol =1)
+map <- grid.arrange(DIFF_MAP,IUCN_MAP,IUCN_MAP_predict,ncol =1)
+ggsave(file = here::here("figures/map_rank.png"),width = 15.75, height = 24.00, units= "in",dpi= 300)
+
 #Data for zonation
 #datazonation <- dat_network[,c("species","IUCN_status","IUCN_final")]
 #datazonation$species <- gsub("-", "_", datazonation$species)

@@ -167,8 +167,6 @@ data_zonation$scenario1_NoWeight <- 1
  boxplot(test$scenario1_NoWeight,
          test$weight_zonation_IUCN_alone,
          test$weight_zonation_IUCN_and_Predict)
- 
-  
 
 save(data_zonation,file= here::here("outputs","data_zonation.RData"))
 
