@@ -1,6 +1,6 @@
 # ---------- Load packages
-pkgs <- c("plyr","rredlist","ggplot2","viridis","hrbrthemes","rphylopic","scales","ggalluvial",
-          "stringr","cluster","ggstatsplot","palmerpenguins","tidyverse","grid","gridExtra")
+pkgs <- c("plyr","rredlist","ggplot2","viridis","hrbrthemes","rphylopic","scales","ggalluvial","dplyr",
+          "stringr","cluster","ggstatsplot","palmerpenguins","tidyverse","grid","gridExtra","raster","gridExtra")
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
@@ -185,19 +185,23 @@ plt +
 
 
 #'---------------------------------------------------------------------@zonationanalyses
+Zrank_main$diff <- Zrank_main$rankSc2-Zrank_main$rankSc1
 
-ggplot(Zrank_main, aes(x=rankMainSc2, y=rankMainSc3) ) +
+fig_rank_hex <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2) ) +
   geom_hex(bins = 100) +
   scale_fill_continuous(type = "viridis") +
   theme_bw() + xlab("IUCN only")+ ylab("IUCN + Predicted")
+ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
 
-
-ggplot(Zrank_main, aes(x=rankMainSc2, y=rankMainSc3, color = diff) ) +
+fig_rank <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2, color = diff) ) +
   geom_point() +
   scale_color_continuous(type = "viridis",direction = -1) +
   theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
   geom_abline(slope=1, intercept = 0)
-  
+ggsave(file = here::here("figures/fig_rank.png"),width = 12, height = 12, units= "in",dpi= 300)
+
+
+
 ggplot(Zrank_main, aes(x=rankMainSc2, y=log10(rankMainSc3+1), color = diff) ) +
   geom_point() +
   scale_color_continuous(type = "viridis",direction = -1) +
@@ -208,23 +212,16 @@ ggplot(Zrank_main, aes(x=rankMainSc2, y=log10(rankMainSc3+1), color = diff) ) +
 
 
 
-
-
-
-
-
-
 # MAP
 
-mask.full=raster("mask.full.tif")
-load("Zrank_main.RData")
+mask.full=raster(here::here("data","mask.full.tif"))
 
 maskdiff = mask.full
 maskdiff[Zrank_main$ID] = Zrank_main$diff
+maskSc1 = mask.full
+maskSc1[Zrank_main$ID] = Zrank_main$rankSc1
 maskSc2 = mask.full
-maskSc2[Zrank_main$ID] = Zrank_main$rankMainSc2
-maskSc3 = mask.full
-maskSc3[Zrank_main$ID] = Zrank_main$rankMainSc3
+maskSc2[Zrank_main$ID] = Zrank_main$rankSc2
 
 
 RankDiff <-as.data.frame(rasterToPoints(maskdiff))
@@ -237,20 +234,20 @@ DIFF_MAP <- ggplot() +
   xlab("")+ylab("")
 
 
-RankSc2 <-as.data.frame(rasterToPoints(maskSc2))
-colnames(RankSc2)[3] = "Rank"
+RankSc1 <-as.data.frame(rasterToPoints(maskSc1))
+colnames(RankSc1)[3] = "Rank"
 IUCN_MAP <- ggplot() +
-  geom_tile(data=RankSc2,aes(x = x, y = y, fill = Rank))+
-  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", midpoint = median(Zrank_main$rankMainSc2))+
+  geom_tile(data=RankSc1,aes(x = x, y = y, fill = Rank))+
+  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", midpoint = median(Zrank_main$rankSc1))+
   ggtitle("IUCN")+
   theme_bw()+
   xlab("")+ylab("")
 
-RankSc3<-as.data.frame(rasterToPoints(maskSc3))
-colnames(RankSc3)[3] = "Rank"
+RankSc2<-as.data.frame(rasterToPoints(maskSc2))
+colnames(RankSc2)[3] = "Rank"
 IUCN_MAP_predict <- ggplot() +
-  geom_tile(data=RankSc3,aes(x = x, y = y, fill = Rank))+
-  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", midpoint = median(Zrank_main$rankMainSc2))+
+  geom_tile(data=RankSc2,aes(x = x, y = y, fill = Rank))+
+  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", midpoint = median(Zrank_main$rankSc2))+
   ggtitle("IUCN + Predict")+
   theme_bw()+
   xlab("")+ylab("")
