@@ -250,6 +250,17 @@ ggsave(file = here::here("figures/map_rank.png"),width = 15.75, height = 24.00, 
 #datazonation$species <- gsub("-", "_", datazonation$species)
 #save(datazonation,file="datazonation.RData")
 
+
+
+
+
+
+
+
+
+
+
+
 #TEST 5% 
 RankScTEST2<-as.data.frame(rasterToPoints(maskSc2))
 colnames(RankScTEST2)[3] = "Rank"
