@@ -8,7 +8,7 @@ library(sf)
 
 
 
-setwd("~/Documents/Postdoc MARBEC/ESTHETIC/TargetAchievement/wdpa")
+setwd("~/Documents/Postdoc MARBEC/FISHUCN/last/FISHUCN_clean/data")
 #mapMPA<-readOGR(dsn=".",layer="WDPA_Feb2018_marine-shapefile-polygons")
 mapMPA<-st_read(dsn=".",layer="WDPA_Feb2018_marine-shapefile-polygons")
 
