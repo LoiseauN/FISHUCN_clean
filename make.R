@@ -36,11 +36,6 @@ setwd(path)
 files <- list.files(here::here("outputs"),pattern = ".RData")
 data_list = lapply(files, load, .GlobalEnv)
 
-path = (here::here("outputs"))
-setwd(path)
-files <- list.files(here::here("outputs"),pattern = ".Rdata")
-data_list = lapply(files, load, .GlobalEnv)
-
 
 #-----------------Loading all functions---------------------
 
@@ -101,11 +96,19 @@ FB_final$IUCN = as.factor(FB_final$IUCN)
 
 FB_final[FB_final==""]<-NA
 FB_final <- FB_final[rowSums(is.na(FB_final)) != 23, ]
+
+
+
+###########
+#TEST
+#FB_final <- FB_final[,c("Max_length","Env_2","Troph","Genus",
+#                        "Family","BodyShapeI","Aquarium","K","Depth_min","Depth_max","IUCN")]
+###########
 #Convert IUCN data to T and NT 
 FB_IUCN = IUCN_split(FB_final)
 #FB_IUCN <- FB_IUCN[,-22]
 #FB_vars <- FB_vars[,-22]
-
+dim(FB_final)
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
 #Trying out missforest
@@ -114,6 +117,11 @@ test_missForest = missForest_test(FB_IUCN,FB_final)
 
 #Applying missforest
 data_noNA = missForest_applied(FB_IUCN,0.6,test_missForest)
+
+###Checking species that are not in data_noNA
+
+dim(FB_final) - dim(data_noNA)
+FB_nonselec <-FB_final[!rownames(FB_final) %in% rownames(data_noNA),]
 
 save(data_noNA, file = "outputs/data_noNA.Rdata")
 

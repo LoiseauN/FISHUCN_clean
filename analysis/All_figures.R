@@ -171,8 +171,9 @@ data_protected <- data_protected[,-c(1:2)]
 colnames(data_protected)[4]<- "species"
 data_protected$IUCN_final <- as.factor(data_protected$IUCN_final)
 
+test <- subset(data_protected, data_protected$IUCN_cat =="No Status")
 plt <- ggstatsplot::ggbetweenstats(
-  data = data_protected,
+  data = test, #data_protected,
   x = IUCN_final,
   y = AreaMPAI_IV,
  )
