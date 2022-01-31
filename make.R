@@ -36,6 +36,7 @@ setwd(path)
 files <- list.files(here::here("outputs"),pattern = ".RData")
 data_list = lapply(files, load, .GlobalEnv)
 
+#TO CHECK HERE .Rdata for IUCN_status
 
 #-----------------Loading all functions---------------------
 
