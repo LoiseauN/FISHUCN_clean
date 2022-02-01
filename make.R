@@ -11,7 +11,7 @@
 
 #-----------------Loading packages-------------------
 
-pkgs <- c("tidyverse","missForest","parallel","here","tidymodels",
+pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","taxize",
           "ranger","caret","tuneRanger","smoof","caper","RCurl","XML","tidyverse",
           "pbmcapply","doParallel","rfishbase","beepr","arm")
 nip <- pkgs[!(pkgs %in% installed.packages())]
@@ -33,7 +33,7 @@ data_list = lapply(files, load, .GlobalEnv)
 
 path = (here::here("outputs"))
 setwd(path)
-files <- list.files(here::here("outputs"),pattern = ".RData")
+files <- list.files(here::here("outputs"),pattern = ".RData|Rdata")
 data_list = lapply(files, load, .GlobalEnv)
 
 #TO CHECK HERE .Rdata for IUCN_status
@@ -116,8 +116,47 @@ dim(FB_final)
 #HERE ADD OPTION THAT DELETES TEMPORARILY THE VARIABLES IF THEY HAVE TOO MANY NAs
 test_missForest = missForest_test(FB_IUCN,FB_final)
 
+#These variables we can't fill out : 
+FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min,Depth_max,Troph))
+FB_IUCN_more = FB_IUCN_more[!rowSums(is.na(FB_IUCN_more)) == ncol(FB_IUCN_more), ] 
+
+#BIT OF CODE TO FILL OUT TAXONOMIC NA 
+
+#Filling out genus and family where there is NA
+FB_IUCN_taxo_na = FB_IUCN_more %>% filter(is.na(Genus)) 
+
+#Add Genus and calculate the rest with taxize
+FB_IUCN_taxo_na = FB_IUCN_taxo_na %>% mutate(Genus = sub("\\_.*", "", rownames(FB_IUCN_taxo_na))) %>% dplyr::select(-Family)
+
+taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>% 
+  rbind() %>% 
+  filter(rank == "family")%>% 
+  dplyr::select(name, query) %>% 
+  dplyr::rename(Family = "name",
+                Genus = "query")
+
+FB_IUCN_taxo_nona = FB_IUCN_taxo_na %>% left_join(taxo, by = "Genus")
+#Manually filling out the rest
+FB_IUCN_taxo_nona[4,13] = "Percophidae"
+FB_IUCN_taxo_nona[72,13] = "Acropomatidae"
+FB_IUCN_taxo_nona[82,13] = "Gobiesocidae"
+FB_IUCN_taxo_nona[109,13] = "Cichlidae"
+FB_IUCN_taxo_nona[236,13] = "Cheilodactylidae"
+FB_IUCN_taxo_nona[237,13] = "Cheilodactylidae"
+FB_IUCN_taxo_nona[446,13] = "Scorpaenidae"
+
+FB_IUCN_taxo_nona = FB_IUCN_taxo_nona[!duplicated(FB_IUCN_taxo_nona), ]
+
+#And now adding in to the final dataframe
+FB_IUCN_temp = FB_IUCN_more %>% filter(!is.na(Genus))
+
+FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
+
+summary(FB_IUCN_final)
+
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN,0.6,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.55,test_missForest)
+
 
 ###Checking species that are not in data_noNA
 
