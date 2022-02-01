@@ -13,7 +13,7 @@
 
 pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","taxize",
           "ranger","caret","tuneRanger","smoof","caper","RCurl","XML","tidyverse",
-          "pbmcapply","doParallel","rfishbase","beepr","arm")
+          "pbmcapply","doParallel","rfishbase","beepr","arm","dplyr")
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
