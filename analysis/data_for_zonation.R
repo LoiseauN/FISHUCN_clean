@@ -63,23 +63,25 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
   
 #--- Prepare for scenario  
   
-  data_zonation$selected_species_IUCNonly <- NA
-  data_zonation$selected_species_complementary_W_IUCN <- NA
-  data_zonation$selected_species_consensus_W_IUCN <- NA
-
-  for(i in 1:nrow(data_zonation)){ 
   
-   print(i)
-  
-  if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
+  #IF WE WANT TO REMOVE SPECIES WITH DATA DEFICIENCY
+  # data_zonation$selected_species_IUCNonly <- NA
+  #data_zonation$selected_species_complementary_W_IUCN <- NA
+  #data_zonation$selected_species_consensus_W_IUCN <- NA
 
-    if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
-    data_zonation$selected_species_complementary_W_IUCN[i] <- 1
+  #for(i in 1:nrow(data_zonation)){ 
+  
+  #print(i)
+  
+  #if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
+
+  #if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
+  #data_zonation$selected_species_complementary_W_IUCN[i] <- 1
  
 
-    if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
-     data_zonation$selected_species_consensus_W_IUCN[i] <- 1
-   }
+  #if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
+  #data_zonation$selected_species_consensus_W_IUCN[i] <- 1
+  # }
   
 
 
@@ -146,16 +148,21 @@ data_zonation$scenario1_NoWeight <- 1
  boxplot(data_zonation$scenario1_NoWeight,
         data_zonation$weight_zonation_IUCN_alone,
         data_zonation$weight_zonation_IUCN_and_Predict)
-
-
- IUCNonly <- subset(data_zonation,data_zonation$selected_species_IUCNonly==1)
- IUCNonly <- IUCNonly[,c("species","weight_zonation_IUCN_alone")]
+#----------------------------------------------------------------
+ #IF WE WANT TO REMOVE SPECIES WITH DATA DEFICIENCY
+ #IUCNonly <- subset(data_zonation,data_zonation$selected_species_IUCNonly==1)
+ #IUCNonly <- IUCNonly[,c("species","weight_zonation_IUCN_alone")]
  
- IUCNandpredict <- subset(data_zonation,data_zonation$selected_species_complementary_W_IUCN==1)
- IUCNandpredict <- IUCNandpredict[,c("species","weight_zonation_IUCN_and_Predict")]
+ #IUCNandpredict <- subset(data_zonation,data_zonation$selected_species_complementary_W_IUCN==1)
+ #IUCNandpredict <- IUCNandpredict[,c("species","weight_zonation_IUCN_and_Predict")]
 
- NoWeight <- subset(data_zonation,data_zonation$selected_species_IUCNonly==1)
- NoWeight <- NoWeight[,c("species","scenario1_NoWeight")] 
+ #NoWeight <- subset(data_zonation,data_zonation$selected_species_IUCNonly==1)
+ #NoWeight <- NoWeight[,c("species","scenario1_NoWeight")] 
+#---------------------------------------------------------------- 
+ 
+ IUCNonly <- data_zonation[,c("species","weight_zonation_IUCN_alone")]
+ IUCNandpredict <- data_zonation[,c("species","weight_zonation_IUCN_and_Predict")]
+ NoWeight <- data_zonation[,c("species","scenario1_NoWeight")] 
  
  
  data_final_zonation <-list(IUCNonly,IUCNandpredict,NoWeight)
