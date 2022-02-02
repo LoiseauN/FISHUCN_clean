@@ -89,6 +89,8 @@ IUCN_status$species <- gsub("-","_",IUCN_status$species)
 #Get IUCN status
 FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IUCN = "IUCN_status") %>% column_to_rownames("species")
 
+
+
 #SOME TRANSFORMATION TO INCLUDE IN ONE OF THE FUNCTIONS
 #FB_final$Common_length = as.numeric(FB_final$Common_length)
 FB_final$IUCN = as.factor(FB_final$IUCN)
@@ -156,14 +158,14 @@ summary(FB_IUCN_final)
 
 #Applying missforest
 data_noNA = missForest_applied(FB_IUCN_final,0.55,test_missForest)
-
+save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
 
 dim(FB_final) - dim(data_noNA)
 FB_nonselec <-FB_final[!rownames(FB_final) %in% rownames(data_noNA),]
 
-save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
+
 
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_noNA)
@@ -180,10 +182,12 @@ IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),75)
 
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
 IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,75)
-
+IUCN_preds_deep_final[IUCN_preds_deep_final=="NaN"] <- NA
 #THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY OF BOTH METHODS
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)
 
+#TO CHECK WHY remove species with number 
+all_predict <- all_predict[-c(1:132),]
 save(all_predict,file = "outputs/all_predict.Rdata")
 
 

@@ -22,6 +22,8 @@ lapply(files, load, envir=.GlobalEnv)
 data_zonation <- data.frame(species = rownames(FB_final),
                             IUCN_cat = FB_final$IUCN) 
 
+data_zonation <- data_zonation[!rownames(data_zonation) %in% sort(rownames(FB_final))[c(1:90)],]
+
 #data_zonation$IUCN_alone <- NA
 
 # ----------  Change 
@@ -61,31 +63,24 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
   
 #--- Prepare for scenario  
   
-data_zonation$selected_species_IUCNonly <- NA
-data_zonation$selected_species_complementary_W_IUCN <- NA
-data_zonation$selected_species_consensus_W_IUCN <- NA
+  data_zonation$selected_species_IUCNonly <- NA
+  data_zonation$selected_species_complementary_W_IUCN <- NA
+  data_zonation$selected_species_consensus_W_IUCN <- NA
 
-for(i in 1:nrow(data_zonation)){ 
+  for(i in 1:nrow(data_zonation)){ 
   
- print(i)
+   print(i)
   
-if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
+  if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
 
-  if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
-  data_zonation$selected_species_complementary_W_IUCN[i] <- 1
+    if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
+    data_zonation$selected_species_complementary_W_IUCN[i] <- 1
  
 
-  if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
-    data_zonation$selected_species_consensus_W_IUCN[i] <- 1
-  }
+    if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
+     data_zonation$selected_species_consensus_W_IUCN[i] <- 1
+   }
   
-
-
-
-data_zonation$weight_zonation_IUCN_and_Predict <- NA
-data_zonation$weight_zonation_IUCN_alone <- NA
-data_zonation$scenario1_NoWeight <- 1
-
 
 
 # SCENARIO 1: 
@@ -101,7 +96,11 @@ data_zonation$scenario1_NoWeight <- 1
 
 
 #data_final_zonation <- lapply(1: length(data_zonation_list), function(x){
-  
+
+data_zonation$weight_zonation_IUCN_and_Predict <- NA
+data_zonation$weight_zonation_IUCN_alone <- NA
+data_zonation$scenario1_NoWeight <- 1
+
   for(i in 1:nrow(data_zonation)){
    
     print(i)

@@ -22,12 +22,14 @@ IUCN_complementarity = function(data_machine,data_deep){
   #Highlight consensus or not between deeplearing and machine learning
   all_predict$agree <- NA
   for (i in 1:nrow(all_predict)){
-    
     if(is.na(all_predict$IUCN_deep[i]) & !is.na(all_predict$IUCN_machine[i])) {all_predict$agree[i] <- "ONLY_MACHINE"}
     
     else if(!is.na(all_predict$IUCN_deep[i]) & is.na(all_predict$IUCN_machine[i])){all_predict$agree[i] <- "ONLY_DEEP"}
     
+    else if(is.na(all_predict$IUCN_deep[i]) & is.na(all_predict$IUCN_machine[i])) {all_predict$agree[i] <- NA}
+    
     else if(all_predict$IUCN_deep[i]==all_predict$IUCN_machine[i]){all_predict$agree[i] <- "AGREE"}
+    
     
     else{all_predict$agree[i] <- "NOT AGREE"}
     
@@ -36,29 +38,35 @@ IUCN_complementarity = function(data_machine,data_deep){
   
   #Predict with the complementary approach
   all_predict$predict_complementary <- NA
-  for (i in 1:nrow(all_predict)){
+  for (i in 1:nrow(all_predict)) {
     
-    if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
+    print(i)
+    if(is.na(all_predict$agree[i])) {all_predict$predict_complementary[i] <- NA}
     
-    if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_deep[i])}
+    else if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
     
-    if(all_predict$agree[i] == "AGREE"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
+    else if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_deep[i])}
     
-    if(all_predict$agree[i] == "NOT AGREE"){all_predict$predict_complementary[i] <- NA}
+    else if(all_predict$agree[i] == "AGREE"){all_predict$predict_complementary[i] <- as.character(all_predict$IUCN_machine[i])}
+   
+    else if (all_predict$agree[i] == "NOT AGREE") {all_predict$predict_complementary[i] <- NA} 
     
-  }
+       }
   
   #Predict with the consensus
   all_predict$predict_consensus <- NA
   for (i in 1:nrow(all_predict)){
     
-    if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_consensus[i] <- NA}
+    if(is.na(all_predict$agree[i])) {all_predict$predict_consensus[i] <- NA}
     
-    if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_consensus[i] <- NA}
     
-    if(all_predict$agree[i] == "AGREE"){all_predict$predict_consensus[i] <- as.character(all_predict$IUCN_machine[i])}
+    else if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$predict_consensus[i] <- NA}
     
-    if(all_predict$agree[i] == "NOT AGREE"){all_predict$predict_consensus[i] <- NA}
+    else if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$predict_consensus[i] <- NA}
+    
+    else if(all_predict$agree[i] == "AGREE"){all_predict$predict_consensus[i] <- as.character(all_predict$IUCN_machine[i])}
+    
+    else if(all_predict$agree[i] == "NOT AGREE"){all_predict$predict_consensus[i] <- NA}
     
   }
   
@@ -67,14 +75,16 @@ IUCN_complementarity = function(data_machine,data_deep){
   
   for (i in 1:nrow(all_predict)){
     
-    if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$proba_select[i] <- all_predict$percentage[i]}
+    if(is.na(all_predict$agree[i])) {all_predict$proba_select[i] <- NA}
     
-    if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$proba_select[i] <- all_predict$proba[i]}
+    else  if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$proba_select[i] <- all_predict$percentage[i]}
+    
+    else  if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$proba_select[i] <- all_predict$proba[i]}
     
     #IF AGREE WE PUT PROBA == 100
-    if(all_predict$agree[i] == "AGREE"){all_predict$proba_select[i] <- 100}
+    else if(all_predict$agree[i] == "AGREE"){all_predict$proba_select[i] <- 100}
     
-    if(all_predict$agree[i] == "NOT AGREE"){all_predict$proba_select[i] <- NA}
+    else if(all_predict$agree[i] == "NOT AGREE"){all_predict$proba_select[i] <- NA}
     
    
   }
