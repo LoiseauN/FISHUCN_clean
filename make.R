@@ -163,7 +163,7 @@ data_noNA = missForest_applied(FB_IUCN_final,0.55,test_missForest)
 dim(FB_final) - dim(data_noNA)
 FB_nonselec <-FB_final[!rownames(FB_final) %in% rownames(data_noNA),]
 
-save(data_noNA, file = "outputs/data_noNA.Rdata")
+save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_noNA)
