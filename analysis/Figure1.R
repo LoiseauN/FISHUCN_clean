@@ -43,7 +43,6 @@ var_imp = function(rel_inf){
 }
 
 
-relativ_import_alphaS <- 
 
 
 
