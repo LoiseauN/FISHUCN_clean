@@ -169,6 +169,24 @@ data_zonation$scenario1_NoWeight <- 1
  save(data_final_zonation,file= here::here("outputs","data_final_zonation.RData"))
  
  
+ 
+ 
+ 
+ #----------------------------------------------------------------
+ #FOR THR ONLY
+IUCNonly_THR_ONLY <- subset(data_zonation,data_zonation$IUCN_cat=="Thr")
+IUCNonly_THR_ONLY <- IUCNonly_THR_ONLY[,c("species","scenario1_NoWeight")]
+colnames(IUCNonly_THR_ONLY)
+IUCNandpredict_THR_ONLY <- subset(data_zonation,data_zonation$predict_complementary=="Thr")
+IUCNandpredict_THR_ONLY <- IUCNandpredict_THR_ONLY[,c("species","scenario1_NoWeight")]
+ 
+#---------------------------------------------------------------- 
+
+ 
+ 
+ data_final_zonation_THR_ONLY <-list(IUCNonly,IUCNandpredict,NoWeight)
+ save(data_final_zonation,file= here::here("outputs","data_final_zonation.RData"))
+ 
  test <- subset(data_zonation,data_zonation$selected_species_complementary_W_IUCN==1)
  boxplot(test$scenario1_NoWeight,
          test$weight_zonation_IUCN_alone,

@@ -7,6 +7,52 @@ library(rgeos)
 library(sf)
 
 
+PctMPAI_IV
+
+
+
+# -------------------------------------------------------------------------------------------- Compute target achievement
+# Correct target with the range of species following  Jones et al. 2020
+#  < 10,000 km2, 100% coverage 
+#  > 390,000 km2 the target was reduced to 10% coverage,
+#coverMPA <- do.call(rbind,coverMPA_SPA)
+#rownames(coverMPA)<-colnames(fish_select)[-c(1,2)]
+
+
+#transmort in Km 2 
+TO CHECK
+FishDistribArea_all <- FishDistribArea_all[FishDistribArea_all$species %in% all_predict$species,]
+
+
+FishDistribArea_all$DistrArea <- FishDistribArea_all$DistrArea/1e+6
+
+
+
+datanico_MPA$TargetExp <- NA
+for (i in 1 : nrow(datanico_MPA)) {   
+  print(i)
+  if(is.na(datanico_MPA$DistrArea[i]))  {  datanico_MPA$TargetExp[i]  <- NA
+  }  else if(datanico_MPA$DistrArea[i]< 1e+05)  { datanico_MPA$TargetExp[i]  <- 100
+  }  else if(datanico_MPA$DistrArea[i]> 39e+05) { datanico_MPA$TargetExp[i]  <- 10  
+  }  else {  datanico_MPA$TargetExp[i]  <- NA}
+}
+
+
+qt=quantile(datanico_MPA[is.na(datanico_MPA$TargetExp),]$DistrArea, probs=c(0.1, 0.9),na.rm=T)
+
+
+for(i in 1:nrow(datanico_MPA)) {
+  if(is.na(datanico_MPA$TargetExp[i])) {  datanico_MPA$TargetExp[i] <- round(target_func(datanico_MPA[i,"DistrArea"], qt, log=T),3) }
+}
+
+datanico_MPA[,"Target_achievement_I_IV"] <- round(100*(datanico_MPA[,"Percentage_MPAI_IV"]/datanico_MPA[,"TargetExp"]),3)
+datanico_MPA[,"Target_achievement_I_II"] <- round(100*(datanico_MPA[,"Percentage_MPAI_II"]/datanico_MPA[,"TargetExp"]),3)
+
+
+
+
+
+
 
 setwd("~/Documents/Postdoc MARBEC/FISHUCN/last/FISHUCN_clean/data")
 #mapMPA<-readOGR(dsn=".",layer="WDPA_Feb2018_marine-shapefile-polygons")
@@ -22,16 +68,6 @@ load("MatPa_Final_ok.rdata")
 
 
 
-# -------------------------------------------------------------------------------------------- Compute target achievement
-# Correct target with the range of species following  Jones et al. 2020
-#  < 10,000 km2, 100% coverage 
-#  > 390,000 km2 the target was reduced to 10% coverage,
-#coverMPA <- do.call(rbind,coverMPA_SPA)
-#rownames(coverMPA)<-colnames(fish_select)[-c(1,2)]
-
-
-#transmort in Km 2 
-datanico_MPA$DistrArea <- datanico_MPA$DistrArea/1e+6
 
 
 datanico_MPA$TargetExp <- NA
