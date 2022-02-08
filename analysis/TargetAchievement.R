@@ -7,9 +7,9 @@ library(rgeos)
 library(sf)
 
 
-PctMPAI_IV
+load("~/Documents/Postdoc MARBEC/FISHUCN/last/FISHUCN_clean/data/PctMPAI_IV.RData")
 
-
+PctMPAI_IV$perc_cover <- as.numeric(as.character(PctMPAI_IV$perc_cover))
 
 # -------------------------------------------------------------------------------------------- Compute target achievement
 # Correct target with the range of species following  Jones et al. 2020
@@ -20,33 +20,33 @@ PctMPAI_IV
 
 
 #transmort in Km 2 
-TO CHECK
-FishDistribArea_all <- FishDistribArea_all[FishDistribArea_all$species %in% all_predict$species,]
+#TO CHECK
+MPA_Protect <- FishDistribArea_all[FishDistribArea_all$species %in% data_zonation$species,]
 
 
-FishDistribArea_all$DistrArea <- FishDistribArea_all$DistrArea/1e+6
+MPA_Protect$DistrArea <- FishDistribArea_all$DistrArea/1e+6
+MPA_Protect <- merge(MPA_Protect,PctMPAI_IV,by="species")
 
 
-
-datanico_MPA$TargetExp <- NA
-for (i in 1 : nrow(datanico_MPA)) {   
+MPA_Protect$TargetExp <- NA
+for (i in 1 : nrow(MPA_Protect)) {   
   print(i)
-  if(is.na(datanico_MPA$DistrArea[i]))  {  datanico_MPA$TargetExp[i]  <- NA
-  }  else if(datanico_MPA$DistrArea[i]< 1e+05)  { datanico_MPA$TargetExp[i]  <- 100
-  }  else if(datanico_MPA$DistrArea[i]> 39e+05) { datanico_MPA$TargetExp[i]  <- 10  
-  }  else {  datanico_MPA$TargetExp[i]  <- NA}
+  if(is.na(MPA_Protect$DistrArea[i]))  {  MPA_Protect$TargetExp[i]  <- NA
+  }  else if(MPA_Protect$DistrArea[i]< 1e+05)  { MPA_Protect$TargetExp[i]  <- 100
+  }  else if(MPA_Protect$DistrArea[i]> 39e+05) { MPA_Protect$TargetExp[i]  <- 10  
+  }  else {  MPA_Protect$TargetExp[i]  <- NA}
 }
 
 
-qt=quantile(datanico_MPA[is.na(datanico_MPA$TargetExp),]$DistrArea, probs=c(0.1, 0.9),na.rm=T)
+qt=quantile(MPA_Protect[is.na(MPA_Protect$TargetExp),]$DistrArea, probs=c(0.1, 0.9),na.rm=T)
 
 
-for(i in 1:nrow(datanico_MPA)) {
-  if(is.na(datanico_MPA$TargetExp[i])) {  datanico_MPA$TargetExp[i] <- round(target_func(datanico_MPA[i,"DistrArea"], qt, log=T),3) }
+for(i in 1:nrow(MPA_Protect)) {
+  if(is.na(MPA_Protect$TargetExp[i])) {  MPA_Protect$TargetExp[i] <- round(target_func(MPA_Protect[i,"DistrArea"], qt, log=T),3) }
 }
 
-datanico_MPA[,"Target_achievement_I_IV"] <- round(100*(datanico_MPA[,"Percentage_MPAI_IV"]/datanico_MPA[,"TargetExp"]),3)
-datanico_MPA[,"Target_achievement_I_II"] <- round(100*(datanico_MPA[,"Percentage_MPAI_II"]/datanico_MPA[,"TargetExp"]),3)
+MPA_Protect[,"Target_achievement_I_IV"] <- round(100*(MPA_Protect[,"Percentage_MPAI_IV"]/MPA_Protect[,"TargetExp"]),3)
+
 
 
 
