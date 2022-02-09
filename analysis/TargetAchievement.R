@@ -9,6 +9,22 @@ library(sf)
 
 load("~/Documents/Postdoc MARBEC/FISHUCN/last/FISHUCN_clean/data/PctMPAI_IV.RData")
 
+## FUNCTION TO COMPUTE THE CONSERVATION TARGET 
+target_func <- function(SR, qt, log=TRUE){
+  SR_i <- SR
+  qt_i <- qt
+  
+  if(log) {
+    SR <- log(SR)
+    qt <- log(qt)
+  }	
+  dat <- data.frame(matrix(c(100,10,qt), ncol=2, dimnames=list(NULL, c("Target", "SR"))))
+  lm_target <- lm(Target~SR, data=dat)
+  Tar <- predict(lm_target,newdata=as.data.frame(SR))
+  Tar[SR_i<=qt_i[1]] <- 100
+  Tar[SR_i>=qt_i[2]] <- 10
+  return(Tar)
+}
 PctMPAI_IV$perc_cover <- as.numeric(as.character(PctMPAI_IV$perc_cover))
 
 # -------------------------------------------------------------------------------------------- Compute target achievement
@@ -17,14 +33,11 @@ PctMPAI_IV$perc_cover <- as.numeric(as.character(PctMPAI_IV$perc_cover))
 #  > 390,000 km2 the target was reduced to 10% coverage,
 #coverMPA <- do.call(rbind,coverMPA_SPA)
 #rownames(coverMPA)<-colnames(fish_select)[-c(1,2)]
-
-
 #transmort in Km 2 
 #TO CHECK
 MPA_Protect <- FishDistribArea_all[FishDistribArea_all$species %in% data_zonation$species,]
 
-
-MPA_Protect$DistrArea <- FishDistribArea_all$DistrArea/1e+6
+#MPA_Protect$DistrArea <- FishDistribArea_all$DistrArea/1e+6
 MPA_Protect <- merge(MPA_Protect,PctMPAI_IV,by="species")
 
 
@@ -142,19 +155,3 @@ coverMPA <- pbmclapply(3:ncol(fish_select), function(i)  {
 coverMPA <- do.call(rbind,coverMPA)
 
 
-## FUNCTION TO COMPUTE THE CONSERVATION TARGET 
-target_func <- function(SR, qt, log=TRUE){
-  SR_i <- SR
-  qt_i <- qt
-  
-  if(log) {
-    SR <- log(SR)
-    qt <- log(qt)
-  }	
-  dat <- data.frame(matrix(c(100,10,qt), ncol=2, dimnames=list(NULL, c("Target", "SR"))))
-  lm_target <- lm(Target~SR, data=dat)
-  Tar <- predict(lm_target,newdata=as.data.frame(SR))
-  Tar[SR_i<=qt_i[1]] <- 100
-  Tar[SR_i>=qt_i[2]] <- 10
-  return(Tar)
-}
