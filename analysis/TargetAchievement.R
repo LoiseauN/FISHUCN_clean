@@ -37,8 +37,8 @@ PctMPAI_IV$perc_cover <- as.numeric(as.character(PctMPAI_IV$perc_cover))
 #TO CHECK
 MPA_Protect <- FishDistribArea_all[FishDistribArea_all$species %in% data_zonation$species,]
 
-#MPA_Protect$DistrArea <- FishDistribArea_all$DistrArea/1e+6
-MPA_Protect <- merge(MPA_Protect,PctMPAI_IV,by="species")
+MPA_Protect$DistrArea <- MPA_Protect$DistrArea/1e+6
+MPA_Protect <- merge(MPA_Protect,PctMPAI_IV,by="species",all.x =T)
 
 
 MPA_Protect$TargetExp <- NA
@@ -58,10 +58,35 @@ for(i in 1:nrow(MPA_Protect)) {
   if(is.na(MPA_Protect$TargetExp[i])) {  MPA_Protect$TargetExp[i] <- round(target_func(MPA_Protect[i,"DistrArea"], qt, log=T),3) }
 }
 
-MPA_Protect[,"Target_achievement_I_IV"] <- round(100*(MPA_Protect[,"Percentage_MPAI_IV"]/MPA_Protect[,"TargetExp"]),3)
+MPA_Protect[,"Target_achievement_I_IV"] <- round(100*(MPA_Protect[,"perc_cover"]/MPA_Protect[,"TargetExp"]),3)
+
+
+save(MPA_Protect,file = here::here("outputs/MPA_Protect.RData"))
 
 
 
+ggplot(MPA_Protect, aes(x= IUCN_cat, y = perc_cover))+ geom_boxplot()
+ggplot(MPA_Protect, aes(x= predict_complementary, y = perc_cover))+ geom_boxplot()
+
+
+
+plt <- ggstatsplot::ggbetweenstats(
+  data = MPA_Protect, #data_protected,
+  x = predict_complementary,
+  y = perc_cover,
+)
+
+plt +
+  labs(
+    x = "IUCN Status",
+    y = "% cover MPA (I - IV)"
+  ) +
+  scale_color_manual(values=c("firebrick1","forestgreen", "grey35"))
+
+
+
+ggplot(MPA_Protect, aes(x= IUCN_cat, y = Target_achievement_I_II))+ geom_boxplot()
+ggplot(MPA_Protect, aes(x= predict_complementary, y = Target_achievement_I_II))+ geom_boxplot()
 
 
 

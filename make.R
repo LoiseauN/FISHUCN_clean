@@ -11,8 +11,8 @@
 
 #-----------------Loading packages-------------------
 
-pkgs <- c("tidyverse","missForest","parallel","here","tidymodels","taxize",
-          "ranger","caret","tuneRanger","smoof","caper","RCurl","XML","tidyverse",
+pkgs <- c("tidyverse","missForest","parallel","tidymodels","taxize","here",
+          "ranger","caret","caper","RCurl","XML","tidyverse",
           "pbmcapply","doParallel","rfishbase","beepr","arm","dplyr")
 nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)

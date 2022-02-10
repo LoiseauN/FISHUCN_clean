@@ -88,6 +88,9 @@ addLevel <- function(x, newlevel=NULL) {
 
 dat_network <- data.frame(data_zonation[,c("species","IUCN_cat","predict_complementary")])
 
+dat_network <- dat_network[dat_network$species %in%MPA_Protect$species,]
+
+
 dat_network <- addLevel(dat_network, "Threatened")
 dat_network <- addLevel(dat_network, "Non Threatened")
 dat_network <- addLevel(dat_network, "No Status")
@@ -160,30 +163,24 @@ ggsave(file = here::here("figures/fig2.png"),width = 12, height = 12, units= "in
 #'
 #'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
 #'---------------------------------------------------------------------@Protectionanalyses
-load("PctMPAFish.RData")
-PctMPAFish$species <- str_replace(PctMPAFish$species, "_", "-")
 
-data_protected <- dat_network
-PctMPAFish[is.na(PctMPAFish)] <- 0
+MPA_Protect <- merge(MPA_Protect,dat_network,by="species")
 
-data_protected <- merge(data_protected,PctMPAFish,by="row.names",all.x = T)
-data_protected <- data_protected[,-c(1:2)]
-colnames(data_protected)[4]<- "species"
-data_protected$IUCN_final <- as.factor(data_protected$IUCN_final)
 
-test <- subset(data_protected, data_protected$IUCN_cat =="No Status")
 plt <- ggstatsplot::ggbetweenstats(
-  data = test, #data_protected,
+  data = MPA_Protect, #data_protected,
   x = IUCN_final,
-  y = AreaMPAI_IV,
- )
+  y = Target_achievement_I_IV,
+)
 
 plt +
   labs(
     x = "IUCN Status",
     y = "% cover MPA (I - IV)"
-    ) +
+  ) +
   scale_color_manual(values=c("grey35", "forestgreen","firebrick1"))
+
+
 
 
 #'---------------------------------------------------------------------@zonationanalyses
