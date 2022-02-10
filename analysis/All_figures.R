@@ -159,13 +159,13 @@ ggsave(file = here::here("figures/fig2.png"),width = 12, height = 12, units= "in
 
 
 #'---------------------------------------------------------------------@Percentagegainmodel
-#'
-#'
 #'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
+gainThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
+gainNThr <- ((table(dat_network$IUCN_cat)[2]-table(dat_network$IUCN_final)[2])/table(dat_network$IUCN_cat)[2])*100
+
 #'---------------------------------------------------------------------@Protectionanalyses
 
 MPA_Protect <- merge(MPA_Protect,dat_network,by="species")
-
 
 plt <- ggstatsplot::ggbetweenstats(
   data = MPA_Protect, #data_protected,
@@ -292,28 +292,5 @@ grid.arrange(IUCN_MAP,IUCN_MAP_predict,ncol =1)
 
 
 
-#Supplementary 
-# Load library
-library(VennDiagram)
-
-# Generate 3 sets of 200 words
-set1 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
-set2 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
-set3 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
-set4 <- paste(rep("word_" , 200) , sample(c(1:1000) , 200 , replace=F) , sep="")
-# Chart
-venn.diagram(
-  x = list(set1, set2, set3,set4),
-  category.names = c("Set 1" , "Set 2 " , "Set 3", "Set 4"),
-  filename = '#14_venn_diagramm.png',
-  output=TRUE
-)
-
-venn.diagram(
-  x = list(set1, set2, set3),
-  category.names = c("Set 1" , "Set 2 " , "Set 3"),
-  filename = NULL,
-  output=TRUE
-)
 
 
