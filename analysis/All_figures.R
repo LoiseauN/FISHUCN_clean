@@ -202,7 +202,7 @@ ggsave(file = here::here("figures/fig_rank.png"),width = 12, height = 12, units=
 
 # MAP
 
-mask.full=raster(here::here("data","mask.full.tif"))
+mask.full=raster::raster(here::here("data","mask.full.tif"))
 
 maskdiff = mask.full
 maskdiff[Zrank_main$ID] = Zrank_main$diff
