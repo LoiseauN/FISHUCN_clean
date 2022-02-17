@@ -3,7 +3,7 @@ species_traits
 
 
 13945 all species
-6002 already have status
+5912 No  status
 
 
 7943  <- without status and selected to be predict

@@ -220,6 +220,7 @@ DIFF_MAP <- ggplot() +
   ggtitle("Difference Ranking IUCN/IUCN + Predict")+
   theme_bw()+
   xlab("")+ylab("")
+ggsave(file = here::here("figures/DIFF_MAP.png"),width = 15.75, height = 24.00, units= "in",dpi= 300)
 
 
 RankSc1 <-as.data.frame(rasterToPoints(maskSc1))
