@@ -116,7 +116,6 @@ dat_network<-as.data.frame(sapply(dat_network,
 
 
 
-
 dat_network$IUCN_final <- NA
 
 for (i in 1:nrow (dat_network)){
