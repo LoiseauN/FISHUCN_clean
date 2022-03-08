@@ -210,6 +210,20 @@ maskSc1[Zrank_main$ID] = Zrank_main$rankSc1
 maskSc2 = mask.full
 maskSc2[Zrank_main$ID] = Zrank_main$rankSc2
 
+maskSc_rich = mask.full
+maskSc_rich[diversity_thr$ID] = diversity_thr$Rthr
+
+rich <-as.data.frame(rasterToPoints(maskSc_rich))
+colnames(rich)[3] = "rich"
+
+ggplot() +
+  geom_tile(data=rich,aes(x = x, y = y, fill = rich))+
+  scale_fill_gradient2(low = "blue", midpoint = 0, mid = "yellow", high = "red", name = "Diffence") +
+  ggtitle("Difference Ranking IUCN/IUCN + Predict")+
+  theme_bw()+
+  xlab("")+ylab("")
+
+
 
 RankDiff <-as.data.frame(rasterToPoints(maskdiff))
 colnames(RankDiff)[3] = "Diff"
