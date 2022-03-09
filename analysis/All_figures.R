@@ -47,8 +47,6 @@ data_4_taxa <- subset(data_4_taxa,data_4_taxa$status != "EX")
 data_4_taxa <- as.matrix(table(data_4_taxa))
 data_4_taxa <- (data_4_taxa/apply(data_4_taxa,1,sum))*100
 
-
-
 data_4_taxa <- transform(data_4_taxa,
                          status = factor(status, c("Threatened",
                                                    "Non Threatened",
@@ -199,110 +197,39 @@ fig_rank <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2, color = diff) ) +
 ggsave(file = here::here("figures/fig_rank.png"),width = 12, height = 12, units= "in",dpi= 300)
 
 
-# MAP
-
+#'---------------------------------------------------------------------@MAP
+#all_geo_res
 mask.full=raster::raster(here::here("data","mask.full.tif"))
 
-maskdiff = mask.full
-maskdiff[Zrank_main$ID] = Zrank_main$diff
-maskSc1 = mask.full
-maskSc1[Zrank_main$ID] = Zrank_main$rankSc1
-maskSc2 = mask.full
-maskSc2[Zrank_main$ID] = Zrank_main$rankSc2
-
-maskSc_rich = mask.full
-maskSc_rich[diversity_thr$ID] = diversity_thr$Rthr
-
-rich <-as.data.frame(rasterToPoints(maskSc_rich))
-colnames(maskSc_rich)[3] = "rich"
-
-ggplot() +
-  geom_tile(data=rich,aes(x = x, y = y, fill = rich))+
-  scale_fill_gradient2(low = "blue", midpoint = 0, mid = "yellow", high = "red", name = "Diffence") +
-  ggtitle("Difference Ranking IUCN/IUCN + Predict")+
-  theme_bw()+
-  xlab("")+ylab("")
-
-
-
-RankDiff <-as.data.frame(rasterToPoints(maskdiff))
-colnames(RankDiff)[3] = "Diff"
-DIFF_MAP <- ggplot() +
-  geom_tile(data=RankDiff,aes(x = x, y = y, fill = Diff))+
-  scale_fill_gradient2(low = "blue", midpoint = 0, mid = "yellow", high = "red", name = "Diffence") +
-  ggtitle("Difference Ranking IUCN/IUCN + Predict")+
-  theme_bw()+
-  xlab("")+ylab("")
-ggsave(file = here::here("figures/DIFF_MAP.png"),width = 15.75, height = 24.00, units= "in",dpi= 300)
-
-
-RankSc1 <-as.data.frame(rasterToPoints(maskSc1))
-colnames(RankSc1)[3] = "Rank"
-IUCN_MAP <- ggplot() +
-  geom_tile(data=RankSc1,aes(x = x, y = y, fill = Rank))+
-  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", midpoint = median(Zrank_main$rankSc1))+
-  ggtitle("IUCN")+
-  theme_bw()+
-  xlab("")+ylab("")
-
-RankSc2<-as.data.frame(rasterToPoints(maskSc2))
-colnames(RankSc2)[3] = "Rank"
-IUCN_MAP_predict <- ggplot() +
-  geom_tile(data=RankSc2,aes(x = x, y = y, fill = Rank))+
-  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", midpoint = median(Zrank_main$rankSc2))+
-  ggtitle("IUCN + Predict")+
-  theme_bw()+
-  xlab("")+ylab("")
-
-map <- grid.arrange(DIFF_MAP,IUCN_MAP,IUCN_MAP_predict,ncol =1)
-ggsave(file = here::here("figures/map_rank.png"),width = 15.75, height = 24.00, units= "in",dpi= 300)
-
-#Data for zonation
-#datazonation <- dat_network[,c("species","IUCN_status","IUCN_final")]
-#datazonation$species <- gsub("-", "_", datazonation$species)
-#save(datazonation,file="datazonation.RData")
 
 
 
 
+#--- Diff ranking  WHITE HOLE ARE MPA
+var = c("DeltaRank","DeltaThr")
+all_map <- lapply(1:length(var),function(x){
+ 
+  mask = mask.full
+  mask[all_geo_res$ID] = all_geo_res[,var[x]]
+  
+  df <-as.data.frame(rasterToPoints(mask))
+  
+  map <- ggplot() +
+    geom_tile(data=df,aes(x = x, y = y, fill = mask))+
+    scale_fill_gradient2(low = "blue", midpoint = 0, mid = "yellow", high = "red", name = "Diffence") +
+    ggtitle("Difference Ranking IUCN/IUCN + Predict")+
+    theme_bw()+
+    xlab("")+ylab("")
+  
+  return(map)
+  
+})
+
+names(all_map) <- var       
+     
 
 
 
-
-
-
-
-
-#TEST 5% 
-RankScTEST2<-as.data.frame(rasterToPoints(maskSc2))
-colnames(RankScTEST2)[3] = "Rank"
-RankScTEST2<- RankScTEST2[order(RankScTEST2$Rank,decreasing = T),]
-RankScTEST2$Rank[c(150000:646384)] <- 0
-
-
-
-IUCN_MAP <- ggplot() +
-  geom_tile(data=RankScTEST2,aes(x = x, y = y, fill = Rank))+
-  scale_fill_gradient2(low = "blue", high = "red")+
-  ggtitle("IUCN")+
-  theme_bw()+
-  xlab("")+ylab("")
-
-
-RankScTEST3<-as.data.frame(rasterToPoints(maskSc3))
-colnames(RankScTEST3)[3] = "Rank"
-RankScTEST3<- RankScTEST3[order(RankScTEST3$Rank,decreasing = T),]
-RankScTEST3$Rank[c(150000:646384)] <- 0
-
-
-IUCN_MAP_predict <- ggplot() +
-  geom_tile(data=RankScTEST3,aes(x = x, y = y, fill = Rank))+
-  scale_fill_gradient2(low = "blue", high = "red")+
-  ggtitle("IUCN + Predict")+
-  theme_bw()+
-  xlab("")+ylab("")
-
-grid.arrange(IUCN_MAP,IUCN_MAP_predict,ncol =1)
 
 
 
