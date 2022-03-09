@@ -214,7 +214,7 @@ maskSc_rich = mask.full
 maskSc_rich[diversity_thr$ID] = diversity_thr$Rthr
 
 rich <-as.data.frame(rasterToPoints(maskSc_rich))
-colnames(rich)[3] = "rich"
+colnames(maskSc_rich)[3] = "rich"
 
 ggplot() +
   geom_tile(data=rich,aes(x = x, y = y, fill = rich))+
