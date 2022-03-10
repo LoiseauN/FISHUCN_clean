@@ -225,7 +225,52 @@ all_map <- lapply(1:length(var),function(x){
 
 
 
-#'---------------------------------------------------------------------@MAP
+#'---------------------------------------------------------------------@DistributionThr+Rank
+
+all_geo_res <-  all_geo_res[sample(nrow(all_geo_res), 1000), ]
+
+a <- ggplot(all_geo_res, aes(x=DeltaRank)) + geom_histogram(color= "#E69F00",fill="#E69F00", alpha=0.5)+ 
+  geom_vline(aes(xintercept=median(DeltaRank,na.rm=T)),
+             color="blue", linetype="dashed", size=1)+  theme_bw() +
+  xlab("RFO_R") 
+ 
+b <- ggplot(all_geo_res, aes(x=DeltaStd_R)) + geom_histogram(color= "#E69F00",fill="#E69F00", alpha=0.5)+ 
+  geom_vline(aes(xintercept=median(DeltaStd_R,na.rm=T)),
+             color="blue", linetype="dashed", size=1)+  theme_bw()+
+  xlab("RFO_THR") 
+
+c <- ggplot(all_geo_res, aes(x=DeltaStd_R,y=DeltaRank)) + geom_point(color= "#E69F00",fill="#E69F00", alpha=0.5)+ 
+  theme_bw()+
+  xlab("RFO_THR") +
+  ylab("RFO_R") 
+
+d <- ggplot(all_geo_res, aes(x=DeltaThr,y=DeltaRank)) + geom_point(color= "#E69F00",fill="#E69F00", alpha=0.5)+ 
+  theme_bw() +
+  xlab("Delta_THR") +
+  ylab("RFO_R") 
+
+e <- ggplot(all_geo_res, aes(x=richness,y=Rfinalthr)) + geom_point(color= "#E69F00",fill="#E69F00", alpha=0.5)+ 
+  theme_bw()+
+  xlab("richness") +
+  ylab("richness_thr_after_model") 
+
+f <- ggplot(all_geo_res, aes(x=richness,y=DeltaThr)) + geom_point(color= "#E69F00",fill="#E69F00", alpha=0.5)+ 
+  theme_bw()+
+  xlab("richness") +
+  ylab("Delta_THR") 
+
+g <- gridExtra::grid.arrange(a,b,c,d,e,f,ncol=2)
+
+set.seed(123)
+pl <- list(a,b,c,d,e,f)
+ml <- marrangeGrob(pl, nrow=2, ncol=2)
+
+
+ggsave(file = here::here("figures/figRFO.png"),width = 12, height = 12, units= "in",dpi= 300)
+
+
+
+
 
 
 
