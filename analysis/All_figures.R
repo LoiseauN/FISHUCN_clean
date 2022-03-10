@@ -202,9 +202,6 @@ ggsave(file = here::here("figures/fig_rank.png"),width = 12, height = 12, units=
 mask.full=raster::raster(here::here("data","mask.full.tif"))
 
 
-
-
-
 #--- Diff ranking  WHITE HOLE ARE MPA
 var = c("DeltaRank","DeltaThr")
 all_map <- lapply(1:length(var),function(x){
@@ -215,8 +212,8 @@ all_map <- lapply(1:length(var),function(x){
   df <-as.data.frame(rasterToPoints(mask))
   
   map <- ggplot() +
-    geom_tile(data=df,aes(x = x, y = y, fill = mask))+
-    scale_fill_gradient2(low = "blue", midpoint = 0, mid = "yellow", high = "red", name = "Diffence") +
+    geom_tile(data=df,aes(x = x, y = y, fill = mask.full))+
+    scale_fill_gradient2(low = "violet", midpoint = 0, mid = "green", high = "red", name = "Diffence") +
     ggtitle("Difference Ranking IUCN/IUCN + Predict")+
     theme_bw()+
     xlab("")+ylab("")
@@ -225,13 +222,10 @@ all_map <- lapply(1:length(var),function(x){
   
 })
 
-names(all_map) <- var       
-     
 
 
 
-
-
+#'---------------------------------------------------------------------@MAP
 
 
 
