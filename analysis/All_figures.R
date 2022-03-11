@@ -5,8 +5,6 @@ nip <- pkgs[!(pkgs %in% installed.packages())]
 nip <- lapply(nip, install.packages, dependencies = TRUE)
 ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
-# ---------- Load data
-load(file=file.path("outputs","all_predict.RData"))
 
 #With package rredlist extract status
 mammals_status <- rl_comp_groups("mammals", key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
@@ -69,7 +67,7 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   add_phylopic(amphibians_pic,x = 3, y = 50, ysize = 10, alpha = 1)+
   add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1)
 
-ggsave(file = here::here("figures/fig1.png"),width = 12, height = 12, units= "in",dpi= 300)
+#ggsave(file = here::here("figures/fig1.png"),width = 12, height = 12, units= "in",dpi= 300)
 
 #'---------------------------------------------------------------------@ResultsPrediction
 
@@ -222,7 +220,7 @@ all_map <- lapply(1:length(var),function(x){
   
 })
 
-
+ggsave(file = here::here("figures/figRFO.png"),ml,width = 12, height = 12, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@DistributionThr+Rank
@@ -259,14 +257,13 @@ f <- ggplot(all_geo_res, aes(x=richness,y=DeltaThr)) + geom_point(color= "#E69F0
   xlab("richness") +
   ylab("Delta_THR") 
 
-g <- gridExtra::grid.arrange(a,b,c,d,e,f,ncol=2)
+
 
 set.seed(123)
-pl <- list(a,b,c,d,e,f)
-ml <- marrangeGrob(pl, nrow=2, ncol=2)
+pl <- list(a,c,d,b,e,f)
+ml <- marrangeGrob(pl,ncol=2,nrow=3)
 
-
-ggsave(file = here::here("figures/figRFO.png"),width = 12, height = 12, units= "in",dpi= 300)
+ggsave(file = here::here("figures/figRFO.png"),ml,width = 12, height = 12, units= "in",dpi= 300)
 
 
 
