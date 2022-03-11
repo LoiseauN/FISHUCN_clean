@@ -204,6 +204,4 @@ lapply(files, load, envir=.GlobalEnv)
 #-----------------Creating Figures----------------------
 
 
-#Figure of variable importance
-#Saved in Figures folder
-figure1 = var_imp(test_IUCN[[1]])
+

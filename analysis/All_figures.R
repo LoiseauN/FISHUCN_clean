@@ -56,9 +56,10 @@ data_4_taxa <- transform(data_4_taxa,
                                                "amphibians",
                                                "fishes")))
 
+
 fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) + 
   geom_bar(position="stack", stat="identity",color="grey20") +
-  scale_fill_manual(values = c("firebrick1", "forestgreen", "grey35"), name = "IUCN status", 
+  scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800"), name = "IUCN status", 
                     guide = guide_legend(reverse = TRUE))+
   theme_bw() +
   xlab("Taxa")+ylab("Percentage")+
@@ -67,53 +68,12 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   add_phylopic(amphibians_pic,x = 3, y = 50, ysize = 10, alpha = 1)+
   add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1)
 
-#ggsave(file = here::here("figures/fig1.png"),width = 12, height = 12, units= "in",dpi= 300)
+ggsave(file = here::here("figures/figure1.png"),width = 12, height = 12, units= "in",dpi= 300)
 
 
-#'---------------------------------------------------------------------@variable importance
-#' Generate plot of variable importance
-#'
-#' Based on the test of your model, this function generates a plot of variable importance based on permutation
-#'
-#' @param rel_inf Data frame with variable importance 
-#' 
-#' @return A plot in pdf format with the variable importance plot 
-#'
-#' @export
-#' 
-#' 
+#'---------------------------------------------------------------------@variable_importance
 
-var_imp = function(rel_inf){
-  
-  #Plot of variable importance
-  tot <- sum(rel_inf[,2])
-  
-  for (i in 1:nrow(rel_inf)){
-    rel_inf[i,2] <- (rel_inf[i,2]/tot)*100
-    
-  }
-  
-  rel_inf %>%
-    arrange(importance.mod.) %>%
-    tail(20) %>%
-    mutate(rowname=factor(rowname, rowname)) %>%
-    ggplot( aes(x=rowname, y=importance.mod.) ) +
-    geom_segment( aes(x=rowname ,xend=rowname, y=0, yend=importance.mod.), color="grey") +
-    geom_point(size=3, color="#69b3a2") +
-    coord_flip() +
-    theme_bw() +
-    theme(
-      panel.grid.minor.y = element_blank(),
-      panel.grid.major.y = element_blank(),
-      legend.position="none"
-    ) +
-    xlab("Variables") +
-    ylab("")
-  
-  ggsave(file = here::here("figures", "Figure1.pdf"), 
-         width = 11.7, height = 8.3)
-  
-}
+figure2 = var_imp(test_IUCN[[1]])
 
 
 #'---------------------------------------------------------------------@ResultsPrediction
