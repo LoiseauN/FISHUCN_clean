@@ -68,7 +68,7 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   add_phylopic(amphibians_pic,x = 3, y = 50, ysize = 10, alpha = 1)+
   add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1)
 
-ggsave(file = here::here("figures/figure1.png"),width = 12, height = 12, units= "in",dpi= 300)
+ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 12, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@variable_importance
@@ -102,7 +102,7 @@ dat_network <- addLevel(dat_network, "No Status")
 for (i in 1:ncol(dat_network)){dat_network[,i] <- as.factor(as.character(dat_network[,i]))}
 
 
-dat_network<-as.data.frame(sapply(dat_network,
+ dat_network<-as.data.frame(sapply(dat_network,
                                   mapvalues, from = c("Thr"), 
                                   to = c("Threatened")))
 
@@ -149,7 +149,7 @@ plot_net <-
   ggplot(df, aes(x = stage, stratum = group, alluvium = id, fill = group, label = stage)) +
   scale_x_discrete(expand = c(.15, .15)) +
   geom_flow(color="white") +
-  scale_fill_manual(values = c("firebrick1", "forestgreen", "grey35","pink"), name = "IUCN status", 
+  scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800","pink"), name = "IUCN status", 
                     guide = guide_legend(reverse = TRUE)) +
   geom_stratum(alpha = 1,color="white") +
   geom_text(stat = "stratum",
@@ -157,7 +157,7 @@ plot_net <-
   theme_bw()+
   xlab("") +ylab("Number of species")
 
-ggsave(file = here::here("figures/fig2.png"),width = 12, height = 12, units= "in",dpi= 300)
+ggsave(file = here::here("figures/Figure3.png"),plot_net, width = 12, height = 12, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@Percentagegainmodel
@@ -175,13 +175,14 @@ plt <- ggstatsplot::ggbetweenstats(
   y = Target_achievement_I_IV,
 )
 
-plt +
+plt <-  plt +
   labs(
     x = "IUCN Status",
-    y = "% cover MPA (I - IV)"
+    y = "Target achievement MPA (I - IV)"
   ) +
-  scale_color_manual(values=c("grey35", "forestgreen","firebrick1"))
+  scale_color_manual(values=c("#00AFBB", "#E7B800","#FC4E07"))
 
+ggsave(file = here::here("figures/Figure4.png"),plt, width = 12, height = 12, units= "in",dpi= 300)
 
 
 
@@ -199,7 +200,7 @@ fig_rank <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2, color = diff) ) +
   scale_color_continuous(type = "viridis",direction = -1) +
   theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
   geom_abline(slope=1, intercept = 0)
-ggsave(file = here::here("figures/fig_rank.png"),width = 12, height = 12, units= "in",dpi= 300)
+ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@MAP
@@ -208,31 +209,53 @@ mask.full=raster::raster(here::here("data","mask.full.tif"))
 
 
 #--- Diff ranking  WHITE HOLE ARE MPA
-var = c("DeltaRank","DeltaThr")
+
+var = c("DeltaRank","DeltaThr","DeltaStd_R")
 all_map <- lapply(1:length(var),function(x){
  
   mask = mask.full
-  mask[all_geo_res$ID] = all_geo_res[,var[x]]
-  
+  df <- all_geo_res[,var[x]]
+  df[is.na(df)] <- 0
+  mask[all_geo_res$ID] = df
+
   df <-as.data.frame(rasterToPoints(mask))
+  colnames(df)[3] <- "value"
   
+  if (var[x] =="DeltaRank" )  {  title =  "Difference Ranking IUCN/IUCN + Predict" }  
+  if (var[x] =="DeltaThr" )  {  title =  "Difference Richness Threatened" }  
+  if (var[x] =="DeltaStd_R" )  {  title =  "Difference Standardized Richness Threatened" }  
+ 
+    
+  if (var[x] =="DeltaRank" ){
+    
   map <- ggplot() +
-    geom_tile(data=df,aes(x = x, y = y, fill = mask.full))+
-    scale_fill_gradient2(low = "violet", midpoint = 0, mid = "green", high = "red", name = "Diffence") +
-    ggtitle("Difference Ranking IUCN/IUCN + Predict")+
+    geom_raster(data=df,aes(x = x, y = y, fill = value))+#(value/max(value))
+    scale_fill_distiller(palette = "RdBu")+
+    ggtitle(title)+
     theme_bw()+
     xlab("")+ylab("")
   
-  return(map)
+
+   } else{
+    map <- ggplot() +
+      geom_raster(data=df,aes(x = x, y = y, fill = value))+
+      scale_fill_distiller(palette = "Spectral")+
+      ggtitle(title)+
+      theme_bw()+
+      xlab("")+ylab("")
   
+  }
+
 })
 
-ggsave(file = here::here("figures/figRFO.png"),ml,width = 12, height = 12, units= "in",dpi= 300)
+map <- marrangeGrob(all_map,ncol=1,nrow=3)
+ggsave(file = here::here("figures/Figure6.png"),map,width = 8, height = 12, units= "in",dpi= 300)
+
+
 
 
 #'---------------------------------------------------------------------@DistributionThr+Rank
 
-all_geo_res <-  all_geo_res[sample(nrow(all_geo_res), 1000), ]
 
 a <- ggplot(all_geo_res, aes(x=DeltaRank)) + geom_histogram(color= "#E69F00",fill="#E69F00", alpha=0.5)+ 
   geom_vline(aes(xintercept=median(DeltaRank,na.rm=T)),
@@ -270,7 +293,7 @@ set.seed(123)
 pl <- list(a,c,d,b,e,f)
 ml <- marrangeGrob(pl,ncol=2,nrow=3)
 
-ggsave(file = here::here("figures/figRFO.png"),ml,width = 12, height = 12, units= "in",dpi= 300)
+ggsave(file = here::here("figures/Figure7.png"),ml,width = 12, height = 12, units= "in",dpi= 300)
 
 
 
