@@ -62,6 +62,10 @@ species_traits = FB_scrap()
 
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 
+#remove line with some trouble
+id_trouble <- sort(rownames(species_traits))[1:90]
+species_traits <- species_traits[!rownames(species_traits)%in% id_trouble,]
+
 #ADD SAVE HERE
 save(species_traits,file = here::here("outputs/species_traits.RData"))
 
@@ -69,6 +73,7 @@ save(species_traits,file = here::here("outputs/species_traits.RData"))
 #Selecting variables of interest
 FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
 save(FB_scrapped,file = here::here("outputs/FB_scrapped.RData"))
+
 
 #PLEASE READ THIS : To run this, your data needs to be formatted as follows : 
 #Species as rownames
@@ -88,14 +93,15 @@ IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
 #Get IUCN status
 FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% 
-  dplyr::rename(IUCN = "IUCN_status") %>% 
-  column_to_rownames("species")
+  dplyr::rename(IUCN = "IUCN_status")%>%
+ column_to_rownames("species")
 
-FB_final <- FB_final[rowSums(is.na(FB_final)) == ncol(FB_final), ]
+FB_final[rowSums(is.na(FB_final)) == ncol(FB_final), ]
 
+rownames(FB_final) <- FB_final$species
+FB_final <- FB_final[,-1]
+FB_final[rowSums(is.na(FB_final)) == ncol(FB_final), ]
 
-
-dim(FB_final[rowSums(is.na(FB_final)) != ncol(FB_final), ])
 
 
 
