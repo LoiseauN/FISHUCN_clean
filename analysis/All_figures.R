@@ -187,17 +187,17 @@ ggsave(file = here::here("figures/Figure4.png"),plt, width = 12, height = 12, un
 
 
 #'---------------------------------------------------------------------@zonationanalyses
-Zrank_main$diff <- Zrank_main$rankSc2-Zrank_main$rankSc1
+#Zrank_main$diff <- Zrank_main$rankSc2-Zrank_main$rankSc1
 
-fig_rank_hex <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2) ) +
-  geom_hex(bins = 100) +
-  scale_fill_continuous(type = "viridis") +
-  theme_bw() + xlab("IUCN only")+ ylab("IUCN + Predicted")
-ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
+#fig_rank_hex <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2) ) +
+#  geom_hex(bins = 100) +
+#  scale_fill_continuous(type = "viridis") +
+#  theme_bw() + xlab("IUCN only")+ ylab("IUCN + Predicted")
+#ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
 
-fig_rank <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2, color = diff) ) +
-  geom_point(size=0.7) + 
-  scale_color_continuous(type = "viridis",direction = -1) +
+fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness)) ) +
+  geom_point(size=0.7,alpha = 0.5) + 
+  scale_color_distiller(palette = "Spectral")+
   theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
   geom_abline(slope=1, intercept = 0)
 ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)

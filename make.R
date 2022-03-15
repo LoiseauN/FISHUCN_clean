@@ -80,14 +80,22 @@ FB_vars = FB_scrapped %>%
          Depth_max = log10(Depth_max+1))
 
 #Get IUCN status
-#IUCN_status <- get_iucn_status(FB_vars)
+IUCN_status <- get_iucn_status(FB_vars)
 #save(IUCN_status,file = "outputs/IUCN_status.RData")
 
 
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
 #Get IUCN status
-FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% dplyr::rename(IUCN = "IUCN_status") %>% column_to_rownames("species")
+FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% 
+  dplyr::rename(IUCN = "IUCN_status") %>% 
+  column_to_rownames("species")
+
+FB_final <- FB_final[rowSums(is.na(FB_final)) == ncol(FB_final), ]
+
+
+
+dim(FB_final[rowSums(is.na(FB_final)) != ncol(FB_final), ])
 
 
 
@@ -118,7 +126,7 @@ dim(FB_final)
 #HERE ADD OPTION THAT DELETES TEMPORARILY THE VARIABLES IF THEY HAVE TOO MANY NAs
 test_missForest = missForest_test(FB_IUCN,FB_final)
 
-#These variables we can't fill out : 
+#These variables we can't fill out : (Depth_max and)R2 was not good enough 
 FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min,Depth_max,Troph))
 FB_IUCN_more = FB_IUCN_more[!rowSums(is.na(FB_IUCN_more)) == ncol(FB_IUCN_more), ] 
 
