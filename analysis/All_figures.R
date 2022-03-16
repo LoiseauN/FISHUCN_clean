@@ -168,11 +168,12 @@ gainNThr <- ((table(dat_network$IUCN_cat)[2]-table(dat_network$IUCN_final)[2])/t
 #'---------------------------------------------------------------------@Protectionanalyses
 
 MPA_Protect <- merge(MPA_Protect,dat_network,by="species")
+MPA_Protect$IUCN_final <- as.factor(MPA_Protect$IUCN_final)
 
 plt <- ggstatsplot::ggbetweenstats(
-  data = MPA_Protect, #data_protected,
+  data = MPA_Protect[c(1:100),], #data_protected,
   x = IUCN_final,
-  y = Target_achievement_I_IV,
+  y = log10(Target_achievement_I_IV+1),
 )
 
 plt <-  plt +
@@ -184,7 +185,8 @@ plt <-  plt +
 
 ggsave(file = here::here("figures/Figure4.png"),plt, width = 12, height = 12, units= "in",dpi= 300)
 
-
+boxplot(MPA_Protect$Target_achievement_I_IV ~ MPA_Protect$predict_complementary, xlim = c(0, 7), ylim = c(0, 15))
+boxplot(MPA_Protect$Target_achievement_I_IV ~ MPA_Protect$IUCN_cat, add = TRUE, at = 4:6)
 
 #'---------------------------------------------------------------------@zonationanalyses
 #Zrank_main$diff <- Zrank_main$rankSc2-Zrank_main$rankSc1
