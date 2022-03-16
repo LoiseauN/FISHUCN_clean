@@ -68,7 +68,7 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   add_phylopic(amphibians_pic,x = 3, y = 50, ysize = 10, alpha = 1)+
   add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1)
 
-ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 12, units= "in",dpi= 300)
+#ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 12, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@variable_importance
