@@ -61,10 +61,17 @@ setwd(here::here())
 species_traits = FB_scrap()
 
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
+#species_traits[rownames(species_traits)%in%FishDistribArea_all$species,]
+
 
 #remove line with some trouble
-id_trouble <- sort(rownames(species_traits))[1:90]
-species_traits <- species_traits[!rownames(species_traits)%in% id_trouble,]
+#id_trouble <- sort(rownames(species_traits))[1:90]
+#species_traits <- species_traits[!rownames(species_traits)%in% id_trouble,]
+#rownames(species_traits) <- gsub("-","_",species_traits$species)
+#FishDistribArea_all$species<- gsub("_","-",FishDistribArea_all$species)
+
+#a <- FishDistribArea_all [!FishDistribArea_all$species%in%rownames(species_traits),]
+
 
 #ADD SAVE HERE
 save(species_traits,file = here::here("outputs/species_traits.RData"))
@@ -72,6 +79,8 @@ save(species_traits,file = here::here("outputs/species_traits.RData"))
 
 #Selecting variables of interest
 FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
+
+
 save(FB_scrapped,file = here::here("outputs/FB_scrapped.RData"))
 
 
@@ -85,7 +94,7 @@ FB_vars = FB_scrapped %>%
          Depth_max = log10(Depth_max+1))
 
 #Get IUCN status
-IUCN_status <- get_iucn_status(FB_vars)
+#IUCN_status <- get_iucn_status(FB_vars)
 #save(IUCN_status,file = "outputs/IUCN_status.RData")
 
 
