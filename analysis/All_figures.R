@@ -217,7 +217,7 @@ mask.full=raster::raster(here::here("data","mask.full.tif"))
 
 #--- Diff ranking  WHITE HOLE ARE MPA
 
-var = c("DeltaRank","DeltaThr","DeltaStd_R")
+var = c("DeltaRank","DeltaStd_R")
 all_map <- lapply(1:length(var),function(x){
  
   mask = mask.full
@@ -229,8 +229,7 @@ all_map <- lapply(1:length(var),function(x){
   colnames(df)[3] <- "value"
   
   if (var[x] =="DeltaRank" )  {  title =  "Difference Ranking IUCN/IUCN + Predict" }  
-  if (var[x] =="DeltaThr" )  {  title =  "Difference Richness Threatened" }  
-  if (var[x] =="DeltaStd_R" )  {  title =  "Difference Standardized Richness Threatened" }  
+ 
  
     
   if (var[x] =="DeltaRank" ){
@@ -243,23 +242,44 @@ all_map <- lapply(1:length(var),function(x){
     xlab("")+ylab("")
   
 
-   } else{
-    map <- ggplot() +
+
+})
+
+map <- marrangeGrob(all_map,ncol=1,nrow=2)
+ggsave(file = here::here("figures/Figure6.png"),map,width = 8, height = 12, units= "in",dpi= 300)
+
+
+#'---------------------------------------------------------------------@MapofDeltaTHR_NONTHR
+all_geo_res$DeltaNonThr <- all_geo_res$Rfinalnothr-all_geo_res$Rnothr
+all_geo_res$DeltaStd_NonThr_R <- all_geo_res$DeltaNonThr/all_geo_res$richness
+var = c("DeltaThr","DeltaNonThr", "DeltaStd_R","DeltaStd_NonThr_R")
+
+all_map <- lapply(1:length(var),function(x){
+  
+  mask = mask.full
+  df <- all_geo_res[,var[x]]
+  df[is.na(df)] <- 0
+  mask[all_geo_res$ID] = df
+  
+  df <-as.data.frame(rasterToPoints(mask))
+  colnames(df)[3] <- "value"
+  
+  if (var[x] =="DeltaThr" )  {  title =  "Difference Richness Threatened" }  
+  if (var[x] =="DeltaNonThr" )  {  title =  "Difference Richness Non-Threatened" }  
+  if (var[x] =="DeltaStd_R" )  {  title =  "Difference Standardized Richness Threatened" }  
+  if (var[x] =="DeltaStd_NonThr_R" )  {  title =  "Difference Standardized Richness Non-Threatened" }  
+    
+  map <- ggplot() +
       geom_raster(data=df,aes(x = x, y = y, fill = value))+
       scale_fill_distiller(palette = "Spectral")+
       ggtitle(title)+
       theme_bw()+
       xlab("")+ylab("")
-  
-  }
 
 })
 
-map <- marrangeGrob(all_map,ncol=1,nrow=3)
-ggsave(file = here::here("figures/Figure6.png"),map,width = 8, height = 12, units= "in",dpi= 300)
-
-
-
+map <- marrangeGrob(all_map,ncol=2,nrow=2)
+ggsave(file = here::here("figures/FigureDeltaThr_NonTHR.png"),map,width = 8, height = 12, units= "in",dpi= 300)
 
 #'---------------------------------------------------------------------@DistributionThr+Rank
 
