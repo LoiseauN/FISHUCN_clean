@@ -279,7 +279,7 @@ all_map <- lapply(1:length(var),function(x){
 })
 
 map <- marrangeGrob(all_map,ncol=2,nrow=2)
-ggsave(file = here::here("figures/FigureDeltaThr_NonTHR.png"),map,width = 8, height = 12, units= "in",dpi= 300)
+ggsave(file = here::here("figures/FigureDeltaThr_NonTHR.png"),map,width = 12, height = 8, units= "in",dpi= 300)
 
 #'---------------------------------------------------------------------@DistributionThr+Rank
 
