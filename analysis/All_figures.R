@@ -131,12 +131,17 @@ for (i in 1:nrow (dat_network)){
   }
 }
 
-dat_network<-as.data.frame(sapply(dat_network,
-                                  mapvalues, from = c(NA,"NaN"), 
-                                  to = c("No Status","No Status")))
 
+dat_network[is.na(dat_network$IUCN_final),]$IUCN_final <- "No Status"
+dat_network[is.na(dat_network$IUCN_cat),]$IUCN_cat <- "No Status"
 
-df <- data.frame(id = rep(dat_network$species,2),
+for (i in 1:nrow(dat_network)){
+  if(is.na(dat_network$predict_complementary[i]) & dat_network$IUCN_cat[i] == "No Status") {
+    dat_network$predict_complementary[i] <- "No Status"
+  
+}}
+
+df <- data.frame(id = rep(d$species,2),
                  stage = as.factor(c(rep("Before Prediction",nrow(dat_network)), rep("After Prediction",nrow(dat_network)))),
                  group = as.factor(c(dat_network$IUCN_cat,dat_network$IUCN_final)))
 
@@ -157,7 +162,7 @@ plot_net <-
   theme_bw()+
   xlab("") +ylab("Number of species")
 
-ggsave(file = here::here("figures/Figure3.png"),plot_net, width = 12, height = 12, units= "in",dpi= 300)
+#ggsave(file = here::here("figures/Figure3.png"),plot_net, width = 12, height = 12, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@Percentagegainmodel

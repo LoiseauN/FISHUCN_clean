@@ -21,6 +21,9 @@ dat_phylo <- data.frame(species = FB_vars$species,
                   Non_Threatened_predicted = rep(NA,nrow(FB_vars)),
                   Unpredicted = rep(NA,nrow(FB_vars))
                   )
+
+
+
 #CHECK ORDER and same species
 dat_phylo <- dat_phylo[order(match(dat_phylo$species, dat_network$species)),]
 
