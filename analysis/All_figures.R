@@ -139,7 +139,8 @@ for (i in 1:nrow(dat_network)){
   if(is.na(dat_network$predict_complementary[i]) & dat_network$IUCN_cat[i] == "No Status") {
     dat_network$predict_complementary[i] <- "No Status"
   
-}}
+      }
+  }
 
 df <- data.frame(id = rep(d$species,2),
                  stage = as.factor(c(rep("Before Prediction",nrow(dat_network)), rep("After Prediction",nrow(dat_network)))),
