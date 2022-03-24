@@ -56,5 +56,6 @@ all_partial <- gridExtra::grid.arrange(all_partial[[1]],
 
 ggsave(file = here::here("figures", "partial_plot.pdf"), all_partial,
        width = 6.5 , height =11.5 )
+
 }
 
