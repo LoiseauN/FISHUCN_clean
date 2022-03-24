@@ -8,8 +8,10 @@
 #' @export
 #' 
 #' 
-names = c("Range size","Max Lenght", "K")
+
 var_partial = function(data_split,var,names){
+  
+  names = c("Range size (log)","Max Length (log)", "K")
   
 #SHuffling data, then Splitting into training and test data
 split <- initial_split(data_split[[i]][sample(nrow(data_split[[i]])),], prop = 0.8)
@@ -41,10 +43,18 @@ all_partial <- lapply(1:length(var), function(x){
     ylim(0.1,0.9)+
     theme_bw()+
     ylab("Probability")+
-    xlab(names[x])
+    xlab(names[x])+
+    theme(legend.position="none")
   
     return(part_plot)
   
+})
+
+all_partial <- gridExtra::grid.arrange(all_partial[[1]],
+                                       all_partial[[2]],
+                                       all_partial[[3]],ncol=1)
+
+ggsave(file = here::here("figures", "partial_plot.pdf"), all_partial,
+       width = 6.5 , height =11.5 )
 }
-)
 
