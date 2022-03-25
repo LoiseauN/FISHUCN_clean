@@ -152,7 +152,8 @@ for (i in 1:nrow(dat_network)){
   if(is.na(dat_network$predict_complementary[i]) & dat_network$IUCN_cat[i] == "No Status") {
     dat_network$predict_complementary[i] <- "No Status"
   
-}}
+      }
+  }
 
 pos <- which(dat_network$'IUCN_final' == "NaN")
 if (length(pos)) dat_network[pos, "IUCN_final"] <- "No Status"
@@ -225,6 +226,26 @@ fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness
   theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
   geom_abline(slope=1, intercept = 0)
 ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
+
+#'---------------------------------------------------------------------@
+test <- na.omit(all_geo_res)
+
+test$pos <- NA
+for (i in 1:nrow(test)){
+  if(test$DeltaRank[i]>0) test$pos[i]=1
+  if(test$DeltaRank[i]<0) test$pos[i]=2
+}
+
+
+fig_rank <- ggplot(test, aes(log10(richness), DeltaRank)) +
+  geom_point(aes(fill = factor(sign(DeltaRank))), size = 3,shape=21) +
+  geom_smooth(aes(colour = factor(pos)))+
+  scale_fill_manual(values =c("dodgerblue2","chocolate1"))+
+  scale_colour_manual(values = c("black","black"))+
+    theme_bw()+
+  theme(legend.position = "none")
+ggsave(file = here::here("figures/Figure5bis.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
+
 
 
 #'---------------------------------------------------------------------@MAP
@@ -340,8 +361,17 @@ ml <- marrangeGrob(pl,ncol=2,nrow=3)
 ggsave(file = here::here("figures/Figure7.png"),ml,width = 12, height = 12, units= "in",dpi= 300)
 
 
+#'---------------------------------------------------------------------@TabeFamily
+
+#TO DO PERCENTAGE?
+dat_taxo <- dat_phylo[!is.na(dat_phylo$keep==1),]
+dat_taxo <-merge(dat_taxo,data_noNA,by.x="label",by.y="row.names",all.x = T)
+dat_taxo<- dat_taxo[rowSums(is.na(dat_taxo)) != ncol(dat_taxo), ]
 
 
+table_taxo <- aggregate(Non_Threatened ~ Family, data = dat_taxo, sum,na.action = na.omit)
+table_taxo <- table_taxo %>% arrange(desc(Non_Threatened))
+grid.table()
 
 
 
