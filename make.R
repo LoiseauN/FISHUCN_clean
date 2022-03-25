@@ -9,53 +9,62 @@
 #' @date 2021/02/17
 #' 
 
-#-----------------Loading packages-------------------
-
-pkgs <- c("tidyverse","missForest","parallel","tidymodels","taxize","here",
-          "ranger","caret","caper","RCurl","XML","tidyverse",
-          "pbmcapply","doParallel","rfishbase","beepr","arm","dplyr")
-nip <- pkgs[!(pkgs %in% installed.packages())]
-nip <- lapply(nip, install.packages, dependencies = TRUE)
-ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
 
-#-----------------Loading all data---------------------
+## Parameters ----
 
-path = (here::here("data"))
-setwd(path)
-files <- list.files(here::here("data"),pattern = ".rds")
-FB_vars = lapply(files, readRDS) %>% bind_rows()
+set.seed(42)
 
-path = (here::here("data"))
-setwd(path)
-files <- list.files(here::here("data"),pattern = ".RData")
-data_list = lapply(files, load, .GlobalEnv)
 
-path = (here::here("outputs"))
-setwd(path)
-files <- list.files(here::here("outputs"),pattern = ".RData|Rdata")
-data_list = lapply(files, load, .GlobalEnv)
+## Installing/Loading packages ----
+
+pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr", 
+           "ggalluvial", "ggplot2", "ggstatsplot", "grid", "gridExtra", "here", 
+           "hrbrthemes", "missForest", "palmerpenguins", "parallel", 
+           "pbmcapply", "plyr", "ranger", "raster", "RCurl", "rfishbase", 
+           "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
+           "tidyverse", "viridis", "XML")
+
+nip <- pkgs[!(pkgs %in% utils::installed.packages())]
+nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
+ip  <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
+
+
+## Loading all functions ----
+
+files.source <- list.files(here::here("R"), pattern = "\\.R$", 
+                           full.names = TRUE)
+invisible(sapply(files.source[-13], source)) ##### pcoaFig.R is not a function
+
+
+# files.source = list.files(here::here("analysis"), pattern = "\\.R$", 
+#                           full.names = TRUE)
+# invisible(sapply(files.source, source))
+
+
+## Loading all data ----
+
+files   <- list.files(here::here("data"), pattern = "\\.rds$", 
+                      full.names = TRUE)
+FB_vars <- lapply(files, readRDS) %>% 
+  dplyr::bind_rows()
+
+
+files     <- list.files(here::here("data"), pattern = "\\.RData$", 
+                        full.names = TRUE)
+data_list <- lapply(files, load, .GlobalEnv)
+
+
+files     <- list.files(here::here("outputs"), pattern = "\\.RData$|\\.Rdata$",
+                        full.names = TRUE)
+data_list <- lapply(files, load, .GlobalEnv)
+
 
 #TO CHECK HERE .Rdata for IUCN_status
 
-#-----------------Loading all functions---------------------
-
-path = (here::here("R"))
-setwd(path)
-files.source = list.files(here::here("R"))
-sapply(files.source, source)
-
-path = (here::here("analysis"))
-setwd(path)
-files.source = list.files(here::here("analysis"))
-sapply(files.source, source)
-
-#-----------------Reproductibility---------------------
-set.seed(42)
 
 #------------------Running code------------------------
 
-setwd(here::here())
 
 #Scrap Data from Fishbase
 species_traits = FB_scrap()

@@ -1,31 +1,44 @@
-# ---------- Load packages
-pkgs <- c("plyr","rredlist","ggplot2","viridis","hrbrthemes","rphylopic","scales","ggalluvial","dplyr",
-          "stringr","cluster","ggstatsplot","palmerpenguins","tidyverse","grid","gridExtra","raster","gridExtra")
-nip <- pkgs[!(pkgs %in% installed.packages())]
-nip <- lapply(nip, install.packages, dependencies = TRUE)
-ip   <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
+#' The make.R must be run first
+#' 
+#' 
+#' 
 
 
-#With package rredlist extract status
-mammals_status <- rl_comp_groups("mammals", key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
-birds_status <- rl_comp_groups("birds", key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
-amphibians_status <- rl_comp_groups("Amphibians", key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
+## Extract IUCN status ----
+
+mammals_status    <- rredlist::rl_comp_groups("mammals", 
+  key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
+
+birds_status      <- rredlist::rl_comp_groups("birds", 
+  key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
+
+amphibians_status <- rredlist::rl_comp_groups("Amphibians", 
+  key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
 
 
-#With phylopic extract pic (with License 1.0 and No Copyright)
-mammals_pic <- image_data("8cad2b22-30d3-4cbd-86a3-a6d2d004b201", size = "512")[[1]]
-birds_pic <- image_data("34d9872c-b7d0-416f-8ac6-1f9f952982c8", size = "512")[[1]]
-fish_pic <- image_data("86c40d81-2613-4bb4-ad57-fb460be56ae5", size = "512")[[1]]
-amphibians_pic <- image_data("cd0cdc36-ecfa-414f-af87-1b5e0ec0c69b", size = "512")[[1]]
+## Download Phylopic silhouettes (with License 1.0 and No Copyright) ----
+
+mammals_pic    <- rphylopic::image_data("8cad2b22-30d3-4cbd-86a3-a6d2d004b201", 
+                                        size = "512")[[1]]
+
+birds_pic      <- rphylopic::image_data("34d9872c-b7d0-416f-8ac6-1f9f952982c8", 
+                                        size = "512")[[1]]
+
+fish_pic       <- rphylopic::image_data("86c40d81-2613-4bb4-ad57-fb460be56ae5", 
+                                        size = "512")[[1]]
+
+amphibians_pic <- rphylopic::image_data("cd0cdc36-ecfa-414f-af87-1b5e0ec0c69b", 
+                                        size = "512")[[1]]
 
 
 
-#'---------------------------------------------------------------------@Comparisonothertaxa
-data_4_taxa <- data.frame( taxa = c(rep("mammals", nrow(mammals_status$result)),
-                                    rep("birds",nrow(birds_status$result)),
-                                    rep("amphibians",nrow(amphibians_status$result)),
-                                    rep("fishes",nrow(FB_final))),
-                           status = as.factor(c(mammals_status$result$category,
+#'------------------------------------------------------------------------------@Comparisonothertaxa
+
+data_4_taxa <- data.frame(taxa   = c(rep("mammals", nrow(mammals_status$result)),
+                                     rep("birds", nrow(birds_status$result)),
+                                     rep("amphibians", nrow(amphibians_status$result)),
+                                     rep("fishes", nrow(FB_final))),
+                          status = as.factor(c(mammals_status$result$category,
                                                 birds_status$result$category,
                                                 amphibians_status$result$category,
                                                 as.character(FB_final$IUCN))))
@@ -141,7 +154,11 @@ for (i in 1:nrow(dat_network)){
   
 }}
 
-df <- data.frame(id = rep(d$species,2),
+pos <- which(dat_network$'IUCN_final' == "NaN")
+if (length(pos)) dat_network[pos, "IUCN_final"] <- "No Status"
+
+
+df <- data.frame(id = rep(dat_network$species,2),
                  stage = as.factor(c(rep("Before Prediction",nrow(dat_network)), rep("After Prediction",nrow(dat_network)))),
                  group = as.factor(c(dat_network$IUCN_cat,dat_network$IUCN_final)))
 
