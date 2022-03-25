@@ -210,6 +210,26 @@ fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness
   geom_abline(slope=1, intercept = 0)
 ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
+#'---------------------------------------------------------------------@
+test <- na.omit(all_geo_res)
+
+test$pos <- NA
+for (i in 1:nrow(test)){
+  if(test$DeltaRank[i]>0) test$pos[i]=1
+  if(test$DeltaRank[i]<0) test$pos[i]=2
+}
+
+
+fig_rank <- ggplot(test, aes(log10(richness), DeltaRank)) +
+  geom_point(aes(fill = factor(sign(DeltaRank))), size = 3,shape=21) +
+  geom_smooth(aes(colour = factor(pos)))+
+  scale_fill_manual(values =c("dodgerblue2","chocolate1"))+
+  scale_colour_manual(values = c("black","black"))+
+    theme_bw()+
+  theme(legend.position = "none")
+ggsave(file = here::here("figures/Figure5bis.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
+
+
 
 #'---------------------------------------------------------------------@MAP
 #all_geo_res
