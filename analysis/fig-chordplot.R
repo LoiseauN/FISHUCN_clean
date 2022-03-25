@@ -1,4 +1,4 @@
-
+#' Circular Chord Diagram
 
 dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
                                              "predict_complementary")])
@@ -76,6 +76,10 @@ ordre <- c("A_Threatened", "A_No Status", "A_Non Threatened",
 grid.col1a = c(A_Threatened = "#FC4E07", `A_Non Threatened` = "#00AFBB", `A_No Status` = "#E7B800",
                B_Threatened = "#FC4E07", `B_Non Threatened` = "#00AFBB", `B_No Status` = "#E7B800")
 
+png(here::here("figures", "figure_2bis.png"), height = 6, width = 6, 
+    units = "in", res = 300)
+
+
 par(new = FALSE, fg = "black", col = "black")
 circlize::circos.clear()
 circlize::circos.par(start.degree = -90, canvas.xlim = c(-1.2, 1.2), 
@@ -118,3 +122,4 @@ for(si in circlize::get.all.sector.index()) {
                         font = 1, adj = c(0.5, -2))
 }
 
+dev.off()
