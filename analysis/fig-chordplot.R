@@ -64,6 +64,12 @@ mat <- table(dat_network$"IUCN_cat", dat_network$"IUCN_final")
 rownames(mat) <- paste0("A_", rownames(mat))
 colnames(mat) <- paste0("B_", colnames(mat))
 
+sum_before <- round(100 * apply(mat, 1, sum) / sum(apply(mat, 1, sum)), 1)
+sum_after  <- round(100 * apply(mat, 2, sum) / sum(apply(mat, 2, sum)), 1)
+
+perc_values <- c(sum_before, sum_after)
+
+
 ordre <- c("A_Threatened", "A_No Status", "A_Non Threatened", 
            "B_Threatened", "B_No Status", "B_Non Threatened")
 
@@ -73,13 +79,14 @@ grid.col1a = c(A_Threatened = "#FC4E07", `A_Non Threatened` = "#00AFBB", `A_No S
 par(new = FALSE, fg = "black", col = "black")
 circlize::circos.clear()
 circlize::circos.par(start.degree = -90, canvas.xlim = c(-1.2, 1.2), 
-                     canvas.ylim = c(-1, 1.25))
+                     canvas.ylim = c(-1, 1.25), points.overflow.warning = FALSE)
 circlize::chordDiagram(mat, grid.col = grid.col1a, 
                        row.col = c("#FC4E0700", "#E7B800FF", "#00AFBB00"),
                        big.gap = 5,
-                       annotationTrack = c("name", "grid"),
+                       annotationTrack = c("grid"),
                        order = ordre, directional = -1, 
-                       annotationTrackHeight = c(0.01, 0.2))
+                       annotationTrackHeight = c(0.20))
+
 segments(x0 = 0, y0 = -1, y1 = 1, lty = 2, col = "#00000080")
 
 text(x = -1.15, y = 1.15, labels = "Before ML/DL", pos = 4, cex = 1, font = 2)
@@ -90,6 +97,24 @@ par(new = TRUE, fg = "transparent", col = "transparent")
 circlize::chordDiagram(mat, grid.col = grid.col1a, 
                        row.col = c("#FC4E0733", "#E7B80000", "#00AFBB33"),
                        big.gap = 5,
-                       annotationTrack = c("name", "grid"),
+                       annotationTrack = c("grid"),
                        order = ordre, directional = -1, 
-                       annotationTrackHeight = c(0.01, 0.2))
+                       annotationTrackHeight = c(0.20))
+
+for(si in circlize::get.all.sector.index()) {
+  
+  xlim = circlize::get.cell.meta.data("xlim", sector.index = si, track.index = 1)
+  ylim = circlize::get.cell.meta.data("ylim", sector.index = si, track.index = 1)
+  
+  val <- paste0(perc_values[names(perc_values) == si], "%")
+  lab <- gsub("A_|B_", "", si)
+  
+  circlize::circos.text(mean(xlim), mean(ylim), val, sector.index = si, track.index = 1, 
+                        facing = "bending.inside", niceFacing = TRUE, col = "black", 
+                        font = 1, adj = c(0.5, 0.5))
+  
+  circlize::circos.text(mean(xlim), mean(ylim), lab, sector.index = si, track.index = 1, 
+                        facing = "bending.inside", niceFacing = TRUE, col = "black", 
+                        font = 1, adj = c(0.5, -2))
+}
+
