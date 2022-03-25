@@ -180,6 +180,8 @@ plot_net <-
   theme_bw()+
   xlab("") +ylab("Number of species")
 
+print(plot_net)
+
 #ggsave(file = here::here("figures/Figure3.png"),plot_net, width = 12, height = 12, units= "in",dpi= 300)
 
 

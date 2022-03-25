@@ -23,7 +23,7 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "hrbrthemes", "missForest", "palmerpenguins", "parallel", 
            "pbmcapply", "plyr", "ranger", "raster", "RCurl", "rfishbase", 
            "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
-           "tidyverse", "viridis", "XML")
+           "tidyverse", "viridis", "XML", "circlize")
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
@@ -34,7 +34,7 @@ ip  <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
 files.source <- list.files(here::here("R"), pattern = "\\.R$", 
                            full.names = TRUE)
-invisible(sapply(files.source[-13], source)) ##### pcoaFig.R is not a function
+invisible(sapply(files.source[-14], source)) ##### pcoaFig.R is not a function
 
 
 # files.source = list.files(here::here("analysis"), pattern = "\\.R$", 
