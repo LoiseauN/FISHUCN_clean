@@ -25,7 +25,7 @@ for (i in 1: nrow(MPA_Protect)){
 }
 
   ## Select var  ----
-select <- MPA_Protect[,c("species","predict_complementary","Max_length","Env_2","Climate",
+select <- MPA_Protect[,c("species","predict_complementary","DistrArea","Max_length","Env_2","Climate",
                       "Repro.Mode","Repro.Fertil","PriceCateg","BodyShapeI",
                       "Aquarium","K","Genus","Family")]
 select <- select[!is.na(select$predict_complementary),]
