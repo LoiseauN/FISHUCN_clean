@@ -181,6 +181,8 @@ plot_net <-
   xlab("") +ylab("Number of species")
 
 print(plot_net)
+save(dat_network,file = here::here("outputs/dat_network.RData"))
+
 
 #ggsave(file = here::here("figures/Figure3.png"),plot_net, width = 12, height = 12, units= "in",dpi= 300)
 
@@ -286,10 +288,44 @@ all_map <- lapply(1:length(var),function(x){
   
 
 
+}
 })
 
 map <- marrangeGrob(all_map,ncol=1,nrow=2)
 ggsave(file = here::here("figures/Figure6.png"),map,width = 8, height = 12, units= "in",dpi= 300)
+
+
+
+
+#'---------------------------------------------------------------------@MapofpercentageTHR
+all_geo_res$PercentageTHR_before <- all_geo_res$Rthr/all_geo_res$richness
+all_geo_res$PercentageTHR_after <- all_geo_res$Rfinalthr/all_geo_res$richness
+
+all_geo_res[is.na(all_geo_res$PercentageTHR_before),]$PercentageTHR_before <- 0
+all_geo_res[is.na(all_geo_res$PercentageTHR_after),]$PercentageTHR_after <- 0
+
+var = c("PercentageTHR_before","PercentageTHR_after")
+all_map <- lapply(1:length(var),function(x){
+  
+  mask = mask.full
+  df <- all_geo_res[,var[x]]
+  df[is.na(df)] <- 0
+  mask[all_geo_res$ID] = df
+  
+  df <-as.data.frame(rasterToPoints(mask))
+  colnames(df)[3] <- "value"
+
+    map <- ggplot() +
+      geom_raster(data=df,aes(x = x, y = y, fill = value))+#(value/max(value))
+      scale_fill_distiller(palette = "RdBu")+
+        theme_bw()+
+      xlab("")+ylab("")
+} )
+    
+    
+ 
+
+
 
 
 #'---------------------------------------------------------------------@MapofDeltaTHR_NONTHR

@@ -8,6 +8,47 @@ set_fish <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.char
 
 
 
+#Compute FRITZ to know if functional rare species are packaged      
+
+#TO DO FOR THE OVERALL PHYLO
+
+#' ---------------------------------------------------------------------------- @ClusteredorNOT
+D.phylogeny <- function(ids,proc,data_DR,permut) {
+  #proc <- 2
+  #data_DR <- data_DR
+  #permut <- 10
+  #ids <- 1:100 (number of tree)
+
+  
+  mclapply(ids,function(id) { 
+    
+    tree <-  tree_fish[[id]]
+    set_tree <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.character(dat_network$species))])
+   
+    set_tree$node.label <- NULL
+    
+    #collapse or resolve multichotomies in phylogenetic trees TODO check that is mean exactely because need it
+    set_tree<-di2multi(set_tree)
+    
+    
+    #
+    #Compute D and statistic
+    FR_PhyloD <- caper::comparative.data(set_tree, dat_phylo_D,"label",na.omit=FALSE)
+    FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Threatened,permut=permut)
+    
+    #The estimated D value
+    estimated_D <- FR_PhyloD$DEstimate
+    #A p value,giving the result of testing whether D is significantly different from one
+    Pval1 <- FR_PhyloD$Pval1
+    #A p value, giving the result of testing whether D is significantly different from zero
+    Pval0 <- FR_PhyloD$Pval0
+    
+    Dstat <- data.frame(estimated_D,Pval1,Pval0)
+    return(Dstat)
+  },mc.cores= proc)
+  
+  
+  
 #Plot Phylogeny
 
 #' ---------------------------------------------------------------------------- @Speciesperstatus
@@ -38,6 +79,10 @@ for(i in 1:nrow(dat_phylo)){
   
   
 }
+
+
+dat_phylo_D <- as.data.frame(dat_phylo)
+
 
 dat_phylo$keep <- NA
 for (i in  1:nrow(dat_phylo)){ 
