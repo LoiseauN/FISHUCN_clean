@@ -224,6 +224,8 @@ boxplot(MPA_Protect$Target_achievement_I_IV ~ MPA_Protect$IUCN_cat, add = TRUE, 
 #  theme_bw() + xlab("IUCN only")+ ylab("IUCN + Predicted")
 #ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
 
+all_geo_res <- all_geo_res[order(all_geo_res$richness, decreasing=FALSE), ]
+
 fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness)) ) +
   geom_point(size=0.7,alpha = 0.5) + 
   scale_color_distiller(palette = "Spectral")+

@@ -12,7 +12,7 @@
 var_partial = function(data_split,var,names){
   
   names = c("Range size (log)","Max Length (log)", "K")
-  
+  data_split <- split
 #SHuffling data, then Splitting into training and test data
 split <- initial_split(data_split[[i]][sample(nrow(data_split[[i]])),], prop = 0.8)
 
@@ -23,10 +23,10 @@ test <- testing(split)
 mod = ranger(IUCN ~ ., data = train , probability = F,
              importance ="permutation",num.trees = 1000,mtry = 3)
 
-ranger::partial(mod, 
-        pred.var = c("DistrArea"), 
-        trim.outliers = TRUE, chull = TRUE, parallel = TRUE,
-        grid.resolution = 30,  paropts = list(.packages = "ranger"))
+#ranger::partial(mod, 
+ #       pred.var = c("DistrArea"), 
+  #      trim.outliers = TRUE, chull = TRUE, parallel = TRUE,
+   #     grid.resolution = 30,  paropts = list(.packages = "ranger"))
 
 
 all_partial <- lapply(1:length(var), function(x){
