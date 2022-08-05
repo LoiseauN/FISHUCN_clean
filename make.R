@@ -196,6 +196,7 @@ save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 dim(FB_final) - dim(data_noNA)
 FB_nonselec <-FB_final[!rownames(FB_final) %in% rownames(data_noNA),]
+FB_nonselec <-FB_nonselec[is.na(FB_nonselec$IUCN),]
 
 
 

@@ -15,29 +15,27 @@
 n     <- 1                          # ID of the first sub-plot
 plots <- list()                     # Sub-plots storage
 load("~/Documents/Postdoc MARBEC/FISHUCN/last/FISHUCN_clean/outputs/MPA_Protect.RData")
-MPA_Protect <- merge(MPA_Protect,dat_network,by="species")
-MPA_Protect$IUCN_final <- as.factor(MPA_Protect$IUCN_final)
+All_res <- merge(MPA_Protect,dat_network,by="species")
+All_res$IUCN_final <- as.factor(All_res$IUCN_final)
 
-MPA_Protect <- merge(MPA_Protect,data_noNA[,-c(10,13)],by.x="species",by.y="row.names")
-for (i in 1: nrow(MPA_Protect)){
-  if(MPA_Protect$IUCN_cat[i] != "No Status") MPA_Protect$predict_complementary[i] <- NA
+All_res <- merge(All_res,data_noNA[,-c(10,13)],by.x="species",by.y="row.names")
+for (i in 1: nrow(All_res)){
+  if(All_res$IUCN_cat[i] != "No Status") All_res$predict_complementary[i] <- NA
     
 }
 
   ## Select var  ----
-select <- MPA_Protect[,c("species","predict_complementary","DistrArea","Max_length","Env_2","Climate",
+select <- All_res[,c("species","predict_complementary","DistrArea","Max_length","Env_2","Climate",
                       "Repro.Mode","Repro.Fertil","PriceCateg","BodyShapeI",
                       "Aquarium","K","Genus","Family")]
 select <- select[!is.na(select$predict_complementary),]
 
 rownames(select) <- select$species
-features <- select[,-c(1:2)]
+features <- select[,-c(1:2,13:14)]
 
-features_cat <- data.frame(names(features), c("Q",rep("N",7),"Q","N","N"))
+features_cat <- data.frame(names(features), c("Q","Q",rep("N",7),"Q"))
 colnames(features_cat) <- c("trait_name", "trait_type")
 
-
-save(features,file="features.RData")
 
   ## Compute distance  ----
  dist <- mFD::funct.dist(
@@ -49,19 +47,16 @@ save(features,file="features.RData")
   weight_type   = "equal",
   stop_if_NA    = TRUE)
  
- 
- save(dist,file = "outputs/dist.Rdata")
- pco_features<-ape::pcoa(dist)
- 
+
  ## Build PCOA  ----
- 
- save(pco_features,file="pco_features.RData")
+pco_features<-ape::pcoa(dist)
+save(pco_features,file = here::here("outputs/pco_features.RData"))
 
  
  coord_features <- pco_features$vectors[,c(1:6)]
- save(coord_features,file="coord_features.RData")
 
- coord_features <- merge(coord_features,MPA_Protect,by.x="row.names",by.y="species",all.x=T)
+
+ coord_features <- merge(coord_features,All_res,by.x="row.names",by.y="species",all.x=T)
  rownames(coord_features)<-coord_features[,1]
  coord_features<-coord_features[,-1]
  

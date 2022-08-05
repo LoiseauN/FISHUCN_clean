@@ -298,6 +298,87 @@ ggsave(file = here::here("figures/Figure6.png"),map,width = 8, height = 12, unit
 
 
 
+#'---------------------------------------------------------------------@MapRichess
+var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr","Rfinalnostatus")
+
+all_map <- lapply(1:length(var),function(x){
+  
+  mask = mask.full
+  df <- all_geo_res[,var[x]]
+  df[is.na(df)] <- 0
+  mask[all_geo_res$ID] = df
+  
+  df <-as.data.frame(rasterToPoints(mask))
+  colnames(df)[3] <- "value"
+  
+  if (var[x] =="Rthr" )  {  title =  "IUCN Threatened"  
+  map <- ggplot() +
+    geom_raster(data=df,aes(x = x, y = y, fill = value))+
+    scale_fill_distiller(palette = "Spectral",
+                         limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T), max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T)))+
+    ggtitle(title)+
+    theme_bw()+
+    xlab("")+ylab("")} 
+  
+  else if (var[x] =="Rnothr" )  {  title =  "IUCN Non-Threatened"  
+  map <- ggplot() +
+    geom_raster(data=df,aes(x = x, y = y, fill = value))+
+    scale_fill_distiller(palette = "Spectral",
+                         limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
+    ggtitle(title)+
+    theme_bw()+
+    xlab("")+ylab("")
+  } 
+  
+  else if  (var[x] =="Rnostatus" )  {  title =  "IUCN No-Status"  
+  map <- ggplot() +
+    geom_raster(data=df,aes(x = x, y = y, fill = value))+
+    scale_fill_distiller(palette = "Spectral",
+                         limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
+    ggtitle(title)+
+    theme_bw()+
+    xlab("")+ylab("")
+  } 
+  
+  else if  (var[x] =="Rfinalthr" )  {  title =  "IUCN + predicted  Threatened"  
+  map <- ggplot() +
+    geom_raster(data=df,aes(x = x, y = y, fill = value))+
+    scale_fill_distiller(palette = "Spectral",
+                         limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T), max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T)))+
+    ggtitle(title)+
+    theme_bw()+
+    xlab("")+ylab("")
+  }
+  
+  else if  (var[x] =="Rfinalnothr" )  {  title =  "IUCN + predicted  Non-Threatened"   
+  map <- ggplot() +
+    geom_raster(data=df,aes(x = x, y = y, fill = value))+
+    scale_fill_distiller(palette = "Spectral",
+                         limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
+    ggtitle(title)+
+    theme_bw()+
+    xlab("")+ylab("")
+  }
+  
+  else if  (var[x] =="Rfinalnostatus" )  {  title =  "IUCN + predicted  No-Status"  
+  map <- ggplot() +
+    geom_raster(data=df,aes(x = x, y = y, fill = value))+
+    scale_fill_distiller(palette = "Spectral",
+                         limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
+    ggtitle(title)+
+    theme_bw()+
+    xlab("")+ylab("")
+  } 
+  
+
+})
+
+
+
+map <- marrangeGrob(all_map,ncol=2,nrow=3)
+ggsave(file = here::here("figures/FigureRichess_status.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+
+#'---------------------------------------------------------------------@DistributionThr+Rank
 
 #'---------------------------------------------------------------------@MapofpercentageTHR
 all_geo_res$PercentageTHR_before <- all_geo_res$Rthr/all_geo_res$richness
