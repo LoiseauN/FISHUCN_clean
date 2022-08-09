@@ -14,7 +14,6 @@
 
 n     <- 1                          # ID of the first sub-plot
 plots <- list()                     # Sub-plots storage
-load("~/Documents/Postdoc MARBEC/FISHUCN/last/FISHUCN_clean/outputs/MPA_Protect.RData")
 All_res <- merge(MPA_Protect,dat_network,by="species")
 All_res$IUCN_final <- as.factor(All_res$IUCN_final)
 
@@ -28,11 +27,15 @@ for (i in 1: nrow(All_res)){
 select <- All_res[,c("species","predict_complementary","DistrArea","Max_length","Env_2","Climate",
                       "Repro.Mode","Repro.Fertil","PriceCateg","BodyShapeI",
                       "Aquarium","K","Genus","Family")]
-select <- select[!is.na(select$predict_complementary),]
+#select <- select[!is.na(select$predict_complementary),]
 
 rownames(select) <- select$species
 features <- select[,-c(1:2,13:14)]
 
+select$Env_2  <- factor(select$Env_2,level = bathydemersal,demersal bathypelagic benthopelagic  pelagic reef-associated)
+Climate <- factor(select$Climate,level = Boreal,Temperate,Subtropical,Tropical)          
+PriceCateg <- factor(select$PriceCateg,level = low,medium,very high,high)
+Aquarium <- factor(select$Aquarium,level = never/rarely,public aquariums potential,show aquarium,commercial)
 features_cat <- data.frame(names(features), c("Q","Q",rep("N",7),"Q"))
 colnames(features_cat) <- c("trait_name", "trait_type")
 
@@ -60,15 +63,19 @@ save(pco_features,file = here::here("outputs/pco_features.RData"))
  rownames(coord_features)<-coord_features[,1]
  coord_features<-coord_features[,-1]
  
+
  
  ## Add Paramaters ----
+ coord_features$predict_complementary[is.nan(coord_features$predict_complementary)]<-NA
  
- classes <- unique(coord_features$predict_complementary)
+ classes <- unique(coord_features$predict_complementary)[-5]
  color_NoStatus <- "#E7B800"             
  color_NoTHR    <- "#00AFBB"            
  color_THR      <- "#FC4E07"             
+ color_Other      <- "grey"  
  
- color_classes <- c(color_NoStatus, color_NoTHR, color_THR)
+ 
+ color_classes <- c(color_NoTHR,color_NoStatus,color_Other , color_THR)
  names(color_classes) <- classes
  
 

@@ -23,13 +23,13 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "hrbrthemes", "missForest", "palmerpenguins", "parallel", 
            "pbmcapply", "plyr", "ranger", "raster", "RCurl", "rfishbase", 
            "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
-           "tidyverse", "viridis", "XML", "circlize")
+           "tidyverse", "viridis", "XML", "circlize","edarf")
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
 ip  <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
-
+devtools::install_github("zmjones/edarf", subdir = "pkg")
 ## Loading all functions ----
 
 files.source <- list.files(here::here("R"), pattern = "\\.R$", 

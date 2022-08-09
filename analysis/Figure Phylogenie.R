@@ -137,7 +137,7 @@ tree_dt <- as.data.frame(tree_plot$data)
 tree_dt <- tree_dt[tree_dt$"isTip" == TRUE, ]
 tree_dt <- tree_dt[order(tree_dt$"y"), ]
 
-## Add Threatened_IUCN Points ----
+## Add Threatened Points ----
 cols <- ifelse(is.na(tree_dt$"Threatened"), NA, pal[1])
 
 tree_dt$"x" <-  max(tree_dt$"x") + 5
@@ -146,7 +146,7 @@ tree_plot <- tree_plot +
   
   geom_point(aes(x = x, y = y, color = Threatened), tree_dt, fill = cols, 
              color = "transparent", shape = 21, size = 1)
-tree_plot
+
 ## Add Non_Threatened Points ----
 
 cols <- ifelse(is.na(tree_dt$"Non_Threatened"), NA, pal[2])
@@ -257,8 +257,8 @@ coords <- data.frame(
   x       = rep(1.0,5),
   x_text  = rep(1.3, 5),
   y       = seq(n_lines - 1, n_lines - 6.4, by = -1.2),
-  text    = c("Threatened_IUCN", "Threatened_predicted", "Non_Threatened_IUCN",
-              "Non_Threatened_predicted", "Unpredicted")
+  text    = c("Threatened", "Non_Threatened",
+              "Unpredicted")
 )
 
 yctr <- 2
@@ -273,7 +273,7 @@ tree_legend <- tree_legend +
       x      = x,
       y      = y
     ),
-    fill     = c(pal[1], pal[2], pal[3],pal[4],pal[5]),
+    fill     = c(pal[1], pal[2], pal[3]),
     color    = "transparent",
     shape    = 21,
     size     = 4

@@ -2,10 +2,7 @@
 #' 
 #' 
 #' 
-
-
 ## Extract IUCN status ----
-
 mammals_status    <- rredlist::rl_comp_groups("mammals", 
   key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
 
@@ -17,7 +14,6 @@ amphibians_status <- rredlist::rl_comp_groups("Amphibians",
 
 
 ## Download Phylopic silhouettes (with License 1.0 and No Copyright) ----
-
 mammals_pic    <- rphylopic::image_data("8cad2b22-30d3-4cbd-86a3-a6d2d004b201", 
                                         size = "512")[[1]]
 
@@ -53,8 +49,6 @@ levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR", "EN", "EW","V
 
 data_4_taxa <- subset(data_4_taxa,data_4_taxa$status != "EX")
 
-
-
 data_4_taxa <- as.matrix(table(data_4_taxa))
 data_4_taxa <- (data_4_taxa/apply(data_4_taxa,1,sum))*100
 
@@ -68,7 +62,6 @@ data_4_taxa <- transform(data_4_taxa,
                                                "mammals",
                                                "amphibians",
                                                "fishes")))
-
 
 fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) + 
   geom_bar(position="stack", stat="identity",color="grey20") +
@@ -85,8 +78,22 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
 
 
 #'---------------------------------------------------------------------@variable_importance
+partial_plot <- var_partial(data_split =  split,
+                            var = c("DistrArea" , "Max_length"),
+                            names = c("Range size (log)","Max Length (log)")) 
 
-figure2 = var_imp(test_IUCN[[1]])
+
+importance_plot = var_imp(test_IUCN[[1]])
+
+importance_plot <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[1]]), xmin = 6, xmax = 11, 
+                     ymin = 25, ymax = 45.65)
+
+fig2 <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[2]]), xmin = 1, xmax = 6, 
+                                                       ymin = 25, ymax = 45.65)
+
+
+
+ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 8, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@ResultsPrediction
@@ -181,10 +188,10 @@ plot_net <-
   xlab("") +ylab("Number of species")
 
 print(plot_net)
-save(dat_network,file = here::here("outputs/dat_network.RData"))
 
 
 #ggsave(file = here::here("figures/Figure3.png"),plot_net, width = 12, height = 12, units= "in",dpi= 300)
+ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 8, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@Percentagegainmodel
@@ -225,13 +232,31 @@ boxplot(MPA_Protect$Target_achievement_I_IV ~ MPA_Protect$IUCN_cat, add = TRUE, 
 #ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
 
 all_geo_res <- all_geo_res[order(all_geo_res$richness, decreasing=FALSE), ]
+all_geo_res <- all_geo_res[,!colnames(all_geo_res) %in% "DeltaStd_R"]
+all_geo_res <- na.omit(all_geo_res)
+all_geo_res <- all_geo_res[all_geo_res$richness  > 0,]
 
-fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness)) ) +
-  geom_point(size=0.7,alpha = 0.5) + 
+df <- all_geo_res[sample(nrow(all_geo_res), 10000), ]
+
+fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
+  geom_point(size=2.5,alpha = 0.3,shape=16) + 
   scale_color_distiller(palette = "Spectral")+
   theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
   geom_abline(slope=1, intercept = 0)
 ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
+
+fig_rank <- ggplot(all_geo_res, aes(x=Rthr, y=Rfinalthr, color = log10(richness))) +
+  geom_point(size=2.5,alpha = 0.3,shape=16) + 
+  scale_color_distiller(palette = "Spectral")+
+  theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") 
+ggsave(file = here::here("figures/test.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
+
+fig_rank <- ggplot(all_geo_res, aes(x=Rnothr, y=Rfinalnothr, color = log10(richness))) +
+  geom_point(size=2.5,alpha = 0.3,shape=16) + 
+  scale_color_distiller(palette = "Spectral")+
+  theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") 
+ggsave(file = here::here("figures/test2.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
+
 
 #'---------------------------------------------------------------------@
 test <- na.omit(all_geo_res[sample(nrow(all_geo_res), 400000), ]) 
@@ -260,6 +285,10 @@ ggsave(file = here::here("figures/Figure5bis.png"),fig_rank,width = 12, height =
 #'---------------------------------------------------------------------@MAP
 #all_geo_res
 mask.full=raster::raster(here::here("data","mask.full.tif"))
+mask.full.polygon <- sf::st_as_sf(as.point = F)
+
+
+
 
 
 #--- Diff ranking  WHITE HOLE ARE MPA
@@ -271,22 +300,36 @@ all_map <- lapply(1:length(var),function(x){
   df <- all_geo_res[,var[x]]
   df[is.na(df)] <- 0
   mask[all_geo_res$ID] = df
-
-  df <-as.data.frame(rasterToPoints(mask))
-  colnames(df)[3] <- "value"
+  
+  #raster to stars
+  mask <- stars::st_as_stars(mask)
+  mask.full.polygon <- sf::st_as_sf(mask,as.point = F)
+  mask.full.polygon <-  fortify(mask.full.polygon)
+  #df <-as.data.frame(rasterToPoints(mask))
+  #colnames(df)[3] <- "value"
   
   if (var[x] =="DeltaRank" )  {  title =  "Difference Ranking IUCN/IUCN + Predict" }  
  
  
     
   if (var[x] =="DeltaRank" ){
+     map <- ggplot(data = mask.full.polygon) +
+      geom_sf(aes(fill = mask.full), color = NA)+#(value/max(value))
+     #scale_fill_distiller(palette = "RdBu")+
+     ggtitle(title)+
+     theme_bw()+
+     xlab("")+ylab("")
     
-  map <- ggplot() +
-    geom_raster(data=df,aes(x = x, y = y, fill = value))+#(value/max(value))
-    scale_fill_distiller(palette = "RdBu")+
-    ggtitle(title)+
-    theme_bw()+
-    xlab("")+ylab("")
+     ggsave(file = here::here("figures/map_test.png"),map,width = 8, height = 12, units= "in",dpi= 300)
+     
+
+     
+ # map <- ggplot() +
+  #  geom_raster(data=df,aes(x = x, y = y, fill = value))+#(value/max(value))
+   # scale_fill_distiller(palette = "RdBu")+
+  #  ggtitle(title)+
+   # theme_bw()+
+  #  xlab("")+ylab("")
   
 
 
