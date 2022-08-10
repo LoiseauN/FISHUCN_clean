@@ -32,14 +32,17 @@ select <- All_res[,c("species","predict_complementary","DistrArea","Max_length",
 rownames(select) <- select$species
 features <- select[,-c(1:2,13:14)]
 
-select$Env_2  <- factor(select$Env_2,level = bathydemersal,demersal bathypelagic benthopelagic  pelagic reef-associated)
-Climate <- factor(select$Climate,level = Boreal,Temperate,Subtropical,Tropical)          
-PriceCateg <- factor(select$PriceCateg,level = low,medium,very high,high)
-Aquarium <- factor(select$Aquarium,level = never/rarely,public aquariums potential,show aquarium,commercial)
-features_cat <- data.frame(names(features), c("Q","Q",rep("N",7),"Q"))
+features$Env_2  <- factor(features$Env_2 ,levels = c("bathydemersal","demersal","reef-associated","benthopelagic","pelagic","bathypelagic"))
+features$Climate <- factor(features$Climate,levels = c("Boreal","Temperate","Subtropical","Tropical"))          
+features$PriceCateg <- factor(features$PriceCateg,levels = c("low","medium","high","very high"))
+features$Aquarium <- factor(features$Aquarium,levels = c("never/rarely","potential","public aquariums", "show aquarium","commercial"))
+features_cat <- data.frame(names(features), c("Q","Q",rep("O",2),rep("N",2),"O","N","O","Q"))
 colnames(features_cat) <- c("trait_name", "trait_type")
 
-
+features$Env_2  <- ordered(features$Env_2 )
+features$Climate  <- ordered(features$Climate)
+features$PriceCateg <-ordered(features$PriceCateg)
+  features$Aquarium <- ordered(  features$Aquarium)
   ## Compute distance  ----
  dist <- mFD::funct.dist(
   sp_tr         = features,
@@ -55,7 +58,7 @@ colnames(features_cat) <- c("trait_name", "trait_type")
 pco_features<-ape::pcoa(dist)
 save(pco_features,file = here::here("outputs/pco_features.RData"))
 
- 
+
  coord_features <- pco_features$vectors[,c(1:6)]
 
 
@@ -78,7 +81,6 @@ save(pco_features,file = here::here("outputs/pco_features.RData"))
  color_classes <- c(color_NoTHR,color_NoStatus,color_Other , color_THR)
  names(color_classes) <- classes
  
-
   ## Add Scatterplot ----
   
   gplot <- ggplot(coord_features, aes(Axis.1, Axis.2, fill = predict_complementary)) +
