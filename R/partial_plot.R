@@ -19,17 +19,17 @@ split <- initial_split(data_split[[i]][sample(nrow(data_split[[i]])),], prop = 0
 train <- training(split)
 test <- testing(split)
 
-train <- train %>%
-  rename(Survival       = DistrArea,
-         Max Length     = Max_length,
-         Water Column   = Env_2,
-         Climate        = Climate,
-         Reproduction   = Repro.Mode,
-         Fertility      = Repro.Fertil,
-         Price Category = PriceCateg,
-         Body Shape     = BodyShapeI,
-         Aquarium       = Aquarium,
-         Growth rate    = K)
+#train <- train %>%
+#  rename(Survival       = DistrArea,
+ #        Max Length     = Max_length,
+   #      Water Column   = Env_2,
+    #     Climate        = Climate,
+     #    Reproduction   = Repro.Mode,
+     #    Fertility      = Repro.Fertil,
+     #    Price Category = PriceCateg,
+     #    Body Shape     = BodyShapeI,
+     #    Aquarium       = Aquarium,
+     #‡    Growth rate    = K)
 
 #Creating the model and predicting to test data
 mod = ranger(IUCN ~ ., data = train , probability = F,
