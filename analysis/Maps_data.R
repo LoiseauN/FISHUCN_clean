@@ -1,25 +1,7 @@
 remotes::install_github("ropensci/rnaturalearthhires")
 install.packages(c("rnaturalearth", "rnaturalearthdata"))
-# import layers world
-world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 
-# projection
-mol   <- paste0("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 ", "+units=m +no_defs")
-world <- sf::st_transform(world, crs=mol)
-
-
-#My data
-mask = mask.full
-df <- all_geo_res[,var[x]]
-df[is.na(df)] <- 0
-mask[all_geo_res$ID] = df
-
-#raster to stars
-mask <- stars::st_as_stars(mask)
-mask.full.polygon <- sf::st_as_sf(mask,as.point = F)
-mask.full.polygon <-  fortify(mask.full.polygon)
-
-mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol)
+#'-------------------------------------------
 
 
 #Add graticules function 
@@ -110,17 +92,46 @@ geom_mapframe <- function(crs, linetype = "solid", colour = "black",
 }
 
 
-map_test <- ggplot(world) +
+# import layers world
+world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
+
+# projection
+mol   <- paste0("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 ", "+units=m +no_defs")
+world <- sf::st_transform(world, crs=mol)
+
+
+#My data
+mask.full=raster::raster(here::here("data","mask.full.tif"))
+
+var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr","Rfinalnostatus")
+#"DeltaRank"
+all_map <- lapply(1:length(var),function(x){
   
+mask = mask.full
+df <- all_geo_res[,var[x]]
+df[is.na(df)] <- 0
+mask[all_geo_res$ID] = df
+
+#raster to stars
+mask <- stars::st_as_stars(mask)
+mask.full.polygon <- sf::st_as_sf(mask,as.point = F)
+mask.full.polygon <-  fortify(mask.full.polygon)
+
+mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol)
+
+  if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
+  map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   #scale_fill_manual(name = "mask.full", values = my_colors) +
-  scale_fill_hp(option = "Ravenclaw")+
+  scale_fill_hp(option = "Ravenclaw", 
+                limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T),
+                           max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T)))+
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
   
- # ggtitle("Reef fish bioregions (with spatial constraint)") +
+  ggtitle(title) +
   
   ggthemes::theme_map(base_family = "serif") +
   theme(legend.position = "bottom", 
@@ -128,5 +139,126 @@ map_test <- ggplot(world) +
         plot.title      = element_text(face = "bold",  size = 18),
         legend.text     = element_text(face = "plain", size = 12)) #+
   #guides(fill = guide_legend(nrow = 1))
+  }
+  
+else if (var[x] =="Rnothr" )  {  title =  "IUCN Non-Threatened"  
+map <- ggplot(world) +
+geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  scale_fill_hp(option = "Ravenclaw", 
+                limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), 
+                           max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
+  
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+}
 
-ggsave(file = here::here("figures/map_test.png"),map_test,width = 12, height = 8, units= "in",dpi= 50)
+else if  (var[x] =="Rnostatus" )  {  title =  "IUCN No-Status"  
+map <- ggplot(world) +
+geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  scale_fill_hp(option = "Ravenclaw", 
+                limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T),
+                           max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
+  
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+}
+
+else if  (var[x] =="Rfinalthr" )  {  title =  "IUCN + predicted  Threatened"  
+map <- ggplot(world) +
+geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  scale_fill_hp(option = "Ravenclaw", 
+                limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T), 
+                           max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T)))+
+  
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+}
+
+else if  (var[x] =="Rfinalnothr" )  {  title =  "IUCN + predicted  Non-Threatened"   
+map <- ggplot(world) +
+geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  scale_fill_hp(option = "Ravenclaw", 
+                limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T),
+                           max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
+  
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+}
+
+else if  (var[x] =="Rfinalnostatus" )  {  title =  "IUCN + predicted  No-Status"  
+map <- ggplot(world) +
+geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  scale_fill_hp(option = "Ravenclaw", 
+                limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T),
+                           max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
+  +
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+}
+  
+})
+
+all_map <- marrangeGrob(all_map,ncol=2,nrow=3)
+
+
+ggsave(file = here::here("figures/all_map.png"),all_map,width = 12, height = 8, units= "in",dpi= 300)
