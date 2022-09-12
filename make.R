@@ -37,9 +37,9 @@ files.source <- list.files(here::here("R"), pattern = "\\.R$",
 invisible(sapply(files.source[-14], source)) ##### pcoaFig.R is not a function
 
 
-# files.source = list.files(here::here("analysis"), pattern = "\\.R$", 
-#                           full.names = TRUE)
-# invisible(sapply(files.source, source))
+ #files.source = list.files(here::here("analysis"), pattern = "\\.R$", 
+  #                         full.names = TRUE)
+ #invisible(sapply(files.source, source))
 
 
 ## Loading all data ----

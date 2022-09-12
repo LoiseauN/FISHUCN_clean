@@ -53,11 +53,11 @@ dat_phylo[is.na(dat_phylo$Non_Threatened),]$Non_Threatened <- 0
 dat_phylo[is.na(dat_phylo$No_Status),]$No_Status <- 0
 
 
-save(dat_phylo,file="dat_phylo.RData")
+#save(dat_phylo,file="dat_phylo.RData")
 
 dat_phylo_test_d <- na.omit(dat_phylo)
 
-D.phylogeny <- function(ids,proc,status,permut) {
+D.phylogeny <- function(ids,proc,permut) {
   #proc <- 2
   #permut <- 10
   #ids <- 1:2
@@ -71,11 +71,11 @@ D.phylogeny <- function(ids,proc,status,permut) {
     set_tree$node.label <- NULL
     
     #collapse or resolve multichotomies in phylogenetic trees TODO check that is mean exactely because need it
-    set_tree<-di2multi(set_tree)
+    set_tree <- di2multi(set_tree)
     
     #Compute D and statistic
     FR_PhyloD <- caper::comparative.data(set_tree, dat_phylo_test_d,"species",na.omit=FALSE)
-    FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Threatened,permut=10)
+    FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Threatened,permut=permut)
     #FR_PhyloD <- sensiPhy::miss.phylo.d(set_tree,dat_phylo,binvar=Threatened)
 
     #The estimated D value
@@ -92,3 +92,5 @@ D.phylogeny <- function(ids,proc,status,permut) {
   },mc.cores= proc)
   
 }
+
+phylo_D_Thr <- D.phylogeny(ids = 1:100,proc=5 ,permut=100) 
