@@ -46,7 +46,7 @@ D.phylogeny <- function(ids,proc,data_DR,permut) {
     Dstat <- data.frame(estimated_D,Pval1,Pval0)
     return(Dstat)
   },mc.cores= proc)
-  
+})
   
   
 #Plot Phylogeny
@@ -254,8 +254,8 @@ tree_legend <- tree_legend +
 ## Add Colors Legend ----
 
 coords <- data.frame(
-  x       = rep(1.0,5),
-  x_text  = rep(1.3, 5),
+  x       = rep(1.0,3),
+  x_text  = rep(1.3, 3),
   y       = seq(n_lines - 1, n_lines - 6.4, by = -1.2),
   text    = c("Threatened", "Non_Threatened",
               "Unpredicted")
