@@ -93,4 +93,9 @@ D.phylogeny <- function(ids,proc,permut) {
   
 }
 
-phylo_D_Thr <- D.phylogeny(ids = 1:100,proc=5 ,permut=100) 
+phylo_D_Thr <- D.phylogeny(ids = 1:100,proc=5 ,permut=100)
+save(phylo_D_Thr,file=here::here("outputs","phylo_D_Thr.RData"))
+
+
+
+
