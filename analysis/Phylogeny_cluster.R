@@ -75,7 +75,7 @@ D.phylogeny <- function(ids,proc,permut) {
     
     #Compute D and statistic
     FR_PhyloD <- caper::comparative.data(set_tree, dat_phylo_test_d,"species",na.omit=FALSE)
-    FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Non_Threatened,permut=permut)
+    FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Threatened,permut=permut)
     #FR_PhyloD <- sensiPhy::miss.phylo.d(set_tree,dat_phylo,binvar=Threatened)
 
     #The estimated D value
