@@ -7,7 +7,7 @@ tree <-  tree_fish[[1]]
 set_fish <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.character(dat_network$species))])
 
 
-
+color_THR, color_NTHR, color_Nostatus
 #Compute FRITZ to know if functional rare species are packaged      
 
 #TO DO FOR THE OVERALL PHYLO
@@ -173,18 +173,22 @@ tree_plot <- tree_plot +
 
 tree_plot
 ## Add Central Histogram ----
-
-hist_plot <- ggplot(species_d, aes(x = estimated_d, color = dr_class, 
-                                   fill = dr_class)) +
+species_d <- data.frame(estimated_d   = c( do.call(rbind,phylo_D_NonThr)$estimated_D,
+            do.call(rbind,phylo_D_Thr)$estimated_D, do.call(rbind,phylo_D_nostatus)$estimated_D),
+            status_d = c(rep("Non_Threatened", 100), rep("Threatened", 100),rep("No_Status", 100)))
+   
+           
+hist_plot <- ggplot(species_d, aes(x = estimated_d, color = status_d, 
+                                   fill = status_d)) +
   
   geom_density(adjust = 1.5) +
   
   scale_x_continuous(limits = c(0, 1)) +
   
-  scale_color_manual(values = c(color_avg, color_common, color_rare)) +
+  scale_color_manual(values = c("#FC4E07", "#E7B800","#00AFBB")    ) +
   
-  scale_fill_manual(values = paste0(c(color_avg, color_common, color_rare), 
-                                    alpha)) +
+  scale_fill_manual(values = paste0(c("#FC4E07", "#E7B800","#00AFBB"), 
+                                    alpha=0.5)) +
   
   theme_light() +
   
