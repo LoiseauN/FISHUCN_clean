@@ -8,7 +8,7 @@ set_fish <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.char
 
 
 color_THR, color_NTHR, color_Nostatus
-#Compute FRITZ to know if functional rare species are packaged      
+#Compute FRITZ to know if predicted species are packaged      
 
 #TO DO FOR THE OVERALL PHYLO
 
@@ -97,12 +97,10 @@ for (i in  1:nrow(dat_phylo)){
 
 
 #' ---------------------------------------------------------------------------- @Parameters
-#Change names for phylo plot
-
 dat_phylo <- dat_phylo[!is.na(dat_phylo$keep),]
 
 n        <-  1                         # ID of first plot
-n_lines  <- 10                         # Number of family per column (in legend)
+#n_lines  <- 10                         # Number of family per column (in legend)
 plots    <- list()                     # Subplots storage
 #color_meandepth <- RColorBrewer::brewer.pal(name = "YlGnBu", n = 9)
 #color_meandepth <- colorRampPalette(color_meandepth)(255)
@@ -171,24 +169,25 @@ tree_plot <- tree_plot +
              color = "transparent", shape = 21, size = 1)
 
 
-tree_plot
+
 ## Add Central Histogram ----
 species_d <- data.frame(estimated_d   = c( do.call(rbind,phylo_D_NonThr)$estimated_D,
             do.call(rbind,phylo_D_Thr)$estimated_D, do.call(rbind,phylo_D_nostatus)$estimated_D),
-            status_d = c(rep("Non_Threatened", 100), rep("Threatened", 100),rep("No_Status", 100)))
+            Status = c(rep("Non Threatened", 100), rep("Threatened", 100),rep("No Status", 100)))
    
-           
-hist_plot <- ggplot(species_d, aes(x = estimated_d, color = status_d, 
-                                   fill = status_d)) +
+    
+
+hist_plot <- ggplot(species_d, aes(x = estimated_d, 
+                                   fill = Status)) +
   
   geom_density(adjust = 1.5) +
   
   scale_x_continuous(limits = c(0, 1)) +
   
-  scale_color_manual(values = c("#FC4E07", "#E7B800","#00AFBB")    ) +
+  #scale_color_manual(values = c("#E7B800","#00AFBB", "#FC4E07")) +
   
-  scale_fill_manual(values = paste0(c("#FC4E07", "#E7B800","#00AFBB"), 
-                                    alpha=0.5)) +
+  scale_fill_manual(values = paste0(c("#E7B800","#00AFBB","#FC4E07") 
+                                    )) +#alpha=0.5
   
   theme_light() +
   
@@ -196,32 +195,35 @@ hist_plot <- ggplot(species_d, aes(x = estimated_d, color = status_d,
     axis.title       = element_blank(),
     axis.text        = element_text(size = 12, colour = "grey50"),
     legend.position  = "None"
-  ) +
+  ) 
   
-  annotate(
-    geom    = "text",
-    x       = 0.30,
-    y       = 47.5,
-    label   = "bold(\"Index D\")",
-    color   = "grey50",
-    size    = 4,
-    family  = "serif",
-    parse = TRUE
-  )
 
 hist_plot <- ggplotGrob(hist_plot)
 
+#tree_plot <- 
+
+tree_plot <- cowplot::ggdraw(tree_plot)
+
 tree_plot <- tree_plot +
-  
   annotation_custom(
     grob = hist_plot,
-    xmin = 0.365,
-    xmax = 0.565,
-    ymin = 0.40,
-    ymax = 0.60
+    xmin = 0.325,
+    xmax = 0.65,
+    ymin = 0.35,
+    ymax = 0.65
   )
+  #annotation_custom(
+  #  grob = hist_plot,
+  #  xmin = 0.365,
+  #  xmax = 0.565,
+  #  ymin = 0.40,
+  #  ymax = 0.60
+  #)
 
-
+#xmin = 0.365,
+#xmax = 0.565,
+#ymin = 0.40,
+#ymax = 0.60
 
 plots[[n]] <- tree_plot
 
@@ -248,9 +250,9 @@ tree_legend <- ggplot() +
 
 tree_legend <- tree_legend +
   
-  scale_x_continuous(limits = c(0, 30)) +
+  scale_x_continuous(limits = c(0, 10)) +
   
-  scale_y_continuous(limits = c(1 - 0.25, n_lines - 0.25))
+  scale_y_continuous(limits = c(1 - 0.25, 1))
 
 
 
@@ -258,11 +260,11 @@ tree_legend <- tree_legend +
 ## Add Colors Legend ----
 
 coords <- data.frame(
-  x       = rep(1.0,3),
-  x_text  = rep(1.3, 3),
-  y       = seq(n_lines - 1, n_lines - 6.4, by = -1.2),
-  text    = c("Threatened", "Non_Threatened",
-              "Unpredicted")
+  x       = seq(1.5, 8, by = 3),
+  x_text  = seq(1.5, 8, by = 3)+0.2,
+  y       = rep(0.9,3) ,
+  text    = c("Threatened", "Non Threatened",
+              "No Status")
 )
 
 yctr <- 2
@@ -280,7 +282,7 @@ tree_legend <- tree_legend +
     fill     = c(pal[1], pal[2], pal[3]),
     color    = "transparent",
     shape    = 21,
-    size     = 4
+    size     = 6
   ) +
   
   geom_text(
@@ -292,7 +294,7 @@ tree_legend <- tree_legend +
       label  = text
     ),
     hjust    = "left",
-    size     = 4,
+    size     = 6,
     color    = "grey50",
     family   = "serif"
   ) #+
@@ -307,11 +309,14 @@ plots[[n]] <- tree_legend
 ## Arrange Sub-plots ----
 
 mat <- matrix(
-  data   = c(rep(1,35),3,2,2,2,3,3,2,2,2,3),
+  data   = c(rep(1,30),3,2,2,2,3),#,3,2,2,2,3),
   ncol   = 5,
-  nrow   = 9,
+  nrow   = 7,
   byrow  = TRUE
 )
+
+
+
 
 
 
@@ -320,14 +325,14 @@ grobs <- gridExtra::arrangeGrob(
   layout_matrix = mat
 )
 
-plot(grobs)
+#plot(grobs)
 ## Export Figure ----
 
 ggsave(
-  filename  = "~/Documents/FISHUCN/clean/FISHUCN_clean/figures/phyl_tree.png",
+  filename  = "~/Documents/Postdoc MARBEC/FISHUCN/last/FISHUCN_clean/figures/phyl_tree.png",
   plot      = grobs,
-  width     = 24,
-  height    = 13,
+  width     = 12,
+  height    = 12,
   units     = "in",
   dpi       = 600
 )
