@@ -340,4 +340,24 @@ ggsave(
 
 
 
+####### Add functional space
+# Functional trait
+functionalTrait <- as.data.frame(do.call(rbind,lapply(1:nrow(dat_phylo), function(i){
+
+  trait <- rfishbase::ecology(str_replace(dat_phylo$label[i], "_", "-"))
+  return(trait)
+})))
+
+data.frame(rfishbase::ecology(str_replace(dat_phylo$label[1550], "_", "-")))
+ecology(c("Oreochromis niloticus", "Salmo trutta"),
+        fields=c("SpecCode", "FoodTroph", "FoodSeTroph", "DietTroph", "DietSeTroph"))
+
+food <- as.data.frame(do.call(rbind,lapply(1:nrow(dat_phylo), function(i){
+  print(i)
+  trait <- data.frame(rfishbase::fooditems(str_replace(dat_phylo$label[i], "_", " ")))
+  trait <- table(trait$FoodI)
+  trait <- names(trait[which.max(trait)])
+  return(trait)
+})))
+
 

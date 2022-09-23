@@ -23,6 +23,12 @@ for (i in 1: nrow(All_res)){
     
 }
 
+
+# Functional traits
+
+All_res$species
+
+
   ## Select var  ----
 select <- All_res[,c("species","predict_complementary","DistrArea","Max_length","Env_2","Climate",
                       "Repro.Mode","Repro.Fertil","PriceCateg","BodyShapeI",
@@ -39,6 +45,7 @@ features$Aquarium <- factor(features$Aquarium,levels = c("never/rarely","potenti
 features_cat <- data.frame(names(features), c("Q","Q",rep("O",2),rep("N",2),"O","N","O","Q"))
 colnames(features_cat) <- c("trait_name", "trait_type")
 
+# Remove distribArea 
 features$Env_2  <- ordered(features$Env_2 )
 features$Climate  <- ordered(features$Climate)
 features$PriceCateg <-ordered(features$PriceCateg)
