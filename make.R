@@ -114,13 +114,6 @@ FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>%
   dplyr::rename(IUCN = "IUCN_status")%>%
  column_to_rownames("species")
 
-FB_final[rowSums(is.na(FB_final)) == ncol(FB_final), ]
-
-rownames(FB_final) <- FB_final$species
-FB_final <- FB_final[,-1]
-FB_final[rowSums(is.na(FB_final)) == ncol(FB_final), ]
-
-
 
 
 #SOME TRANSFORMATION TO INCLUDE IN ONE OF THE FUNCTIONS
@@ -132,7 +125,7 @@ FB_final$IUCN = as.factor(FB_final$IUCN)
 FB_final[FB_final==""]<-NA
 FB_final <- FB_final[rowSums(is.na(FB_final)) != 23, ]
 
-
+save(FB_final,file = "outputs/FB_final.Rdata")
 
 ###########
 #TEST
@@ -144,6 +137,8 @@ FB_IUCN = IUCN_split(FB_final)
 #FB_IUCN <- FB_IUCN[,-22]
 #FB_vars <- FB_vars[,-22]
 dim(FB_final)
+
+
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
 #Trying out missforest

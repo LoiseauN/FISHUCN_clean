@@ -11,35 +11,12 @@
 #' 
 
 
-#------------------Loading outputs----------------------
-path = (here::here("outputs"))
-setwd(path)
-files <- list.files(here::here("outputs"))
-lapply(files, load, envir=.GlobalEnv)
-
 #Last file to send in zonation
 
 data_zonation <- data.frame(species = rownames(FB_final),
                             IUCN_cat = FB_final$IUCN) 
 
-data_zonation <- data_zonation[!rownames(data_zonation) %in% sort(rownames(FB_final))[c(1:90)],]
 
-#data_zonation$IUCN_alone <- NA
-
-# ----------  Change 
-#for(i in 1:nrow(data_zonation)){ 
- 
-#   print(i)
-  
-#if(is.na(data_zonation$IUCN_cat[i])) data_zonation$IUCN_alone[i] <- NA  
-#else if(data_zonation$IUCN_cat[i] =="LC") data_zonation$IUCN_alone[i] <- "NThr"
-#else if(data_zonation$IUCN_cat[i] =="NT") data_zonation$IUCN_alone[i] <- "NThr"
-#else if(data_zonation$IUCN_cat[i] =="nt") data_zonation$IUCN_alone[i] <- "NThr"
-#else if(data_zonation$IUCN_cat[i] =="VU") data_zonation$IUCN_alone[i] <- "Thr"
-#else if(data_zonation$IUCN_cat[i] =="EN") data_zonation$IUCN_alone[i] <- "Thr"
-#else if(data_zonation$IUCN_cat[i] =="CR") data_zonation$IUCN_alone[i] <- "Thr"
-
-#}
 
 # ----------  Change 
 data_zonation<- data_zonation %>%
@@ -59,32 +36,6 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
   data_zonation<- data_zonation %>%
     left_join(rescale_data,by="species")
 
-
-  
-#--- Prepare for scenario  
-  
-  
-  #IF WE WANT TO REMOVE SPECIES WITH DATA DEFICIENCY
-  # data_zonation$selected_species_IUCNonly <- NA
-  #data_zonation$selected_species_complementary_W_IUCN <- NA
-  #data_zonation$selected_species_consensus_W_IUCN <- NA
-
-  #for(i in 1:nrow(data_zonation)){ 
-  
-  #print(i)
-  
-  #if(!is.na(data_zonation$IUCN_cat[i]) ) data_zonation$selected_species_IUCNonly[i] <- 1
-
-  #if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_complementary[i])) 
-  #data_zonation$selected_species_complementary_W_IUCN[i] <- 1
- 
-
-  #if(!is.na(data_zonation$IUCN_cat[i]) | !is.na(data_zonation$predict_consensus[i])) 
-  #data_zonation$selected_species_consensus_W_IUCN[i] <- 1
-  # }
-  
-
-
 # SCENARIO 1: 
 # 1 for everyone
 
@@ -95,9 +46,6 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
 # NonThreatened predit = 2-probability
 # Threatened by IUCN = 6
 # Threatened predit = 2 + probability (range between 2 and 5)
-
-
-#data_final_zonation <- lapply(1: length(data_zonation_list), function(x){
 
 data_zonation$weight_zonation_IUCN_and_Predict <- NA
 data_zonation$weight_zonation_IUCN_alone <- NA
