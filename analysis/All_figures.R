@@ -203,12 +203,30 @@ gainNThr <- ((table(dat_network$IUCN_cat)[2]-table(dat_network$IUCN_final)[2])/t
 
 MPA_Protect <- merge(MPA_Protect,dat_network,by="species")
 MPA_Protect$IUCN_final <- as.factor(MPA_Protect$IUCN_final)
+MPA_Protect$species <- as.factor(MPA_Protect$species)
+
+MPA_Protect$LOGIT_Target_achievement_I_IV <- log10(MPA_Protect$Target_achievement_I_IV+1)
+
+target_noNA <- MPA_Protect[!is.na(MPA_Protect$LOGIT_Target_achievement_I_IV),]
+target_noNA <- target_noNA[!is.na(target_noNA$IUCN_final),]
 
 plt <- ggstatsplot::ggbetweenstats(
-  data = MPA_Protect[c(1:100),], #data_protected,
+  data = target_noNA[c(1:20),], #data_protected,
   x = IUCN_final,
-  y = log10(Target_achievement_I_IV+1),
+  y = LOGIT_Target_achievement_I_IV
 )
+
+a <- target_noNA[c(1:20),]
+plt <- ggstatsplot::ggbetweenstats(
+  data = a, #data_protected,
+  x = IUCN_final,
+  y = LOGIT_Target_achievement_I_IV
+)
+
+
+
+remove.packages("statsExpressions")
+remove.packages("ggstatsplot")
 
 plt <-  plt +
   labs(
