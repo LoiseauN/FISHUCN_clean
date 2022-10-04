@@ -216,9 +216,11 @@ plt <- ggstatsplot::ggbetweenstats(
 plt <-  plt +
   labs(
     x = "IUCN Status",
-    y = "Target achievement MPA (I - IV)"
+    y = "log10 (Target achievement MPA (I - IV) +1)"
   ) +
   scale_color_manual(values=c("#00AFBB", "#E7B800","#FC4E07"))
+
+
 
 ggsave(file = here::here("figures/Figure4.png"),plt, width = 12, height = 12, units= "in",dpi= 300)
 
