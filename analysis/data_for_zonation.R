@@ -96,6 +96,9 @@ data_zonation$scenario1_NoWeight <- 1
  boxplot(data_zonation$scenario1_NoWeight,
         data_zonation$weight_zonation_IUCN_alone,
         data_zonation$weight_zonation_IUCN_and_Predict)
+ 
+ save(data_zonation,file= here::here("outputs","data_zonation.RData"))
+ 
 #----------------------------------------------------------------
  #IF WE WANT TO REMOVE SPECIES WITH DATA DEFICIENCY
  #IUCNonly <- subset(data_zonation,data_zonation$selected_species_IUCNonly==1)
