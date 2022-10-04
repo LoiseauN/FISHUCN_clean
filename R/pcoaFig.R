@@ -60,7 +60,7 @@ features$PriceCateg <-ordered(features$PriceCateg)
   weight_type   = "equal",
   stop_if_NA    = TRUE)
  
-
+  save(pco_features,file = here::here("outputs/pco_features.RData"))
  ## Build PCOA  ----
 pco_features<-ape::pcoa(dist)
 save(pco_features,file = here::here("outputs/pco_features.RData"))

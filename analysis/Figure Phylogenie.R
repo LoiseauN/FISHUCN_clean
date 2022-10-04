@@ -84,13 +84,13 @@ for(i in 1:nrow(dat_phylo)){
 dat_phylo_D <- as.data.frame(dat_phylo)
 
 
-dat_phylo$keep <- NA
-for (i in  1:nrow(dat_phylo)){ 
-  print(i)
-  if(sum(dat_phylo$Threatened[i],dat_phylo$Non_Threatened[i],dat_phylo$No_Status[i],na.rm=T)==1){
-    dat_phylo$keep[i] <- 1 }
+#dat_phylo$keep <- NA
+#for (i in  1:nrow(dat_phylo)){ 
+#  print(i)
+#  if(sum(dat_phylo$Threatened[i],dat_phylo$Non_Threatened[i],dat_phylo$No_Status[i],na.rm=T)==1){
+#    dat_phylo$keep[i] <- 1 }
   
-}
+#}
 
 
 
