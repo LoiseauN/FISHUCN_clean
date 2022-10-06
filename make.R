@@ -14,7 +14,11 @@
 ## Parameters ----
 
 set.seed(42)
-
+test<-  lapply(1:nrow(FishDistribArea_all),function(i){
+  a <- ecology(as.character(FishDistribArea_all$species[i]))
+  return(a)
+})
+save(test,file = here::here("outputs/testTOREMOVE.RData"))
 
 ## Installing/Loading packages ----
 
