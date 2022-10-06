@@ -23,25 +23,15 @@
 #' 
 
 var_partial = function(data,var,names){
- # data <- data_noNA
-    data <- data %>%
-    dplyr::select("DistrArea",
-                "Max_length",
-                  "Env_2",
-                  "Climate",
-                  "Repro.Mode",
-                  "Repro.Fertil",
-                  "PriceCateg",
-                  "BodyShapeI",
-                  "Aquarium",
-                  "K",
-                  "IUCN")
-   
-    data <- na.omit(data)
-  #Creating the model and predicting to test data
-  mod = ranger(IUCN ~ ., data = data , probability = F,
-               importance ="permutation",num.trees = 1000,mtry = 3)
-  
+ # data =  data_noNA
+ # var = c("DistrArea" , "Max_length","K") 
+ # names = c("Range size (log)","Max Length (log)","Growth rate")
+
+  data = na.omit(data)
+    #Creating the model and predicting to new data
+    mod = ranger::ranger(IUCN ~ ., data = data, probability = F,
+                         importance ="permutation",num.trees = 1000,mtry = 3)
+
   #ranger::partial(mod, 
   #       pred.var = c("DistrArea"), 
   #      trim.outliers = TRUE, chull = TRUE, parallel = TRUE,
@@ -50,7 +40,7 @@ var_partial = function(data,var,names){
   
   all_partial <- lapply(1:length(var), function(x){
     pd = edarf::partial_dependence(mod, var[x], 
-                                   data = train, interaction =F)
+                                   data = data, interaction =F)
     
     #data <- pd %>% pivot_longer(-var[x])
     #colnames(data)[1] <- "variable"
@@ -58,7 +48,7 @@ var_partial = function(data,var,names){
     
     part_plot <- ggplot(pd,aes(x=pd[,var[x]],y=Thr)) + #00AFBB"
       geom_smooth(color="#FC4E07",fill="#FC4E07") +
-      ylim(0.1,0.9)+
+      ylim(0,0.5)+
       theme_bw()+
       ylab("Probability")+
       xlab(names[x])+
@@ -73,3 +63,19 @@ var_partial = function(data,var,names){
   #                                       ncol=1)
   
 }
+
+
+data <- data %>%
+  dplyr::select("DistrArea",
+                "Max_length",
+                "Env_2",
+                "Climate",
+                "Repro.Mode",
+                "Repro.Fertil",
+                "PriceCateg",
+                "BodyShapeI",
+                "Aquarium",
+                "K",
+                "IUCN",
+                "Family",
+                "Genus")

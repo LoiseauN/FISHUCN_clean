@@ -80,23 +80,15 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
 #'---------------------------------------------------------------------@variable_importance
 
 
+
+
+
 partial_plot <- var_partial(data =  data_noNA,
                             var = c("DistrArea" , "Max_length"),
                             names = c("Range size (log)","Max Length (log)")) 
 
 
-importance_plot = var_imp(test_IUCN[[1]])  %>% 
-  
-dplyr::rename("Range size (log)"      = "DistrArea",
-              "Max Length (log)"      = "Max_length",
-              "Water Column"    = "Env_2",
-              "Climate"         = "Climate",
-              "Reproduction"    = "Repro.Mode",
-              "Fertility"       = "Repro.Fertil",
-              "Price Category"  = "PriceCateg",
-              "Body Shape"      = "BodyShapeI",
-              "Aquarium"        = "Aquarium",
-              "Growth rate"     = "K")           
+importance_plot = var_imp(test_IUCN[[1]])      
 
 importance_plot <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[1]]), xmin = 6, xmax = 11, 
                      ymin = 25, ymax = 45.65)

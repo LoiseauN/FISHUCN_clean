@@ -1,4 +1,4 @@
-#' Generate plot of variable importance
+v#' Generate plot of variable importance
 #'
 #' Based on the test of your model, this function generates a plot of variable importance based on permutation
 #'
@@ -25,7 +25,11 @@ var_imp = function(rel_inf){
     tail(20) %>%
     mutate(rowname=factor(rowname, rowname)) %>%
     ggplot( aes(x=rowname, y=importance.mod.,fill=importance.mod.))+ 
-       geom_bar(stat="identity", position="dodge")+ coord_flip()+
+       geom_bar(stat="identity", position="dodge")+ 
+   scale_x_discrete(labels=c("Reproduction mode","Aquarium", "Fertility","Price Category","Climate",
+                             "Body Shape","Genus","Family","Water Column","Growth Rate","Max Length (log)",
+                             "Range size (log)")) +
+   coord_flip()+
       xlab("Variables") +
       ylab("") +
     theme_bw() +
@@ -36,12 +40,10 @@ var_imp = function(rel_inf){
       panel.grid.minor.x = element_blank(),
       legend.position="none"
     ) +
-    scale_fill_gradient(low="darkslategray3", high="darkcyan")
+    scale_fill_gradient(low="grey", high="grey")
+     
   
  # ggsave(file = here::here("figures", "Figure2.pdf"), 
   #       width = 11.7, height = 8.3)
   
 }
-
-
-
