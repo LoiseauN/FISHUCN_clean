@@ -1,4 +1,6 @@
 #' Circular Chord Diagram
+dat_network <-dat_network[dat_network$species %in%rownames(Fish_trait_Metawebproject) ,]
+
 
 dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
                                              "predict_complementary")])

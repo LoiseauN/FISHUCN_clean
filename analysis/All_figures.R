@@ -204,6 +204,46 @@ ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 8, uni
 gainThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
 gainNThr <- ((table(dat_network$IUCN_cat)[2]-table(dat_network$IUCN_final)[2])/table(dat_network$IUCN_cat)[2])*100
 
+mean(do.call(rbind,phylo_D_Thr)[,1])
+sd(do.call(rbind,phylo_D_Thr)[,1])
+
+mean(do.call(rbind,phylo_D_NonThr)[,1])
+sd(do.call(rbind,phylo_D_NonThr)[,1])
+
+mean(do.call(rbind,phylo_D_nostatus)[,1])
+sd(do.call(rbind,phylo_D_nostatus)[,1])
+
+#'---------------------------------------------------------------------@Percentageperfamilly
+#'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
+res <- merge(dat_network, FB_final[,c("Genus","Family")], by.x="species", by.y="row.names")
+#Rmeove the freswater TODO
+res <-res[res$species %in%rownames(Fish_trait_Metawebproject) ,]
+
+
+
+res$predict_complementary <- as.factor(res$predict_complementary )
+res <- as.data.frame.matrix(t(table(res$predict_complementary,res$Family)))
+
+res$percenTHR <- NA
+
+for (i in 1:nrow(res)){
+  res[i,4] <- res[i,3]/sum(res[i,1],res[i,2],res[i,3])
+}
+
+family <- rownames(res)
+res <- do.call(data.frame, lapply(res, function(x) {
+  replace(x, is.infinite(x), NA)
+})
+)
+
+rownames(res) <- family 
+
+res <-  res[order(res$percenTHR,decreasing = T),]
+
+
+
+FB_final[FB_final$Family %in% "Loricariidae",]
+
 #'---------------------------------------------------------------------@Protectionanalyses
 
 MPA_Protect <- merge(MPA_Protect,dat_network,by="species")

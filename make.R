@@ -64,6 +64,8 @@ data_list <- lapply(files, load, .GlobalEnv)
 
 
 #------------------Running code------------------------
+#remove(freshwaterfish)
+
 
 
 #Scrap Data from Fishbase
