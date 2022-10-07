@@ -213,13 +213,13 @@ sd(do.call(rbind,phylo_D_NonThr)[,1])
 mean(do.call(rbind,phylo_D_nostatus)[,1])
 sd(do.call(rbind,phylo_D_nostatus)[,1])
 
-#'---------------------------------------------------------------------@Percentageperfamilly
+#'---------------------------------------------------------------------@Checkperfamily
 #'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
 res <- merge(dat_network, FB_final[,c("Genus","Family")], by.x="species", by.y="row.names")
-#Rmeove the freswater TODO
-res <-res[res$species %in%rownames(Fish_trait_Metawebproject) ,]
+notfresh <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_brackish"),]
+rownames(notfresh) <- str_replace(rownames(notfresh), "-", "_")
 
-
+res    <-  res[res$species %in% rownames(notfresh),]
 
 res$predict_complementary <- as.factor(res$predict_complementary )
 res <- as.data.frame.matrix(t(table(res$predict_complementary,res$Family)))
@@ -240,9 +240,8 @@ rownames(res) <- family
 
 res <-  res[order(res$percenTHR,decreasing = T),]
 
+#FAMILY TO CHECK
 
-
-FB_final[FB_final$Family %in% "Loricariidae",]
 
 #'---------------------------------------------------------------------@Protectionanalyses
 

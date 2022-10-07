@@ -1,7 +1,4 @@
 #' Circular Chord Diagram
-dat_network <-dat_network[dat_network$species %in%rownames(Fish_trait_Metawebproject) ,]
-
-
 dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
                                              "predict_complementary")])
 
@@ -38,6 +35,12 @@ for (i in 1:nrow(dat_network)) {
   }
 }
 
+
+## Remove the freshwater ----
+notfresh <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_brackish"),]
+rownames(notfresh) <- str_replace(rownames(notfresh), "-", "_")
+
+dat_network    <-  dat_network[dat_network$species %in% rownames(notfresh),]
 
 ## Replace NA IUCN status ----
 

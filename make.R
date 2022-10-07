@@ -14,11 +14,8 @@
 ## Parameters ----
 
 set.seed(42)
-test<-  lapply(1:nrow(FishDistribArea_all),function(i){
-  a <- ecology(as.character(FishDistribArea_all$species[i]))
-  return(a)
-})
-save(test,file = here::here("outputs/testTOREMOVE.RData"))
+
+
 
 ## Installing/Loading packages ----
 
@@ -92,10 +89,13 @@ species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 save(species_traits,file = here::here("outputs/species_traits.RData"))
 
 
+## Removing freshwater ----
+species_traits <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_brackish"),]
+FishDistribArea_all <-  FishDistribArea_all[FishDistribArea_all$species %in% 
+                                              str_replace(rownames(species_traits), "-", "_"),]
+
 #Selecting variables of interest
 FB_scrapped = prep_data(FishDistribArea_all,species_traits,FamilyElasmo)
-
-
 save(FB_scrapped,file = here::here("outputs/FB_scrapped.RData"))
 
 
@@ -173,14 +173,18 @@ taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>%
 FB_IUCN_taxo_nona = FB_IUCN_taxo_na %>% left_join(taxo, by = "Genus")
 #Manually filling out the rest
 FB_IUCN_taxo_nona[4,13] = "Percophidae"
-FB_IUCN_taxo_nona[72,13] = "Acropomatidae"
-FB_IUCN_taxo_nona[82,13] = "Gobiesocidae"
-FB_IUCN_taxo_nona[109,13] = "Cichlidae"
-FB_IUCN_taxo_nona[236,13] = "Cheilodactylidae"
-FB_IUCN_taxo_nona[237,13] = "Cheilodactylidae"
-FB_IUCN_taxo_nona[446,13] = "Scorpaenidae"
+FB_IUCN_taxo_nona[68,13] = "Acropomatidae"
+FB_IUCN_taxo_nona[78,13] = "Gobiesocidae"
+FB_IUCN_taxo_nona[221,13] = "Cheilodactylidae"
+FB_IUCN_taxo_nona[222,13] = "Cheilodactylidae"
+FB_IUCN_taxo_nona[230,13] = "Sciaenidae"
+FB_IUCN_taxo_nona[417,13] = "Scorpaenidae"
 
 FB_IUCN_taxo_nona = FB_IUCN_taxo_nona[!duplicated(FB_IUCN_taxo_nona), ]
+
+#CHECK WHY SOME HAVE no GENUS 
+
+
 
 #And now adding in to the final dataframe
 FB_IUCN_temp = FB_IUCN_more %>% filter(!is.na(Genus))
