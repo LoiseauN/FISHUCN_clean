@@ -1,15 +1,3 @@
-#' Generate partial plot
-#'
-
-#' @param data_split 
-#' 
-#' @return A plot in pdf format with the partial plot 
-#'
-#' @export
-#' 
-#' 
-
-
 
 #' Generate partial plot
 #'
@@ -21,7 +9,6 @@
 #' @export
 #' 
 #' 
-
 var_partial = function(data,var,names){
  # data =  data_noNA
  # var = c("DistrArea" , "Max_length","K") 
@@ -63,19 +50,3 @@ var_partial = function(data,var,names){
   #                                       ncol=1)
   
 }
-
-
-data <- data %>%
-  dplyr::select("DistrArea",
-                "Max_length",
-                "Env_2",
-                "Climate",
-                "Repro.Mode",
-                "Repro.Fertil",
-                "PriceCateg",
-                "BodyShapeI",
-                "Aquarium",
-                "K",
-                "IUCN",
-                "Family",
-                "Genus")

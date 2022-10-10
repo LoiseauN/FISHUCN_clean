@@ -35,7 +35,7 @@ devtools::install_github("zmjones/edarf", subdir = "pkg")
 
 files.source <- list.files(here::here("R"), pattern = "\\.R$", 
                            full.names = TRUE)
-invisible(sapply(files.source[-14], source)) ##### pcoaFig.R is not a function
+invisible(sapply(files.source[-c(14)], source)) ##### pcoaFig.R is not a function
 
 
  #files.source = list.files(here::here("analysis"), pattern = "\\.R$", 
@@ -73,6 +73,7 @@ data_list <- lapply(files, load, .GlobalEnv)
 species_traits = FB_scrap()
 
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
+species_traits <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_brackish"),]
 #species_traits[rownames(species_traits)%in%FishDistribArea_all$species,]
 
 
@@ -90,7 +91,7 @@ save(species_traits,file = here::here("outputs/species_traits.RData"))
 
 
 ## Removing freshwater ----
-species_traits <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_brackish"),]
+
 FishDistribArea_all <-  FishDistribArea_all[FishDistribArea_all$species %in% 
                                               str_replace(rownames(species_traits), "-", "_"),]
 
