@@ -174,6 +174,9 @@ taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>%
 
 
 
+
+FB_IUCN_taxo_nona = FB_IUCN_taxo_nona[!duplicated(FB_IUCN_taxo_nona), ]
+
 #Manually filling out the rest
 FB_IUCN_taxo_nona[4,13] = "Percophidae"
 FB_IUCN_taxo_nona[71,13] = "Acropomatidae"
@@ -182,9 +185,6 @@ FB_IUCN_taxo_nona[231,13] = "Cheilodactylidae"
 FB_IUCN_taxo_nona[232,13] = "Cheilodactylidae"
 FB_IUCN_taxo_nona[240,13] = "Sciaenidae"
 FB_IUCN_taxo_nona[432,13] = "Scorpaenidae"
-
-FB_IUCN_taxo_nona = FB_IUCN_taxo_nona[!duplicated(FB_IUCN_taxo_nona), ]
-
 #CHECK WHY SOME HAVE no GENUS 
 
 
@@ -220,15 +220,16 @@ save(run_IUCN,file = "outputs/run_IUCN.Rdata")
 
 #IUCN consensus (0.5 for this dummy dataset)
 IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),75)
-
+#TO CHECK WHY remove species with number 
+IUCN_preds_machine_final <- IUCN_preds_machine_final[-c(1:100),]
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
 IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,75)
 IUCN_preds_deep_final[IUCN_preds_deep_final=="NaN"] <- NA
 #THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY OF BOTH METHODS
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)
 
-#TO CHECK WHY remove species with number 
-all_predict <- all_predict[-c(1:132),]
+
+
 save(all_predict,file = "outputs/all_predict.Rdata")
 
 
