@@ -172,20 +172,20 @@ taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>%
   dplyr::rename(Family = "name",
                 Genus = "query")
 
-
-
+taxo <- unique(taxo)
+FB_IUCN_taxo_nona <- FB_IUCN_taxo_na %>% left_join(taxo,by="Genus")
+rownames(FB_IUCN_taxo_nona) <- rownames(FB_IUCN_taxo_na)
 
 FB_IUCN_taxo_nona = FB_IUCN_taxo_nona[!duplicated(FB_IUCN_taxo_nona), ]
 
 #Manually filling out the rest
-FB_IUCN_taxo_nona[4,13] = "Percophidae"
-FB_IUCN_taxo_nona[71,13] = "Acropomatidae"
-FB_IUCN_taxo_nona[81,13] = "Gobiesocidae"
-FB_IUCN_taxo_nona[231,13] = "Cheilodactylidae"
-FB_IUCN_taxo_nona[232,13] = "Cheilodactylidae"
-FB_IUCN_taxo_nona[240,13] = "Sciaenidae"
-FB_IUCN_taxo_nona[432,13] = "Scorpaenidae"
-#CHECK WHY SOME HAVE no GENUS 
+FB_IUCN_taxo_nona["Bembrops_greyae",13] = "Percophidae"
+FB_IUCN_taxo_nona["Verilus_anomalus",13] = "Acropomatidae"
+FB_IUCN_taxo_nona["Lissonanchus_lusherae",13] = "Gobiesocidae"
+FB_IUCN_taxo_nona["Morwong_fuscus",13] = "Cheilodactylidae"
+FB_IUCN_taxo_nona["Pseudogoniistius_nigripes",13] = "Cheilodactylidae"
+FB_IUCN_taxo_nona["Eques_lanceolatus",13] = "Sciaenidae"
+FB_IUCN_taxo_nona["Pteropelor_noronhai",13] = "Scorpaenidae"
 
 
 
@@ -194,7 +194,6 @@ FB_IUCN_temp = FB_IUCN_more %>% filter(!is.na(Genus))
 
 FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
-summary(FB_IUCN_final)
 
 #Applying missforest
 data_noNA = missForest_applied(FB_IUCN_final,0.55,test_missForest)
@@ -220,8 +219,8 @@ save(run_IUCN,file = "outputs/run_IUCN.Rdata")
 
 #IUCN consensus (0.5 for this dummy dataset)
 IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),75)
-#TO CHECK WHY remove species with number 
-IUCN_preds_machine_final <- IUCN_preds_machine_final[-c(1:100),]
+
+
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
 IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,75)
 IUCN_preds_deep_final[IUCN_preds_deep_final=="NaN"] <- NA
