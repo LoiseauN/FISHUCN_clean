@@ -164,6 +164,7 @@ FB_IUCN_taxo_na = FB_IUCN_more %>% filter(is.na(Genus))
 #Add Genus and calculate the rest with taxize
 FB_IUCN_taxo_na = FB_IUCN_taxo_na %>% mutate(Genus = sub("\\_.*", "", rownames(FB_IUCN_taxo_na))) %>% dplyr::select(-Family)
 
+
 taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>% 
   rbind() %>% 
   filter(rank == "family")%>% 
@@ -171,15 +172,16 @@ taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>%
   dplyr::rename(Family = "name",
                 Genus = "query")
 
-FB_IUCN_taxo_nona = FB_IUCN_taxo_na %>% left_join(taxo, by = "Genus")
+
+
 #Manually filling out the rest
 FB_IUCN_taxo_nona[4,13] = "Percophidae"
-FB_IUCN_taxo_nona[68,13] = "Acropomatidae"
-FB_IUCN_taxo_nona[78,13] = "Gobiesocidae"
-FB_IUCN_taxo_nona[221,13] = "Cheilodactylidae"
-FB_IUCN_taxo_nona[222,13] = "Cheilodactylidae"
-FB_IUCN_taxo_nona[230,13] = "Sciaenidae"
-FB_IUCN_taxo_nona[417,13] = "Scorpaenidae"
+FB_IUCN_taxo_nona[71,13] = "Acropomatidae"
+FB_IUCN_taxo_nona[81,13] = "Gobiesocidae"
+FB_IUCN_taxo_nona[231,13] = "Cheilodactylidae"
+FB_IUCN_taxo_nona[232,13] = "Cheilodactylidae"
+FB_IUCN_taxo_nona[240,13] = "Sciaenidae"
+FB_IUCN_taxo_nona[432,13] = "Scorpaenidae"
 
 FB_IUCN_taxo_nona = FB_IUCN_taxo_nona[!duplicated(FB_IUCN_taxo_nona), ]
 
