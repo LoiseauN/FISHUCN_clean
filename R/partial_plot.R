@@ -50,3 +50,4 @@ var_partial = function(data,var,names){
   #                                       ncol=1)
   
 }
+

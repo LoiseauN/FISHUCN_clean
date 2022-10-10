@@ -12,7 +12,7 @@
 
 
 ## Parameters ----
-
+rm(list=ls())
 set.seed(42)
 
 
@@ -35,7 +35,7 @@ devtools::install_github("zmjones/edarf", subdir = "pkg")
 
 files.source <- list.files(here::here("R"), pattern = "\\.R$", 
                            full.names = TRUE)
-invisible(sapply(files.source[-c(14)], source)) ##### pcoaFig.R is not a function
+invisible(sapply(files.source[-14], source)) ##### pcoaFig.R is not a function
 
 
  #files.source = list.files(here::here("analysis"), pattern = "\\.R$", 

@@ -1,4 +1,4 @@
-v#' Generate plot of variable importance
+#' Generate plot of variable importance
 #'
 #' Based on the test of your model, this function generates a plot of variable importance based on permutation
 #'
