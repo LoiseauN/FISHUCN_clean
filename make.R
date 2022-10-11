@@ -2,9 +2,9 @@
 #'
 #' This script reproduces all analyses and figures of the ___________ article.
 #'
-#' @author Raphaël SEGUIN, \email{raphael.seguin46@@gmail.com},
-#'         Nicolas LOISEAU, \email{nicolas.loiseau1@@gmail.com},
-#'         Valentine FLEURE, \email{valentine.fleure@@gmail.com},
+#' @author  Nicolas LOISEAU, \email{nicolas.loiseau1@@gmail.com},
+#'          Raphaël SEGUIN, \email{raphael.seguin46@@gmail.com},
+#'          Valentine FLEURE, \email{valentine.fleure@@gmail.com},
 #'
 #' @date 2021/02/17
 #' 
@@ -235,14 +235,6 @@ save(all_predict,file = "outputs/all_predict.Rdata")
 
 #THEN  FUNCTION THAT MAKES CONSENSUS OF BOTH METHODS FOR SUPPLEMENTARY
 
-#------------------Loading outputs----------------------
-
-path = (here::here("outputs"))
-setwd(path)
-files <- list.files(here::here("outputs"))
-lapply(files, load, envir=.GlobalEnv)
-
-#-----------------Creating Figures----------------------
 
 
 

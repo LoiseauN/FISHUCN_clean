@@ -38,8 +38,8 @@ var_imp = function(rel_inf){
       panel.grid.major.y = element_blank(),
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
-      legend.position="none"
-    ) +
+      legend.position="none",
+      axis.text=element_text(size=16)) +
     scale_fill_gradient(low="grey", high="grey")
      
   

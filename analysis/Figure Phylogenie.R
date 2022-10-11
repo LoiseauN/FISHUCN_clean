@@ -7,7 +7,7 @@ tree <-  tree_fish[[1]]
 set_fish <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.character(dat_network$species))])
 
 
-color_THR, color_NTHR, color_Nostatus
+
 #Compute FRITZ to know if predicted species are packaged      
 
 #TO DO FOR THE OVERALL PHYLO
@@ -67,17 +67,17 @@ dat_phylo <- dat_phylo[order(match(dat_phylo$species, dat_network$species)),]
 colnames(dat_phylo)[1:2] <- c("label","group")
 
 for(i in 1:nrow(dat_phylo)){
-  print(i)
   
-  if(is.na(dat_phylo$group[i])){next }  
+ print(i)
+  
+  if(is.na(dat_phylo$group[i])){next}  
   
   if(dat_phylo$group[i] == "Non Threatened"){dat_phylo$Non_Threatened[i] <- 1  }
   
   if(dat_phylo$group[i] == "Threatened"){dat_phylo$Threatened[i] <- 1}
   
   if(dat_phylo$group[i] == "No Status") {dat_phylo$No_Status[i] <- 1}
-  
-  
+
 }
 
 
@@ -97,7 +97,7 @@ dat_phylo_D <- as.data.frame(dat_phylo)
 
 
 #' ---------------------------------------------------------------------------- @Parameters
-dat_phylo <- dat_phylo[!is.na(dat_phylo$keep),]
+#dat_phylo <- dat_phylo[!is.na(dat_phylo$keep),]
 
 n        <-  1                         # ID of first plot
 #n_lines  <- 10                         # Number of family per column (in legend)

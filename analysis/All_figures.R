@@ -72,9 +72,9 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   add_phylopic(birds_pic,     x = 1, y = 50, ysize = 12, alpha = 1)+
   add_phylopic(mammals_pic,   x = 2, y = 50, ysize = 10, alpha = 1)+
   add_phylopic(amphibians_pic,x = 3, y = 50, ysize = 10, alpha = 1)+
-  add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1)
-
-#ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 12, units= "in",dpi= 300)
+  add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1) +
+  theme( axis.text=element_text(size=16),axis.title=element_text(size=18,face="bold"))
+ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 12, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@variable_importance
@@ -91,10 +91,10 @@ partial_plot <- var_partial(data =  data_noNA,
 importance_plot = var_imp(test_IUCN[[1]])      
 
 importance_plot <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[1]]), xmin = 6, xmax = 11, 
-                     ymin = 25, ymax = 45.65)
+                     ymin = 20, ymax = 35.65)
 
 fig2 <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[2]]), xmin = 1, xmax = 6, 
-                                                       ymin = 25, ymax = 45.65)
+                                                       ymin = 20, ymax = 35.65)
 
 
 
