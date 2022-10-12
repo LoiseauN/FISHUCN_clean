@@ -201,8 +201,8 @@ ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 8, uni
 
 #'---------------------------------------------------------------------@Percentagegainmodel
 #'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
-gainThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
-gainNThr <- ((table(dat_network$IUCN_cat)[2]-table(dat_network$IUCN_final)[2])/table(dat_network$IUCN_cat)[2])*100
+gainThr <- ((table(dat_network$IUCN_cat)[1]-table(dat_network$IUCN_final)[1])/table(dat_network$IUCN_cat)[1])*100
+gainNThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
 
 mean(do.call(rbind,phylo_D_Thr)[,1])
 sd(do.call(rbind,phylo_D_Thr)[,1])
@@ -216,10 +216,8 @@ sd(do.call(rbind,phylo_D_nostatus)[,1])
 #'---------------------------------------------------------------------@Checkperfamily
 #'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
 res <- merge(dat_network, FB_final[,c("Genus","Family")], by.x="species", by.y="row.names")
-notfresh <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_brackish"),]
-rownames(notfresh) <- str_replace(rownames(notfresh), "-", "_")
 
-res    <-  res[res$species %in% rownames(notfresh),]
+
 
 res$predict_complementary <- as.factor(res$predict_complementary )
 res <- as.data.frame.matrix(t(table(res$predict_complementary,res$Family)))
@@ -248,16 +246,28 @@ res <-  res[order(res$percenTHR,decreasing = T),]
 MPA_Protect <- merge(MPA_Protect,dat_network,by="species")
 MPA_Protect$IUCN_final <- as.factor(MPA_Protect$IUCN_final)
 MPA_Protect$species <- as.factor(MPA_Protect$species)
+MPA_Protect$predictORiucn <- NA
+for (i in 1:nrow(MPA_Protect)){
+  print(i)
+ 
+  if(is.na(MPA_Protect$predict_complementary[i])) {MPA_Protect$predictORiucn[i] <- "IUCN" 
+  }
+  else{
+    MPA_Protect$predictORiucn[i] <- "Predicted" 
+  }
+  
+  
+}
 
 MPA_Protect$LOGIT_Target_achievement_I_IV <- log10(MPA_Protect$Target_achievement_I_IV+1)
 
-plt <- ggstatsplot::ggbetweenstats(
+Target_all <-   ggstatsplot::ggbetweenstats(
   data = MPA_Protect, #data_protected,
   x = IUCN_final,
   y = LOGIT_Target_achievement_I_IV
 )
 
-plt <-  plt +
+Target_all <-  Target_all +
   labs(
     x = "IUCN Status",
     y = "log10 (Target achievement MPA (I - IV) +1)"
@@ -266,10 +276,13 @@ plt <-  plt +
 
 
 
-ggsave(file = here::here("figures/Figure4.png"),plt, width = 12, height = 12, units= "in",dpi= 300)
 
-boxplot(MPA_Protect$Target_achievement_I_IV ~ MPA_Protect$predict_complementary, xlim = c(0, 7), ylim = c(0, 15))
-boxplot(MPA_Protect$Target_achievement_I_IV ~ MPA_Protect$IUCN_cat, add = TRUE, at = 4:6)
+ggsave(file = here::here("figures/Figure4.png"),Target_all, width = 12, height = 12, units= "in",dpi= 300)
+
+
+#'---------------------------------------------------------------------@UNpredictedspecies
+noprediction <- FB_final[rownames(FB_final) %in% all_predict[is.na(all_predict$predict_complementary),]$species,]
+sum(is.na(FB_final$K))
 
 #'---------------------------------------------------------------------@zonationanalyses
 #Zrank_main$diff <- Zrank_main$rankSc2-Zrank_main$rankSc1
@@ -328,7 +341,6 @@ fig_rank <- ggplot(test, aes(log10(richness), DeltaRank)) +
   theme(legend.position = "none")+
   ylim(-max(abs(test$DeltaRank)),max(abs(test$DeltaRank)))
 ggsave(file = here::here("figures/Figure5bis.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
-
 
 
 #'---------------------------------------------------------------------@MAP

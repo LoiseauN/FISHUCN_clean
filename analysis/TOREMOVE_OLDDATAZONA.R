@@ -252,5 +252,12 @@ var_partial = function(data_split,var,names){
 
 
 
+#remove line with some trouble
+#id_trouble <- sort(rownames(species_traits))[1:90]
+#species_traits <- species_traits[!rownames(species_traits)%in% id_trouble,]
+#rownames(species_traits) <- gsub("-","_",species_traits$species)
+#FishDistribArea_all$species<- gsub("_","-",FishDistribArea_all$species)
+
+
 
 

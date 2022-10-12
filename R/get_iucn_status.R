@@ -51,5 +51,3 @@ IUCN_status <- IUCN_status %>% mutate(IUCN_status = na_if(IUCN_status,"DD"))
   #Filter out species that are numbers with no information at all
  return(IUCN_status) 
 }
-
-

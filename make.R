@@ -37,12 +37,6 @@ files.source <- list.files(here::here("R"), pattern = "\\.R$",
                            full.names = TRUE)
 invisible(sapply(files.source[-14], source)) ##### pcoaFig.R is not a function
 
-
- #files.source = list.files(here::here("analysis"), pattern = "\\.R$", 
-  #                         full.names = TRUE)
- #invisible(sapply(files.source, source))
-
-
 ## Loading all data ----
 
 files   <- list.files(here::here("data"), pattern = "\\.rds$", 
@@ -65,33 +59,19 @@ data_list <- lapply(files, load, .GlobalEnv)
 
 
 #------------------Running code------------------------
-#remove(freshwaterfish)
-
-
-
 #Scrap Data from Fishbase
 species_traits = FB_scrap()
 
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
+
+#remove(freshwaterfish)
 species_traits <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_brackish"),]
-#species_traits[rownames(species_traits)%in%FishDistribArea_all$species,]
 
-
-#remove line with some trouble
-#id_trouble <- sort(rownames(species_traits))[1:90]
-#species_traits <- species_traits[!rownames(species_traits)%in% id_trouble,]
-#rownames(species_traits) <- gsub("-","_",species_traits$species)
-#FishDistribArea_all$species<- gsub("_","-",FishDistribArea_all$species)
-
-#a <- FishDistribArea_all [!FishDistribArea_all$species%in%rownames(species_traits),]
-
-
-#ADD SAVE HERE
+#Save species_traits
 save(species_traits,file = here::here("outputs/species_traits.RData"))
 
 
 ## Removing freshwater ----
-
 FishDistribArea_all <-  FishDistribArea_all[FishDistribArea_all$species %in% 
                                               str_replace(rownames(species_traits), "-", "_"),]
 
@@ -112,7 +92,6 @@ FB_vars = FB_scrapped %>%
 #Get IUCN status
 #IUCN_status <- get_iucn_status(FB_vars)
 #save(IUCN_status,file = "outputs/IUCN_status.RData")
-
 
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
