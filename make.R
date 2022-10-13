@@ -90,8 +90,8 @@ FB_vars = FB_scrapped %>%
          Depth_max = log10(Depth_max+1))
 
 #Get IUCN status
-#IUCN_status <- get_iucn_status(FB_vars)
-#save(IUCN_status,file = "outputs/IUCN_status.RData")
+IUCN_status <- get_iucn_status(IUCN_status)
+save(IUCN_status,file = "outputs/IUCN_status.RData")
 
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
