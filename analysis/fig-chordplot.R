@@ -9,7 +9,6 @@ dat_network <- addLevel(dat_network, "Threatened")
 dat_network <- addLevel(dat_network, "Non Threatened")
 dat_network <- addLevel(dat_network, "No Status")
 
-
 for (i in 1:ncol(dat_network)) {
   dat_network[ , i] <- as.factor(as.character(dat_network[ , i]))
 }
