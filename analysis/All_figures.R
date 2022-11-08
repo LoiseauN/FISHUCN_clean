@@ -292,13 +292,15 @@ sum(is.na(FB_final$K))
 #  scale_fill_continuous(type = "viridis") +
 #  theme_bw() + xlab("IUCN only")+ ylab("IUCN + Predicted")
 #ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
-
+all_geo_res <- all_geo_res[,-c(10,11)]
+all_geo_res <- merge(all_geo_res,Zrank_main,by = "ID",all.x=T)
+all_geo_res$DeltaRank <- all_geo_res$rankSc2-all_geo_res$rankSc1
+  
+  
 all_geo_res <- all_geo_res[order(all_geo_res$richness, decreasing=FALSE), ]
 all_geo_res <- all_geo_res[,!colnames(all_geo_res) %in% "DeltaStd_R"]
 all_geo_res <- na.omit(all_geo_res)
 all_geo_res <- all_geo_res[all_geo_res$richness  > 0,]
-
-df <- all_geo_res[sample(nrow(all_geo_res), 10000), ]
 
 fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
   geom_point(size=2.5,alpha = 0.3,shape=16) + 
@@ -319,28 +321,28 @@ fig_rank <- ggplot(all_geo_res, aes(x=Rnothr, y=Rfinalnothr, color = log10(richn
   theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") 
 ggsave(file = here::here("figures/test2.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
+#NOT GOOD
+#'---------------------------------------------------------------------@Otherpresentation
+#test <- na.omit(all_geo_res[sample(nrow(all_geo_res), 10000), ]) 
 
-#'---------------------------------------------------------------------@
-test <- na.omit(all_geo_res[sample(nrow(all_geo_res), 400000), ]) 
-
-test$pos <- NA
-for (i in 1:nrow(test)){
-  print(i)
-  if(test$DeltaRank[i]>0) test$pos[i]=2
-  if(test$DeltaRank[i]<0) test$pos[i]=1
-  if(test$DeltaRank[i]==0) test$pos[i]=3
-}
+#test$pos <- NA
+#for (i in 1:nrow(test)){
+#  print(i)
+#  if(test$DeltaRank[i]>0) test$pos[i]=2
+#  if(test$DeltaRank[i]<0) test$pos[i]=1
+#  if(test$DeltaRank[i]==0) test$pos[i]=3
+#}
 
 
-fig_rank <- ggplot(test, aes(log10(richness), DeltaRank)) +
-  geom_point(aes(fill = factor(sign(DeltaRank))), size = 3,shape=21) +
-  geom_smooth(aes(colour = factor(pos)))+
-  scale_fill_manual(values =c("dodgerblue2","grey","chocolate1"))+
-  scale_colour_manual(values = c("black","black"))+
-    theme_bw()+
-  theme(legend.position = "none")+
-  ylim(-max(abs(test$DeltaRank)),max(abs(test$DeltaRank)))
-ggsave(file = here::here("figures/Figure5bis.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
+#fig_rank <- ggplot(test, aes(log10(richness), DeltaRank)) +
+#  geom_point(aes(fill = factor(sign(DeltaRank))), size = 3,shape=21) +
+#  geom_smooth(aes(colour = factor(pos)))+
+#  scale_fill_manual(values =c("dodgerblue2","grey","chocolate1"))+
+#  scale_colour_manual(values = c("black","black"))+
+#    theme_bw()+
+#  theme(legend.position = "none")+
+#  ylim(-max(abs(test$DeltaRank)),max(abs(test$DeltaRank)))
+# ggsave(file = here::here("figures/Figure5bis.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@MAP
@@ -375,8 +377,8 @@ all_map <- lapply(1:length(var),function(x){
     
   if (var[x] =="DeltaRank" ){
      map <- ggplot(data = mask.full.polygon) +
-      geom_sf(aes(fill = mask.full), color = NA)+#(value/max(value))
-     #scale_fill_distiller(palette = "RdBu")+
+      geom_sf(aes(fill = mask.full))+#, color = NA)+#(value/max(value))
+     scale_fill_distiller(palette = "RdBu")+
      ggtitle(title)+
      theme_bw()+
      xlab("")+ylab("")
