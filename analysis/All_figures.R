@@ -309,7 +309,7 @@ fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness
   geom_abline(slope=1, intercept = 0)
 ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
-fig_rank <- ggplot(all_geo_res, aes(x=Rthr, y=Rfinalthr, color = log10(richness))) +
+fig_rank <- ggplot(all_geo_res, aes(x=richness, y=DeltaThr, color = log10(richness))) +
   geom_point(size=2.5,alpha = 0.3,shape=16) + 
   scale_color_distiller(palette = "Spectral")+
   theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") 
@@ -377,9 +377,9 @@ all_map <- lapply(1:length(var),function(x){
     
   if (var[x] =="DeltaRank" ){
      map <- ggplot(data = mask.full.polygon) +
-      geom_sf(aes(fill = mask.full))+#, color = NA)+#(value/max(value))
+      geom_sf(aes(fill = mask.full), color = NA)+#(value/max(value))
      scale_fill_distiller(palette = "RdBu")+
-     ggtitle(title)+
+     #ggtitle(title)+
      theme_bw()+
      xlab("")+ylab("")
     
