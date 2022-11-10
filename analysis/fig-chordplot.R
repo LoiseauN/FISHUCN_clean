@@ -80,6 +80,9 @@ ordre <- c("A_Threatened", "A_No Status", "A_Non Threatened",
 grid.col1a = c(A_Threatened = "#FC4E07", `A_Non Threatened` = "#00AFBB", `A_No Status` = "#E7B800",
                B_Threatened = "#FC4E07", `B_Non Threatened` = "#00AFBB", `B_No Status` = "#E7B800")
 
+
+
+
 png(here::here("figures", "figure_2bis.png"), height = 6, width = 6, 
     units = "in", res = 300)
 
@@ -123,7 +126,7 @@ for(si in circlize::get.all.sector.index()) {
   
   circlize::circos.text(mean(xlim), mean(ylim), lab, sector.index = si, track.index = 1, 
                         facing = "bending.inside", niceFacing = TRUE, col = "black", 
-                        font = 1, adj = c(0.5, -2))
+                        font = 1, adj = c(0.5, -3),cex = 0.75)
 }
 
 dev.off()
