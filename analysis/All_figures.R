@@ -292,13 +292,12 @@ sum(is.na(FB_final$K))
 #  scale_fill_continuous(type = "viridis") +
 #  theme_bw() + xlab("IUCN only")+ ylab("IUCN + Predicted")
 #ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
-all_geo_res <- all_geo_res[,-c(10,11)]
-all_geo_res <- merge(all_geo_res,Zrank_main,by = "ID",all.x=T)
-all_geo_res$DeltaRank <- all_geo_res$rankSc2-all_geo_res$rankSc1
+#all_geo_res <- all_geo_res[,-c(10,11)]
+#all_geo_res <- merge(all_geo_res,Zrank_main,by = "ID",all.x=T)
+#all_geo_res$DeltaRank <- all_geo_res$rankSc2-all_geo_res$rankSc1
   
   
 all_geo_res <- all_geo_res[order(all_geo_res$richness, decreasing=FALSE), ]
-all_geo_res <- all_geo_res[,!colnames(all_geo_res) %in% "DeltaStd_R"]
 all_geo_res <- na.omit(all_geo_res)
 all_geo_res <- all_geo_res[all_geo_res$richness  > 0,]
 

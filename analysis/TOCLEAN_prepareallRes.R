@@ -23,12 +23,13 @@ head(all_geo_res)
 df  <-  merge(Zrank_main,df,by = "ID",all.x=T)
 df$DeltaRank   <-  df$rankSc2-df$rankSc1
 df$DeltaThr  <-   df$Rfinalthr-df$Rthr
-richness <-  df$Rthr+df$Rnothr+df$Rnostatus
+all_geo_res$richness <-  all_geo_res$Rthr+all_geo_res$Rnothr+all_geo_res$Rnostatus
 
 
 df  <-  merge(df,all_geo_res[,c("ID","MPA")],by = "ID",all.x=T)
 
-all_geo_res
+all_geo_res <- df
+save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
 #import all raster files in folder using lapply
 
 #to check the index numbers of all imported raster list elements
