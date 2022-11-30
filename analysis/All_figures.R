@@ -304,7 +304,7 @@ all_geo_res <- all_geo_res[all_geo_res$richness  > 0,]
 fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
   geom_point(size=2.5,alpha = 0.3,shape=16) + 
   scale_color_distiller(palette = "Spectral")+
-  theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") +
+  theme_bw() + xlab("Cell rank IUCN")+ ylab("Cell rank IUCN + Predicted") +
   geom_abline(slope=1, intercept = 0)
 ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
