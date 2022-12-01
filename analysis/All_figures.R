@@ -355,7 +355,7 @@ mask.full.polygon <- sf::st_as_sf(as.point = F)
 
 #--- Diff ranking  WHITE HOLE ARE MPA
 
-var = c("DeltaRank","DeltaStd_R")
+var = c("DeltaRank")
 all_map <- lapply(1:length(var),function(x){
  
   mask = mask.full
@@ -370,15 +370,12 @@ all_map <- lapply(1:length(var),function(x){
   #df <-as.data.frame(rasterToPoints(mask))
   #colnames(df)[3] <- "value"
   
-  if (var[x] =="DeltaRank" )  {  title =  "Difference Ranking IUCN/IUCN + Predict" }  
+   title =  "Difference Ranking IUCN/IUCN + Predict"
  
- 
-    
-  if (var[x] =="DeltaRank" ){
-     map <- ggplot(data = mask.full.polygon) +
+      map <- ggplot(data = mask.full.polygon) +
       geom_sf(aes(fill = mask.full), color = NA)+#(value/max(value))
      scale_fill_distiller(palette = "RdBu")+
-     #ggtitle(title)+
+     ggtitle(title)+
      theme_bw()+
      xlab("")+ylab("")
     
@@ -394,8 +391,6 @@ all_map <- lapply(1:length(var),function(x){
   #  xlab("")+ylab("")
   
 
-
-}
 })
 
 map <- marrangeGrob(all_map,ncol=1,nrow=2)
