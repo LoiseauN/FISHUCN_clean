@@ -103,8 +103,8 @@ world <- sf::st_transform(world, crs=mol)
 #My data
 mask.full=raster::raster(here::here("data","mask.full.tif"))
 
-var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr","Rfinalnostatus")
-#"DeltaRank"
+var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr","Rfinalnostatus","DeltaThr","DeltaRank")
+
 all_map <- lapply(1:length(var),function(x){
   
 mask = mask.full
@@ -119,6 +119,7 @@ mask.full.polygon <-  fortify(mask.full.polygon)
 
 mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol)
 
+#'--------------------------------------------------------@Threatened
   if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
   map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
@@ -139,8 +140,11 @@ mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol)
         plot.title      = element_text(face = "bold",  size = 18),
         legend.text     = element_text(face = "plain", size = 12)) #+
   #guides(fill = guide_legend(nrow = 1))
+  ggsave(file = here::here("figures/IUCN_Threatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+  rm(map)
   }
   
+#'--------------------------------------------------------@Non-Threatened
 else if (var[x] =="Rnothr" )  {  title =  "IUCN Non-Threatened"  
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
@@ -162,8 +166,11 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
         plot.title      = element_text(face = "bold",  size = 18),
         legend.text     = element_text(face = "plain", size = 12)) #+
 #guides(fill = guide_legend(nrow = 1))
+ggsave(file = here::here("figures/IUCN_NonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
 }
 
+#'--------------------------------------------------------@No-Status
 else if  (var[x] =="Rnostatus" )  {  title =  "IUCN No-Status"  
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
@@ -185,9 +192,13 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
         plot.title      = element_text(face = "bold",  size = 18),
         legend.text     = element_text(face = "plain", size = 12)) #+
 #guides(fill = guide_legend(nrow = 1))
+ggsave(file = here::here("figures/IUCN_NoStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
 }
 
-else if  (var[x] =="Rfinalthr" )  {  title =  "IUCN + predicted  Threatened"  
+#'--------------------------------------------------------@IUCNThreatenedpredicted
+
+else if  (var[x] =="Rfinalthr" )  {  title =  "IUCN + predicted Threatened"  
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   #scale_fill_manual(name = "mask.full", values = my_colors) +
@@ -208,7 +219,12 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
         plot.title      = element_text(face = "bold",  size = 18),
         legend.text     = element_text(face = "plain", size = 12)) #+
 #guides(fill = guide_legend(nrow = 1))
+
+ggsave(file = here::here("figures/IUCNandpredictedThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
 }
+
+#'--------------------------------------------------------@IUCNNonThreatenedpredicted
 
 else if  (var[x] =="Rfinalnothr" )  {  title =  "IUCN + predicted  Non-Threatened"   
 map <- ggplot(world) +
@@ -217,7 +233,6 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   scale_fill_hp(option = "Ravenclaw", 
                 limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T),
                            max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
-  
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -231,7 +246,11 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
         plot.title      = element_text(face = "bold",  size = 18),
         legend.text     = element_text(face = "plain", size = 12)) #+
 #guides(fill = guide_legend(nrow = 1))
+ggsave(file = here::here("figures/IUCNandpredictedNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
 }
+
+#'--------------------------------------------------------@IUCNNo-Statuspredicted
 
 else if  (var[x] =="Rfinalnostatus" )  {  title =  "IUCN + predicted  No-Status"  
 map <- ggplot(world) +
@@ -240,7 +259,6 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   scale_fill_hp(option = "Ravenclaw", 
                 limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T),
                            max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
-  +
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -254,11 +272,63 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
         plot.title      = element_text(face = "bold",  size = 18),
         legend.text     = element_text(face = "plain", size = 12)) #+
 #guides(fill = guide_legend(nrow = 1))
+ggsave(file = here::here("figures/IUCNandpredictedNoStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
 }
+
+#'--------------------------------------------------------@DeltaThreatened
+
+else if  (var[x] =="DeltaThr" )  {  title =  "Delta Richness Threatened"  
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  scale_fill_hp(option = "Ravenclaw", 
+                limits = c(min(all_geo_res$DeltaThr),na.rm=T),
+                max(all_geo_res$DeltaThr,na.rm=T))+
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+ggsave(file = here::here("figures/DeltaRichness.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
+}
+
+else if  (var[x] =="DeltaRank" )  {  title =  "Delta Rank"  
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  scale_fill_hp(option = "Ravenclaw", 
+                limits = c(min(all_geo_res$DeltaRank),na.rm=T),
+                           max(all_geo_res$DeltaRank,na.rm=T))+
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+ggsave(file = here::here("figures/DeltaRank.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
+}
+
   
 })
 
-all_map <- marrangeGrob(all_map,ncol=2,nrow=3)
 
 
-ggsave(file = here::here("figures/all_map.png"),all_map,width = 12, height = 8, units= "in",dpi= 300)
+
