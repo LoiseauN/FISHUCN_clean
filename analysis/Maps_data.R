@@ -301,14 +301,19 @@ map <- ggplot(world) +
 ggsave(file = here::here("figures/DeltaRichness.png"),map,width = 12, height = 8, units= "in",dpi= 300)
 rm(map)
 }
+pal <- hp(n = 8, house = "Ravenclaw")
+
 
 else if  (var[x] =="DeltaRank" )  {  title =  "Delta Rank"  
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  #viridis::scale_fill_viridis(option = "inferno")+
+  scale_fill_gradient2(midpoint= 0, low="mediumblue", mid="white",
+                        high="red", space ="Lab" )+
   #scale_fill_manual(name = "mask.full", values = my_colors) +
-  scale_fill_hp(option = "Ravenclaw", 
-                limits = c(min(all_geo_res$DeltaRank),na.rm=T),
-                           max(all_geo_res$DeltaRank,na.rm=T))+
+  #scale_fill_hp(option = "Ravenclaw", 
+  #              limits = c(min(all_geo_res$DeltaRank),na.rm=T),
+  #                         max(all_geo_res$DeltaRank,na.rm=T))+
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
