@@ -26,11 +26,14 @@ PctMPAI_IV$perc_cover <- as.numeric(as.character(PctMPAI_IV$perc_cover))
 #  > 390,000 km2 the target was reduced to 10% coverage,
 
 load(here::here("data/PctMPAI_IV.RData")) 
+load(here::here("data/FishDistribArea_all.RData")) 
+load(here::here("outputs/dat_network.RData")) 
 MPA_Protect <- FishDistribArea_all[FishDistribArea_all$species %in% dat_network$species,]
 
 MPA_Protect$DistrArea <- MPA_Protect$DistrArea/1e+6
 MPA_Protect <- merge(MPA_Protect,PctMPAI_IV,by="species",all.x =T)
-
+MPA_Protect$perc_cover <- as.numeric(as.character(MPA_Protect$perc_cover))
+MPA_Protect[is.na(MPA_Protect$perc_cover),]$perc_cover <- 0
 
 MPA_Protect$TargetExp <- NA
 for (i in 1 : nrow(MPA_Protect)) {   
@@ -62,8 +65,7 @@ Cover <- ggstatsplot::ggbetweenstats(
   data = MPA_Protect, #data_protected,
   x = IUCN_final,
   y = log_cover,
-  bf.message = F,
-  ggtheme = ggplot2::theme_bw()
+  bf.message = F
 )+
   scale_color_manual(values=c("#FC4E07" , "#E7B800","#00AFBB")) +
   labs(
@@ -75,7 +77,8 @@ Target_achievement <- ggstatsplot::ggbetweenstats(
   data = MPA_Protect, #data_protected,
   x = IUCN_final,
   y = log_Target_achievement_I_IV,
-  bf.message = F,results.subtitle = TRUE
+  bf.message = F,
+
 )+
   scale_color_manual(values=c("#FC4E07" , "#E7B800","#00AFBB")) +
   labs(
@@ -88,7 +91,6 @@ plot_protection <- grid.arrange(Cover,Target_achievement, ncol = 2)
 
 
 ggsave(file = here::here("figures/Target_achievement.png"),plot_protection,width = 12, height = 6, units= "in",dpi= 300)
-save(MPA_Protect,file = here::here("outputs/MPA_Protect.RData"))
 
 
 
