@@ -303,7 +303,8 @@ all_geo_res <- all_geo_res[all_geo_res$richness  > 0,]
 
 fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
   geom_point(size=2.5,alpha = 0.3,shape=16) + 
-  scale_color_distiller(palette = "Spectral")+
+  #scale_color_distiller(palette = "Spectral")+
+  scale_color_gradient(low = "#00AFBB", high = "#FC4E07")+
   theme_bw() + xlab("Cell rank IUCN")+ ylab("Cell rank IUCN + Predicted") +
   geom_abline(slope=1, intercept = 0)
 ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
@@ -348,10 +349,6 @@ ggsave(file = here::here("figures/test2.png"),fig_rank,width = 12, height = 12, 
 #all_geo_res
 mask.full=raster::raster(here::here("data","mask.full.tif"))
 mask.full.polygon <- sf::st_as_sf(as.point = F)
-
-
-
-
 
 #--- Diff ranking  WHITE HOLE ARE MPA
 

@@ -122,15 +122,17 @@ mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol)
 #'--------------------------------------------------------@Threatened
   if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
   map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  #scale_fill_manual(name = "mask.full", values = my_colors) +
-  scale_fill_hp(option = "Ravenclaw", 
-                limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T),
-                           max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T)))+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
+    scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
+                        limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), 
+                        max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
+    scale_colour_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
+                          limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), 
+                                     max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
+    geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
+   geom_graticules(mol) +
+   geom_mapframe(mol, colour = "white", size = 2.0) +
+   geom_mapframe(mol, colour = "black", size = 0.4) +
   
   ggtitle(title) +
   
@@ -256,9 +258,9 @@ else if  (var[x] =="Rfinalnostatus" )  {  title =  "IUCN + predicted  No-Status"
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   #scale_fill_manual(name = "mask.full", values = my_colors) +
-  scale_fill_hp(option = "Ravenclaw", 
-                limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T),
-                           max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
+  #scale_fill_hp(option = "Ravenclaw", 
+  #              limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T),
+  #                         max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -278,14 +280,20 @@ rm(map)
 
 #'--------------------------------------------------------@DeltaThreatened
 
+min(mask.full.polygon$mask.full[log10(mask.full.polygon$mask.full+1)>0])
+
+
 else if  (var[x] =="DeltaThr" )  {  title =  "Delta Richness Threatened"  
 map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  #scale_fill_manual(name = "mask.full", values = my_colors) +
-  scale_fill_hp(option = "Ravenclaw", 
-                limits = c(min(all_geo_res$DeltaThr),na.rm=T),
-                max(all_geo_res$DeltaThr,na.rm=T))+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_sf(data = mask.full.polygon, aes(fill = log10(mask.full+1), color = log10(mask.full+1))) +
+  #viridis::scale_fill_viridis(option = "inferno")+
+  scale_fill_gradient2(low = "white",mid="#00AFBB", midpoint = 1,
+                      high="#FC4E07", space ="Lab" )+
+  scale_colour_gradient2(low = "white",mid="#00AFBB", midpoint = 1,
+                       high="#FC4E07", space ="Lab" )+
+
+  
+  geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
@@ -301,20 +309,20 @@ map <- ggplot(world) +
 ggsave(file = here::here("figures/DeltaRichness.png"),map,width = 12, height = 8, units= "in",dpi= 300)
 rm(map)
 }
-pal <- hp(n = 8, house = "Ravenclaw")
-
 
 else if  (var[x] =="DeltaRank" )  {  title =  "Delta Rank"  
 map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  geom_sf(data = mask.full.polygon, aes(fill = scale(mask.full), color = scale(mask.full))) +
   #viridis::scale_fill_viridis(option = "inferno")+
-  scale_fill_gradient2(midpoint= 0, low="mediumblue", mid="white",
-                        high="red", space ="Lab" )+
+  scale_fill_gradient2(midpoint= 0, low="#00AFBB", mid="white",
+                        high="#FC4E07", space ="Lab" )+
+  scale_color_gradient2(midpoint= 0, low="#00AFBB", mid="white",
+                       high="#FC4E07", space ="Lab" )+
   #scale_fill_manual(name = "mask.full", values = my_colors) +
   #scale_fill_hp(option = "Ravenclaw", 
   #              limits = c(min(all_geo_res$DeltaRank),na.rm=T),
   #                         max(all_geo_res$DeltaRank,na.rm=T))+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
