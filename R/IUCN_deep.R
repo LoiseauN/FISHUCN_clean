@@ -1,3 +1,15 @@
+#' IUCN deep predict
+#' 
+#' This function run the python script to train the models and predict IUCN classifications
+#'
+#' @return no return data
+#' @export
+
+IUCN_deep_predict = function(){
+  python_file_train = here::here("Python/train.py")
+  system(paste0("python", python_file_train))
+}
+
 #' Deep learning prediction
 #'
 #' This functions calculates the consensus of the 200 models based on a specified baseline

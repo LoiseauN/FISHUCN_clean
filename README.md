@@ -41,6 +41,7 @@ master R script to run the entire project by calling each R script stored in the
 - All required packages will be installed (if necessary)
 - All required packages and R functions will be loaded
 - Figures will be stored in `figures/`
+- Prior to run the deep learning part, download the needed libraries using the **requirement.txt** file
 
 ## Usage
 

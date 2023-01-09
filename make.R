@@ -200,6 +200,8 @@ save(run_IUCN,file = "outputs/run_IUCN.Rdata")
 #IUCN consensus (0.5 for this dummy dataset)
 IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),75)
 
+# Running IUCN predictions using deep learning
+IUCN_deep_predict()
 
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
 IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,75)

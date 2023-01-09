@@ -7,7 +7,7 @@ import pyreadr
 import joblib
 from pathlib import Path
 from sklearn import preprocessing
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import accuracy_score
 
 # Class for RNN model
 class Model(nn.Module):
