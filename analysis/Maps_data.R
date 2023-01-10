@@ -36,7 +36,17 @@ for (i in 1:nrow(all_geo_res2)) {
   all_geo_res2$Pernostatusfinal[i] <- all_geo_res2$Rfinalnostatus[i]/(all_geo_res2$Rfinalthr[i]+all_geo_res2$Rfinalnothr[i]+all_geo_res2$Rfinalnostatus[i])
   
 print(i)
-  }
+}
+
+
+all_geo_res2$Perthrbefore <- all_geo_res2$Rthr/(all_geo_res2$Rthr+all_geo_res2$Rnothr+all_geo_res2$Rnostatus)
+all_geo_res2$Perthrfinal <- all_geo_res2$Rfinalthr/(all_geo_res2$Rfinalthr+all_geo_res2$Rfinalnothr+all_geo_res2$Rfinalnostatus)
+
+all_geo_res2$Pernothrbefore <- all_geo_res2$Rnothr/(all_geo_res2$Rthr+all_geo_res2$Rnothr+all_geo_res2$Rnostatus)
+all_geo_res2$Pernothrfinal <- all_geo_res2$Rfinalnothr/(all_geo_res2$Rfinalthr+all_geo_res2$Rfinalnothr+all_geo_res2$Rfinalnostatus)
+
+all_geo_res2$Pernostatusbefore <- all_geo_res2$Rnostatus/(all_geo_res2$Rthr+all_geo_res2$Rnothr+all_geo_res2$Rnostatus)
+all_geo_res2$Pernostatusfinal <- all_geo_res2$Rfinalnostatus/(all_geo_res2$Rfinalthr+all_geo_res2$Rfinalnothr+all_geo_res2$Rfinalnostatus)
 
 
 
@@ -44,6 +54,8 @@ all_geo_res2[is.na(all_geo_res2)] <- 0
 
 var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
         "Rfinalnostatus","DeltaThr","DeltaRank","PerTHRbefore","PerTHRfinal")
+
+
 
 all_map <- lapply(1:length(var),function(x){
   
@@ -60,15 +72,17 @@ mask.full.polygon <-  fortify(mask.full.polygon)
 mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol)
 
 #'--------------------------------------------------------@Threatened
-  if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
+if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
+pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
+
   map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
-    scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
-                        limits = c(min(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), 
-                        max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T)))+
-    scale_colour_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
-                          limits = c(min(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), 
-                                     max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T)))+
+    scale_fill_gradientn(colours = pal, 
+                        limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
+                                   max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T)))+
+    scale_colour_gradientn(colours = pal, 
+                         limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
+                                    max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T)))+
     geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
    geom_graticules(mol) +
    geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -87,14 +101,17 @@ mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol)
   }
   
 #'--------------------------------------------------------@Non-Threatened
-else if (var[x] =="Rnothr" )  {  title =  "IUCN Non-Threatened"  
+pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), type = "continuous")
+
+ if (var[x] =="Rnothr" )  {  title =  "IUCN Non-Threatened"  
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  #scale_fill_manual(name = "mask.full", values = my_colors) +
-  scale_fill_hp(option = "Ravenclaw", 
-                limits = c(min(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), 
-                           max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T)))+
-  
+  scale_fill_gradientn(colours = pal, 
+                       limits = c(min(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), 
+                                  max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T)))+
+  scale_colour_gradientn(colours = pal, 
+                        limits = c(min(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), 
+                                   max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T)))+
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -113,13 +130,17 @@ rm(map)
 }
 
 #'--------------------------------------------------------@No-Status
-else if  (var[x] =="Rnostatus" )  {  title =  "IUCN No-Status"  
+ if  (var[x] =="Rnostatus" )  {  title =  "IUCN No-Status"  
+pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), type = "continuous")
+
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  #scale_fill_manual(name = "mask.full", values = my_colors) +
-  scale_fill_hp(option = "Ravenclaw", 
-                limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T),
-                           max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T)))+
+  scale_fill_gradientn(colours = pal, 
+                        limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
+                                   max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T)))+
+  scale_colour_gradientn(colours = pal, 
+                         limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
+                                    max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T)))+
   
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
@@ -140,13 +161,17 @@ rm(map)
 
 #'--------------------------------------------------------@IUCNThreatenedpredicted
 
-else if  (var[x] =="Rfinalthr" )  {  title =  "IUCN + predicted Threatened"  
+ if  (var[x] =="Rfinalthr" )  {  title =  "IUCN + predicted Threatened"  
+pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
+
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  #scale_fill_manual(name = "mask.full", values = my_colors) +
-  scale_fill_hp(option = "Ravenclaw", 
-                limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
-                           max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T)))+
+  scale_fill_gradientn(colours = pal, 
+                        limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
+                                   max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T)))+
+  scale_colour_gradientn(colours = pal, 
+                         limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
+                                    max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T)))+
   
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
@@ -168,13 +193,17 @@ rm(map)
 
 #'--------------------------------------------------------@IUCNNonThreatenedpredicted
 
-else if  (var[x] =="Rfinalnothr" )  {  title =  "IUCN + predicted  Non-Threatened"   
+ if  (var[x] =="Rfinalnothr" )  {  title =  "IUCN + predicted  Non-Threatened"   
+pal <- wes_palette("Zissou1",  max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), type = "continuous")
+
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  #scale_fill_manual(name = "mask.full", values = my_colors) +
-  scale_fill_hp(option = "Ravenclaw", 
-                limits = c(min(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T),
-                           max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T)))+
+  scale_fill_gradientn(colours = pal, 
+                         limits = c(min(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), 
+                                    max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T)))+
+  scale_colour_gradientn(colours = pal, 
+                         limits = c(min(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), 
+                                    max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T)))+
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -194,13 +223,17 @@ rm(map)
 
 #'--------------------------------------------------------@IUCNNo-Statuspredicted
 
-else if  (var[x] =="Rfinalnostatus" )  {  title =  "IUCN + predicted  No-Status"  
+ if  (var[x] =="Rfinalnostatus" )  {  title =  "IUCN + predicted  No-Status"  
+pal <- wes_palette("Zissou1",  max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), type = "continuous")
+
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  #scale_fill_manual(name = "mask.full", values = my_colors) +
-  #scale_fill_hp(option = "Ravenclaw", 
-  #              limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T),
-  #                         max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T)))+
+  scale_fill_gradientn(colours = pal, 
+                         limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
+                                    max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T)))+
+  scale_colour_gradientn(colours = pal, 
+                         limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
+                                    max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T)))+
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -220,10 +253,10 @@ rm(map)
 
 #'--------------------------------------------------------@DeltaThreatened
 
-min(mask.full.polygon$mask.full[log10(mask.full.polygon$mask.full+1)>0])
+#min(mask.full.polygon$mask.full[log10(mask.full.polygon$mask.full+1)>0])
 
 
-else if  (var[x] =="DeltaThr" )  {  title =  "Delta Richness Threatened"  
+ if  (var[x] =="DeltaThr" )  {  title =  "Delta Richness Threatened"  
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = log10(mask.full+1), color = log10(mask.full+1))) +
   #viridis::scale_fill_viridis(option = "inferno")+
@@ -232,7 +265,6 @@ map <- ggplot(world) +
   scale_colour_gradient2(low = "white",mid="#00AFBB", midpoint = 0,
                        high="#FC4E07", space ="Lab" )+
 
-  
   geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -250,7 +282,7 @@ ggsave(file = here::here("figures/DeltaRichness.png"),map,width = 12, height = 8
 rm(map)
 }
 
-else if  (var[x] =="DeltaRank" )  {  title =  "Delta Rank"  
+ if  (var[x] =="DeltaRank" )  {  title =  "Delta Rank"  
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = scale(mask.full), color = scale(mask.full))) +
   #viridis::scale_fill_viridis(option = "inferno")+
@@ -279,7 +311,7 @@ ggsave(file = here::here("figures/DeltaRank.png"),map,width = 12, height = 8, un
 rm(map)
 }
 
-else if (var[x] =="PerTHRbefore" )  {  title =  "Percentage THR IUCN" 
+ if (var[x] =="PerTHRbefore" )  {  title =  "Percentage THR IUCN" 
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
   scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
@@ -305,7 +337,7 @@ ggsave(file = here::here("figures/PerTHRbefore.png"),map,width = 12, height = 8,
 rm(map)
 }
 
-else if (var[x] =="PerTHRfinal" )  {  title =  "Percentage IUCN + predicted THR " 
+ if (var[x] =="PerTHRfinal" )  {  title =  "Percentage IUCN + predicted THR " 
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
   scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
