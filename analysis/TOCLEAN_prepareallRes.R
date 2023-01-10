@@ -7,7 +7,12 @@ allrasters <- lapply(rastlist, raster)
 rastlist <- list.files(path = here::here("outputs/tif_outputs"), pattern='.tif', 
                        all.files=TRUE, full.names=FALSE)
 
+rastlist <- unlist(lapply(1:length(rastlist), function(x){
+  paste0(here::here("outputs/tif_outputs"),"/",rastlist[x])
+}))
+
 allrasters <- stack(rastlist)
+
 df <-  data.frame(getValues(allrasters))
 df  <- data.frame(ID = seq(from = 1, to = nrow(df),by=1),
                   Rthr = df$richness_initTHR,
@@ -18,39 +23,20 @@ df  <- data.frame(ID = seq(from = 1, to = nrow(df),by=1),
                   Rfinalnostatus = df$richness_finalNoStatus
                   )
 
-head(all_geo_res)
 
-df  <-  merge(Zrank_main,df,by = "ID",all.x=T)
+
+#df  <-  merge(Zrank_main,df,by = "ID",all.x=T)
+
+df  <-  merge(Zrank_main,df,by = "ID",all=T)
 df$DeltaRank   <-  df$rankSc2-df$rankSc1
 df$DeltaThr  <-   df$Rfinalthr-df$Rthr
-all_geo_res$richness <-  all_geo_res$Rthr+all_geo_res$Rnothr+all_geo_res$Rnostatus
+
 
 
 df  <-  merge(df,all_geo_res[,c("ID","MPA")],by = "ID",all.x=T)
 
-all_geo_res <- df
-save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
-#import all raster files in folder using lapply
-
-#to check the index numbers of all imported raster list elements
-allrasters
+all_geo_res2 <- df
+all_geo_res2$richness <-  all_geo_res2$Rthr+all_geo_res2$Rnothr+all_geo_res2$Rnostatus
+save(all_geo_res2,file=here::here("outputs","all_geo_res2.RData"))
 
 
-Zrank_main$DeltaRank <- Zrank_main$rankSc2-Zrank_main$rankSc1
-
-
-ggsave(file = here::here("figures/test2.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
-
-
-
-df_richnessTHR_final <- data.frame(ID = seq(from = 1, to = (richnessTHR_final@ncols*richnessTHR_final@nrows),by=1),
-                                   THR_final =  getValues(richnessTHR_final))
-
-
-
-
-  
-df$DeltaRank <- df$rankSc2-df$rankSc1
-
-
-plot(df$DeltaRank,df)

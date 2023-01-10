@@ -8,3 +8,5 @@ VennDiagram.2022-02-10_17-01-49.log
 diversity_thr.RData
 pco_features.RData
 dist.RData
+gadm36_BRA_2_sp.rds
+outputs/all_geo_res2.RData
