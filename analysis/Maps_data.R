@@ -72,7 +72,7 @@ mask[all_geo_res2$ID] = df
     df[is.na(df)] <- 0
     df <- data.frame(df,getValues(mask.full))
     colnames(df) <- c(var[x],"MPA")
-    df$DeltaRank[df$MPA==100] <- NA
+    df$DeltaRank[df$MPA==100] <- -1000000
     mask[all_geo_res2$ID] = df[,1]
   }
     
@@ -81,7 +81,7 @@ mask[all_geo_res2$ID] = df
     mask.full.polygon <- sf::st_as_sf(mask,as.point = F, na.omit = F)
     mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
     mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
-    
+    mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA
 
 #'--------------------------------------------------------@Threatened
 if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
