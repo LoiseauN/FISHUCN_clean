@@ -77,13 +77,12 @@ mask[all_geo_res2$ID] = df
   }
     
     #raster to stars
-    mask <- stars::st_as_stars(mask)
-    mask.full.polygon <- sf::st_as_sf(mask,as.point = F)
-    mask.full.polygon <-  fortify(mask.full.polygon)
+    mask <- stars::st_as_stars(mask, na.omit = F)
+    mask.full.polygon <- sf::st_as_sf(mask,as.point = F, na.omit = F)
+    mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
+    mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
     
-    mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol)
- 
-  
+
 #'--------------------------------------------------------@Threatened
 if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
 #pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
@@ -322,7 +321,7 @@ rm(map)
 
  if  (var[x] =="DeltaRank" )  {  title =  "Delta Rank"  
 map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = scale(mask.full), color = scale(mask.full))) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
   #viridis::scale_fill_viridis(option = "inferno")+
   scale_fill_gradient2(midpoint= 0, low="#00AFBB", mid="white",
                         high="#FC4E07", space ="Lab",na.value = '#7FFF00B3')+
