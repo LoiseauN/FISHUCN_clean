@@ -58,12 +58,12 @@ var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
 
 
 all_map <- lapply(1:length(var),function(x){
-  
+
   if(var[x] != "DeltaRank"){ 
-mask = mask.full
-df <- all_geo_res2[,var[x]]
-df[is.na(df)] <- 0
-mask[all_geo_res2$ID] = df
+    mask = mask.full
+    df <- all_geo_res2[,var[x]]
+    df[is.na(df)] <- 0
+    mask[all_geo_res2$ID] = df
   }
 
   else{ 
@@ -81,8 +81,9 @@ mask[all_geo_res2$ID] = df
     mask.full.polygon <- sf::st_as_sf(mask,as.point = F, na.omit = F)
     mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
     mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
-    mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA
-
+ 
+    if(var[x] == "DeltaRank") {mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
+    
 #'--------------------------------------------------------@Threatened
 if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
 #pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
@@ -100,18 +101,18 @@ if (var[x] =="Rthr" )  {  title =  "IUCN Threatened"
                                  max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T))) +
     scale_colour_viridis(limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
                                   max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T))) +
-    geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
-   geom_graticules(mol) +
-   geom_mapframe(mol, colour = "white", size = 2.0) +
-   geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
-  
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
+    geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+    geom_graticules(mol) +
+    geom_mapframe(mol, colour = "white", size = 2.0) +
+    geom_mapframe(mol, colour = "black", size = 0.4) +
+    
+    ggtitle(title) +
+    
+    ggthemes::theme_map(base_family = "serif") +
+    theme(legend.position = "bottom", 
+          legend.title    = element_blank(), 
+          plot.title      = element_text(face = "bold",  size = 18),
+          legend.text     = element_text(face = "plain", size = 12)) #+
   #guides(fill = guide_legend(nrow = 1))
   ggsave(file = here::here("figures/IUCN_Threatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
   rm(map)
@@ -220,9 +221,9 @@ ggsave(file = here::here("figures/IUCNandpredictedThreatened.png"),map,width = 1
 rm(map)
 }
 
+    
 #'--------------------------------------------------------@IUCNNonThreatenedpredicted
-
- if  (var[x] =="Rfinalnothr" )  {  title =  "IUCN + predicted  Non-Threatened"   
+if  (var[x] =="Rfinalnothr" )  {title =  "IUCN + predicted  Non-Threatened"   
 #pal <- wes_palette("Zissou1",  max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
@@ -302,7 +303,7 @@ map <- ggplot(world) +
   scale_colour_gradient2(low = "white",mid="#00AFBB", midpoint = 0,
                        high="#FC4E07", space ="Lab" )+
 
-  geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
@@ -319,19 +320,20 @@ ggsave(file = here::here("figures/DeltaRichness.png"),map,width = 12, height = 8
 rm(map)
 }
 
- if  (var[x] =="DeltaRank" )  {  title =  "Delta Rank"  
+#'--------------------------------------------------------@DeltaRankzonation
+ if  (var[x] =="DeltaRank" )  {  title =  "Delta Rank" 
+# adjustcolor( "chartreuse4", alpha.f = 0.7)
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-  #viridis::scale_fill_viridis(option = "inferno")+
-  scale_fill_gradient2(midpoint= 0, low="#00AFBB", mid="white",
-                        high="#FC4E07", space ="Lab",na.value = '#7FFF00B3')+
+   scale_fill_gradient2(midpoint= 0, low="#00AFBB", mid="white",
+                        high="#FC4E07", space ="Lab",na.value = "#458B00B3")+
   scale_color_gradient2(midpoint= 0, low="#00AFBB", mid="white",
-                       high="#FC4E07", space ="Lab",na.value = '#7FFF00B3')+
+                       high="#FC4E07", space ="Lab",na.value = "#458B00B3")+
   #scale_fill_manual(name = "mask.full", values = my_colors) +
   #scale_fill_hp(option = "Ravenclaw", 
   #              limits = c(min(all_geo_res2$DeltaRank),na.rm=T),
   #                         max(all_geo_res2$DeltaRank,na.rm=T))+
-  geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
@@ -348,12 +350,8 @@ ggsave(file = here::here("figures/DeltaRank.png"),map,width = 12, height = 8, un
 rm(map)
 }
 
-
-
-
-
-
- if (var[x] =="PerTHRbefore" )  {  title =  "Percentage THR IUCN" 
+#'--------------------------------------------------------@PerTHRbefore
+if (var[x] =="PerTHRbefore" )  {  title =  "Percentage THR IUCN" 
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
   scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
@@ -362,7 +360,7 @@ map <- ggplot(world) +
   scale_colour_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
                         limits = c(min(c(all_geo_res2$PerTHRbefore,all_geo_res2$PerTHRfinal),na.rm=T), 
                                    max(c(all_geo_res2$PerTHRbefore,all_geo_res2$PerTHRfinal),na.rm=T)))+
-  geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
@@ -379,7 +377,9 @@ ggsave(file = here::here("figures/PerTHRbefore.png"),map,width = 12, height = 8,
 rm(map)
 }
 
- if (var[x] =="PerTHRfinal" )  {  title =  "Percentage IUCN + predicted THR " 
+    
+#'--------------------------------------------------------@PerTHRfinal
+if (var[x] =="PerTHRfinal" )  {  title =  "Percentage IUCN + predicted THR " 
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
   scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
@@ -388,7 +388,7 @@ map <- ggplot(world) +
   scale_colour_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
                         limits = c(min(c(all_geo_res2$PerTHRbefore,all_geo_res2$PerTHRfinal),na.rm=T), 
                                    max(c(all_geo_res2$PerTHRbefore,all_geo_res2$PerTHRfinal),na.rm=T)))+
-  geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
