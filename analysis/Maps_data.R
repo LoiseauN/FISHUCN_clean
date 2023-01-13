@@ -53,7 +53,7 @@ all_geo_res2$Pernostatusfinal <- all_geo_res2$Rfinalnostatus/(all_geo_res2$Rfina
 all_geo_res2[is.na(all_geo_res2)] <- 0
 
 var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
-        "Rfinalnostatus","DeltaThr","DeltaRank","PerTHRbefore","PerTHRfinal")
+        "Rfinalnostatus","DeltaThr","DeltaRank","Perthrbefore","Pernothrfinal")
 
 
 
@@ -88,32 +88,34 @@ all_map <- lapply(1:length(var),function(x){
 if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
 #pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
 
-  map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
-    #scale_fill_gradientn(colours = pal, 
-     #                   limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
-     #                              max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T)))+
-    #scale_colour_gradientn(colours = pal, 
-     #                    limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
-    #                                max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T)))+
-    
-    scale_fill_viridis(limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
-                                 max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T))) +
-    scale_colour_viridis(limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
+
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
+  #scale_fill_gradientn(colours = pal, 
+  #                      limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
+  #                                 max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T)))+
+  #scale_colour_gradientn(colours = pal, 
+  #                      limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
+  #                                 max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T)))+
+  scale_fill_viridis(limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
+                                max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T))) +
+  scale_colour_viridis(limits = c(min(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), 
                                   max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T))) +
-    geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-    geom_graticules(mol) +
-    geom_mapframe(mol, colour = "white", size = 2.0) +
-    geom_mapframe(mol, colour = "black", size = 0.4) +
-    
-    ggtitle(title) +
-    
-    ggthemes::theme_map(base_family = "serif") +
-    theme(legend.position = "bottom", 
-          legend.title    = element_blank(), 
-          plot.title      = element_text(face = "bold",  size = 18),
-          legend.text     = element_text(face = "plain", size = 12)) #+
-  #guides(fill = guide_legend(nrow = 1))
+  
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+
   ggsave(file = here::here("figures/IUCN_Threatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
   rm(map)
   }
@@ -163,10 +165,10 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   #scale_colour_gradientn(colours = pal, 
   #                       limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
   #                                  max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T)))+
-  scale_fill_viridis(limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
-                                max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T))) +
-  scale_colour_viridis(limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
-                                  max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T))) +
+  scale_fill_viridis() + #limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
+  #max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T))) +
+  scale_colour_viridis()+#limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
+  #max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T))) +
   
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
@@ -268,10 +270,10 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   #scale_colour_gradientn(colours = pal, 
   #                      limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
   #                                 max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T)))+
-  scale_fill_viridis(limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
-                                max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T))) +
-  scale_colour_viridis(limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
-                                  max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T))) +
+  scale_fill_viridis()+#limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
+  #         max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T))) +
+  scale_colour_viridis()+#limits = c(min(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), 
+  #                max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T))) +
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -296,7 +298,7 @@ rm(map)
 
  if  (var[x] =="DeltaThr" )  {  title =  "Delta Richness Threatened"  
 map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = log10(mask.full+1), color = log10(mask.full+1))) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
   #viridis::scale_fill_viridis(option = "inferno")+
   scale_fill_gradient2(low = "white",mid="#00AFBB", midpoint = 0,
                       high="#FC4E07", space ="Lab" )+
@@ -351,7 +353,7 @@ rm(map)
 }
 
 #'--------------------------------------------------------@PerTHRbefore
-if (var[x] =="PerTHRbefore" )  {  title =  "Percentage THR IUCN" 
+if (var[x] =="Perthrbefore" )  {  title =  "Percentage THR IUCN" 
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
   scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
@@ -379,7 +381,7 @@ rm(map)
 
     
 #'--------------------------------------------------------@PerTHRfinal
-if (var[x] =="PerTHRfinal" )  {  title =  "Percentage IUCN + predicted THR " 
+if (var[x] =="Perthrfinal" )  {  title =  "Percentage IUCN + predicted THR " 
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
   scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
