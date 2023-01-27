@@ -90,11 +90,39 @@ plot_protection <- grid.arrange(Cover,Target_achievement, ncol = 2)
 
 
 
-ggsave(file = here::here("figures/Target_achievement.png"),plot_protection,width = 12, height = 6, units= "in",dpi= 300)
+
+
+ggsave(file = here::here("figures/Target_achievement.before.png"),plot_protection,width = 12, height = 6, units= "in",dpi= 300)
 
 
 
 
 
 
+
+
+Cover <- ggstatsplot::ggbetweenstats(
+  data = MPA_Protect, #data_protected,
+  x = IUCN_cat,
+  y = log_cover,
+  bf.message = F
+)+
+  scale_color_manual(values=c("#FC4E07" , "#E7B800","#00AFBB")) +
+  labs(
+    x = "IUCN Status",
+    y = "Log (% Cover + 1)"
+  ) 
+
+Target_achievement <- ggstatsplot::ggbetweenstats(
+  data = MPA_Protect, #data_protected,
+  x = IUCN_cat,
+  y = log_Target_achievement_I_IV,
+  bf.message = F,
+  
+)+
+  scale_color_manual(values=c("#FC4E07" , "#E7B800","#00AFBB")) +
+  labs(
+    x = "IUCN Status",
+    y = "Log (Target_achievement (I - IV) + 1)"
+  ) 
 
