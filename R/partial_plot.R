@@ -14,6 +14,8 @@ var_partial = function(data,var,names){
  # var = c("DistrArea" , "Max_length","K") 
  # names = c("Range size (log)","Max Length (log)","Growth rate")
 
+  pal <- hp(n = length(var), house = "Ravenclaw")
+
   data = na.omit(data)
     #Creating the model and predicting to new data
     mod = ranger::ranger(IUCN ~ ., data = data, probability = F,
@@ -34,7 +36,7 @@ var_partial = function(data,var,names){
     
     
     part_plot <- ggplot(pd,aes(x=pd[,var[x]],y=Thr)) + #00AFBB"
-      geom_smooth(color="#FC4E07",fill="#FC4E07") +
+      geom_smooth(color=pal[x],fill=pal[x]) +
       ylim(0,0.5)+
       theme_bw()+
       ylab("Probability")+
