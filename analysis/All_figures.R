@@ -84,8 +84,8 @@ ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 12, un
 
 
 partial_plot <- var_partial(data =  data_noNA,
-                            var = c("DistrArea" , "Max_length"),
-                            names = c("Range size (log)","Max Length (log)")) 
+                            var = c("DistrArea" , "Max_length","K"),
+                            names = c("Range size (log)","Max Length (log)", "Growth rate")) 
 
 
 importance_plot = var_imp(test_IUCN[[1]])      

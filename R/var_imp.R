@@ -26,8 +26,9 @@ var_imp = function(rel_inf){
     mutate(rowname=factor(rowname, rowname)) %>%
     ggplot( aes(x=rowname, y=importance.mod.,fill=importance.mod.))+ 
        geom_bar(stat="identity", position="dodge")+ 
+   harrypotter::scale_fill_hp(option = "RonWeasley") + 
    scale_x_discrete(labels=c("Reproduction mode","Aquarium", "Fertility","Price Category","Climate",
-                             "Body Shape","Genus","Family","Water Column","Growth Rate","Max Length (log)",
+                             "Body Shape","Genus","Family","Position in Water Column","Growth Rate","Max Length (log)",
                              "Range size (log)")) +
    coord_flip()+
       xlab("Variables") +
@@ -39,8 +40,8 @@ var_imp = function(rel_inf){
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
       legend.position="none",
-      axis.text=element_text(size=16)) +
-    scale_fill_gradient(low="grey", high="grey")
+      axis.text=element_text(size=16)) 
+    
      
   
  # ggsave(file = here::here("figures", "Figure2.pdf"), 
