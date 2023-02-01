@@ -90,10 +90,16 @@ partial_plot <- var_partial(data =  data_noNA,
 
 importance_plot = var_imp(test_IUCN[[1]])      
 
-importance_plot <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[1]]), xmin = 6, xmax = 11, 
-                     ymin = 20, ymax = 35.65)
+#importance_plot <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[1]]), xmin = 6, xmax = 11, 
+#ymin = 20, ymax = 35.65)
 
-fig2 <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[2]]), xmin = 1, xmax = 6, 
+fig2 <- gridExtra::grid.arrange(partial_plot[[1]],
+                                partial_plot[[2]],
+                                partial_plot[[3]])
+
+fig2 <-  gridExtra::grid.arrange(importance_plot,fig2,ncol=2)
+
+  # importance_plot + annotation_custom(ggplotGrob(partial_plot[[2]]), xmin = 1, xmax = 6, 
                                                        ymin = 20, ymax = 35.65)
 
 
