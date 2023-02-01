@@ -14,7 +14,7 @@ var_partial = function(data,var,names){
  # var = c("DistrArea" , "Max_length","K") 
  # names = c("Range size (log)","Max Length (log)","Growth rate")
 
-  pal <- hp(n = length(var), house = "Ravenclaw")
+  pal <- c("#B35800","#A8BCC1","#42A5D9")
 
   data = na.omit(data)
     #Creating the model and predicting to new data
