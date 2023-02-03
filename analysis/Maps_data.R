@@ -25,20 +25,6 @@ all_geo_res2$Pernostatusbefore <- NA
 all_geo_res2$Pernostatusfinal <- NA
 
 
-for (i in 1:nrow(all_geo_res2)) { 
-  all_geo_res2$Perthrbefore[i] <- all_geo_res2$Rthr[i]/(all_geo_res2$Rthr[i]+all_geo_res2$Rnothr[i]+all_geo_res2$Rnostatus[i])
-  all_geo_res2$Perthrfinal[i] <- all_geo_res2$Rfinalthr[i]/(all_geo_res2$Rfinalthr[i]+all_geo_res2$Rfinalnothr[i]+all_geo_res2$Rfinalnostatus[i])
-  
-  all_geo_res2$Pernothrbefore[i] <- all_geo_res2$Rnothr[i]/(all_geo_res2$Rthr[i]+all_geo_res2$Rnothr[i]+all_geo_res2$Rnostatus[i])
-  all_geo_res2$Pernothrfinal[i] <- all_geo_res2$Rfinalnothr[i]/(all_geo_res2$Rfinalthr[i]+all_geo_res2$Rfinalnothr[i]+all_geo_res2$Rfinalnostatus[i])
-  
-  all_geo_res2$Pernostatusbefore[i] <- all_geo_res2$Rnostatus[i]/(all_geo_res2$Rthr[i]+all_geo_res2$Rnothr[i]+all_geo_res2$Rnostatus[i])
-  all_geo_res2$Pernostatusfinal[i] <- all_geo_res2$Rfinalnostatus[i]/(all_geo_res2$Rfinalthr[i]+all_geo_res2$Rfinalnothr[i]+all_geo_res2$Rfinalnostatus[i])
-  
-print(i)
-}
-
-
 all_geo_res2$Perthrbefore <- all_geo_res2$Rthr/(all_geo_res2$Rthr+all_geo_res2$Rnothr+all_geo_res2$Rnostatus)
 all_geo_res2$Perthrfinal <- all_geo_res2$Rfinalthr/(all_geo_res2$Rfinalthr+all_geo_res2$Rfinalnothr+all_geo_res2$Rfinalnostatus)
 
@@ -51,6 +37,7 @@ all_geo_res2$Pernostatusfinal <- all_geo_res2$Rfinalnostatus/(all_geo_res2$Rfina
 
 
 all_geo_res2[is.na(all_geo_res2)] <- 0
+
 
 var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
         "Rfinalnostatus","DeltaThr","DeltaRank","Perthrbefore","Pernothrfinal")
@@ -86,7 +73,7 @@ all_map <- lapply(1:length(var),function(x){
     
 #'--------------------------------------------------------@Threatened
 if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
-#pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
+pal <- wesanderson::wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
 
 
 map <- ggplot(world) +
