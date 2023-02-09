@@ -1,6 +1,6 @@
 remotes::install_github("ropensci/rnaturalearthhires")
 install.packages(c("rnaturalearth", "rnaturalearthdata"))
-
+wesanderson
 #'-------------------------------------------
 source(here::here("R","map_function.R"))
 
@@ -10,6 +10,9 @@ world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 # projection
 mol   <- paste0("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 ", "+units=m +no_defs")
 world <- sf::st_transform(world, crs=mol)
+
+# import layers border
+mollBorder <- st_read(here::here("data","mollBorder","mollBorder.shp"))
 
 
 #My data
@@ -52,15 +55,22 @@ all_map <- lapply(1:length(var),function(x){
     mask[all_geo_res2$ID] = df[,1]
   }
     
-    #raster to stars
-    mask <- stars::st_as_stars(mask, na.omit = F)
-    mask <- sf::st_transform(mask, crs=mol, na.omit = F)
-    
-    mask.full.polygon <- sf::st_as_sf(mask,as.point = F, na.omit = F)
-    mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
-    mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
- 
-    if(var[x] == "DeltaRank") {mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
+  #raster to stars
+  CellsIn = exactextractr::exact_extract(mask,mollBorder, include_cell = TRUE)
+  
+  NumCell <- seq(1,length(mask),1)
+  
+  CellsToRemove <- NumCell[!NumCell%in%CellsIn[[1]]$cell]
+
+  mask[CellsToRemove] = NA
+  
+  mask <- stars::st_as_stars(mask, na.omit = F)
+  mask <- sf::st_transform(mask, crs=mol, na.omit = F)
+  mask.full.polygon <- sf::st_as_sf(mask,as.point = F, na.omit = F)
+  mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
+  mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
+   
+  if(var[x] == "DeltaRank") {mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
     
 #'--------------------------------------------------------@Threatened
 if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
@@ -82,6 +92,7 @@ map <- ggplot(world) +
   ggtitle(title) +
   
   ggthemes::theme_map(base_family = "serif") +
+  
   theme(legend.position = "bottom", 
         legend.title    = element_blank(), 
         plot.title      = element_text(face = "bold",  size = 18),
