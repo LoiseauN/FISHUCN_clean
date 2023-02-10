@@ -32,13 +32,14 @@ all_geo_res2[is.na(all_geo_res2)] <- 0
 
 
 var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
-        "Rfinalnostatus","DeltaThr","DeltaRank","Perthrbefore","Pernothrfinal")
+        "Rfinalnostatus","rankSc1","rankSc2","DeltaThr","DeltaRank","Perthrbefore","Pernothrfinal")
 
+var = c("rankSc1","rankSc2")
 
 
 all_map <- lapply(1:length(var),function(x){
 
-  if(var[x] != "DeltaRank"){ 
+  if(! var[x] %in% c("DeltaRank","rankSc1","rankSc2")){ 
     mask = mask.full
     df <- all_geo_res2[,var[x]]
     df[is.na(df)] <- 0
@@ -51,7 +52,7 @@ all_map <- lapply(1:length(var),function(x){
     df[is.na(df)] <- 0
     df <- data.frame(df,getValues(mask.full))
     colnames(df) <- c(var[x],"MPA")
-    df$DeltaRank[df$MPA==100] <- -1000000
+    df[,var[x]][df$MPA==100] <- -1000000
     mask[all_geo_res2$ID] = df[,1]
   }
     
@@ -70,10 +71,10 @@ all_map <- lapply(1:length(var),function(x){
   mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
   mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
    
-  if(var[x] == "DeltaRank") {mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
+  if(var[x] %in% c("DeltaRank","rankSc1","rankSc2")) {mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
     
 #'--------------------------------------------------------@Threatened
-if (var[x] =="Rthr" )  {  title =  "IUCN Threatened" 
+if (var[x] =="Rthr" )  {  title =  "BEFORE Threatened" 
 pal <- wesanderson::wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
@@ -104,7 +105,7 @@ map <- ggplot(world) +
 #'--------------------------------------------------------@Non-Threatened
 pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), type = "continuous")
 
- if (var[x] =="Rnothr" )  {  title =  "IUCN Non-Threatened"  
+ if (var[x] =="Rnothr" )  {  title =  "BEFORE Non-Threatened"  
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   scale_fill_gradientn(colours = pal, 
@@ -132,7 +133,7 @@ rm(map)
 }
 
 #'--------------------------------------------------------@No-Status
- if  (var[x] =="Rnostatus" )  {  title =  "IUCN No-Status"  
+ if  (var[x] =="Rnostatus" )  {  title =  "BEFORE No-Status"  
 pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
@@ -162,7 +163,7 @@ rm(map)
 
 #'--------------------------------------------------------@IUCNThreatenedpredicted
 
- if  (var[x] =="Rfinalthr" )  {  title =  "IUCN + predicted Threatened"  
+ if  (var[x] =="Rfinalthr" )  {  title =  "AFTER + predicted Threatened"  
 pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
@@ -192,7 +193,7 @@ rm(map)
 
     
 #'--------------------------------------------------------@IUCNNonThreatenedpredicted
-if  (var[x] =="Rfinalnothr" )  {title =  "IUCN + predicted  Non-Threatened"   
+if  (var[x] =="Rfinalnothr" )  {title =  "AFTER Non-Threatened"   
 pal <- wes_palette("Zissou1",  max(c(all_geo_res2$Rnothr,all_geo_res2$Rfinalnothr),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
@@ -222,7 +223,7 @@ rm(map)
 
 #'--------------------------------------------------------@IUCNNo-Statuspredicted
 
- if  (var[x] =="Rfinalnostatus" )  {  title =  "IUCN + predicted  No-Status"  
+ if  (var[x] =="Rfinalnostatus" )  {  title =  "AFTER No-Status"  
 pal <- wes_palette("Zissou1",  max(c(all_geo_res2$Rnostatus,all_geo_res2$Rfinalnostatus),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
@@ -250,6 +251,69 @@ ggsave(file = here::here("figures/IUCNandpredictedNoStatus.png"),map,width = 12,
 rm(map)
 }
 
+
+
+#'--------------------------------------------------------@RANKBEFORE
+
+if  (var[x] =="rankSc1" )  {  title =  "BEFORE Rank"  
+pal <- wes_palette("Zissou1",  max(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T), type = "continuous")
+
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
+  scale_fill_gradientn(colours = pal, na.value = "#458B00B3",
+                       limits = c(min(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T), 
+                                  max(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T)))+
+  scale_colour_gradientn(colours = pal, na.value = "#458B00B3",
+                         limits = c(min(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T), 
+                                    max(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T)))+
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+
+ggsave(file = here::here("figures/RankBefore.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
+}
+
+
+
+#'--------------------------------------------------------@RANKAFTER
+
+if  (var[x] =="rankSc2" )  {  title =  "AFTER Rank"  
+pal <- wes_palette("Zissou1",  max(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T), type = "continuous")
+
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
+  scale_fill_gradientn(colours = pal, na.value = "#458B00B3",
+                       limits = c(min(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T), 
+                                  max(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T)))+
+  scale_colour_gradientn(colours = pal, na.value = "#458B00B3",
+                         limits = c(min(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T), 
+                                    max(c(all_geo_res2$rankSc1,all_geo_res2$rankSc2),na.rm=T)))+
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+
+ggsave(file = here::here("figures/RankAfter.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
+}
 #'--------------------------------------------------------@DeltaThreatened
 
 #min(mask.full.polygon$mask.full[log10(mask.full.polygon$mask.full+1)>0])

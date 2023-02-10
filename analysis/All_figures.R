@@ -9,10 +9,17 @@ mammals_status    <- rredlist::rl_comp_groups("mammals",
 birds_status      <- rredlist::rl_comp_groups("birds", 
   key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
 
-amphibians_status <- rredlist::rl_comp_groups("Amphibians", 
+amphibians_status <- rredlist::rl_comp_groups("amphibians", 
   key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
 
+reptiles_status <- rredlist::rl_comp_groups("reptilia", 
+  key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
 
+all_status <- rredlist::rl_comp_groups(
+                            key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
+
+chameleons
+crocodiles_and_alligators
 ## Download Phylopic silhouettes (with License 1.0 and No Copyright) ----
 mammals_pic    <- rphylopic::image_data("8cad2b22-30d3-4cbd-86a3-a6d2d004b201", 
                                         size = "512")[[1]]
