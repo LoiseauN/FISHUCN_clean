@@ -34,7 +34,6 @@ all_geo_res2[is.na(all_geo_res2)] <- 0
 var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
         "Rfinalnostatus","rankSc1","rankSc2","DeltaThr","DeltaRank","Perthrbefore","Pernothrfinal")
 
-var = c("rankSc1","rankSc2")
 
 
 all_map <- lapply(1:length(var),function(x){
@@ -163,7 +162,7 @@ rm(map)
 
 #'--------------------------------------------------------@IUCNThreatenedpredicted
 
- if  (var[x] =="Rfinalthr" )  {  title =  "AFTER + predicted Threatened"  
+ if  (var[x] =="Rfinalthr" )  {  title =  "AFTER Threatened"  
 pal <- wes_palette("Zissou1", max(c(all_geo_res2$Rthr,all_geo_res2$Rfinalthr),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
@@ -369,7 +368,8 @@ map <- ggplot(world) +
   theme(legend.position = "bottom", 
         legend.title    = element_blank(), 
         plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
+        legend.text     = element_text(face = "plain", size = 12),
+        legend.key.width=unit(1.5,"cm")) #+
 #guides(fill = guide_legend(nrow = 1))
 ggsave(file = here::here("figures/DeltaRank.png"),map,width = 12, height = 8, units= "in",dpi= 300)
 rm(map)

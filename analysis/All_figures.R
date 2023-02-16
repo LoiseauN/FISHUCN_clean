@@ -318,20 +318,20 @@ fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness
   geom_point(size=2.5,alpha = 0.3,shape=16) + 
   #scale_color_distiller(palette = "Spectral")+
   scale_color_gradient(low = "#00AFBB", high = "#FC4E07")+
-  theme_bw() + xlab("Cell rank IUCN")+ ylab("Cell rank IUCN + Predicted") +
+  theme_bw() + xlab("Cell rank BEFORE")+ ylab("Cell rank AFTER") +
   geom_abline(slope=1, intercept = 0)
 ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
 fig_rank <- ggplot(all_geo_res, aes(x=richness, y=DeltaThr, color = log10(richness))) +
   geom_point(size=2.5,alpha = 0.3,shape=16) + 
   scale_color_distiller(palette = "Spectral")+
-  theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") 
+  theme_bw() + xlab("Cell rank BEFORE")+ ylab("Cell rank AFTER") 
 ggsave(file = here::here("figures/test.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
 fig_rank <- ggplot(all_geo_res, aes(x=Rnothr, y=Rfinalnothr, color = log10(richness))) +
   geom_point(size=2.5,alpha = 0.3,shape=16) + 
   scale_color_distiller(palette = "Spectral")+
-  theme_bw() + xlab("IUCN")+ ylab("IUCN + Predicted") 
+  theme_bw() + xlab("Cell rank BEFORE")+ ylab("Cell rank AFTER") 
 ggsave(file = here::here("figures/test2.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
 #NOT GOOD
