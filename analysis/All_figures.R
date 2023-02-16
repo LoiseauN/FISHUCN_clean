@@ -13,32 +13,22 @@
 #   key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
 
 
-
-
 all_status <- read.table(file = here::here("data","IUCN_risk.csv"), sep = ";", row.names = 1, header = T)
 
 
 ## Download Phylopic silhouettes (with License 1.0 and No Copyright) ----
-mammals_pic    <- rphylopic::image_data("8cad2b22-30d3-4cbd-86a3-a6d2d004b201", 
-                                        size = "512")[[1]]
+mammals_pic    <- get_phylopic_image("8cad2b22-30d3-4cbd-86a3-a6d2d004b201", size = "512")
 
-birds_pic      <- rphylopic::image_data("34d9872c-b7d0-416f-8ac6-1f9f952982c8", 
-                                        size = "512")[[1]]
+birds_pic      <- get_phylopic_image("34d9872c-b7d0-416f-8ac6-1f9f952982c8", size = "512")
 
-fish_pic       <- rphylopic::image_data("86c40d81-2613-4bb4-ad57-fb460be56ae5", 
-                                        size = "512")[[1]]
+fish_pic       <- get_phylopic_image("86c40d81-2613-4bb4-ad57-fb460be56ae5", size = "512")
 
-amphibians_pic <- rphylopic::image_data("cd0cdc36-ecfa-414f-af87-1b5e0ec0c69b", 
-                                        size = "512")[[1]]
+amphibians_pic <- get_phylopic_image("cd0cdc36-ecfa-414f-af87-1b5e0ec0c69b", size = "512")
 
-reptile_pic <- rphylopic::image_data("bf7d9c5f-83c0-435a-b09f-dc6111ece257/raster/512x194.png", 
-                                        size = "512")[[1]]
+reptile_pic <- get_phylopic_image("bf7d9c5f-83c0-435a-b09f-dc6111ece257", size = "512")
 
-img <- image_data("27356f15-3cf8-47e8-ab41-71c6260b2724", size = "512")[[1]]
 
 #'------------------------------------------------------------------------------@Comparisonothertaxa
-
-
 data_4_taxa <- data.frame(taxa   = c(rep("amphibians", nrow(all_status[all_status$className == "Amphibians",])),
                                      rep("mammals", nrow(all_status[all_status$className == "Mammals",])),
                                      rep("reptiles", nrow(all_status[all_status$className == "Reptiles",])),
@@ -48,7 +38,6 @@ data_4_taxa <- data.frame(taxa   = c(rep("amphibians", nrow(all_status[all_statu
                           status = as.factor(c(all_status$rlCodes,
                                                 as.character(FB_final$IUCN))),
                           nb_sp = c(all_status$n,rep(1,nrow(FB_final))))
-
 
 
 levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR/cd", "LR/nt", "nt","NT", "LC","NThr")] <- "Non Threatened"
@@ -76,7 +65,11 @@ data_4_taxa$total_taxa <- c(rep(sum(data_4_taxa[data_4_taxa$taxa == "amphibians"
                             
 data_4_taxa$Freq  <- (data_4_taxa$nb_sp/data_4_taxa$total_taxa)*100 
 
-data_4_taxa$status <- factor(data_4_taxa$status, levels = c("No Status", "Non Threatened", "Threatened"))
+data_4_taxa$status <- factor(data_4_taxa$status, levels = c("Threatened", "Non Threatened", "No Status"))
+
+data_4_taxa$taxa <- factor(data_4_taxa$taxa, levels = c("birds", "reptiles", "mammals","amphibians", "fishes"))
+
+
 
 fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) + 
   geom_bar(position="stack", stat="identity",color="grey20") +
@@ -84,13 +77,19 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
                     guide = guide_legend(reverse = TRUE))+
   theme_bw() +
   xlab("Taxa")+ylab("Percentage")+
-  #add_phylopic(birds_pic,     x = 1, y = 50, ysize = 12, alpha = 1)+
+  #draw_image(birds_pic,     x = 1, y = 50, ysize = 12, alpha = 1)+
   #add_phylopic(mammals_pic,   x = 2, y = 50, ysize = 10, alpha = 1)+
   #add_phylopic(amphibians_pic,x = 3, y = 50, ysize = 10, alpha = 1)+
   #add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1) +
   theme( axis.text=element_text(size=16),axis.title=element_text(size=18,face="bold"))
 ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 12, units= "in",dpi= 300)
 
+
+
+ fig1 + annotation_custom(rasterGrob(as.raster(mammals_pic)), xmin = 1, xmax = 2, ymin = 40, ymax = 50)
+
+draw_image(mammals_pic,  x = 0.3, y = 0.4, scale = .2) +
+  draw_plot(fig1)
 
 #'---------------------------------------------------------------------@variable_importance
 
