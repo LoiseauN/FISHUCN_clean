@@ -23,9 +23,12 @@ birds_pic      <- get_phylopic_image("34d9872c-b7d0-416f-8ac6-1f9f952982c8", siz
 
 fish_pic       <- get_phylopic_image("86c40d81-2613-4bb4-ad57-fb460be56ae5", size = "512")
 
-amphibians_pic <- get_phylopic_image("cd0cdc36-ecfa-414f-af87-1b5e0ec0c69b", size = "512")
+amphibians_pic <- get_phylopic_image("28e237f7-9fcd-47be-8a4c-94c0ad057455", size = "512")
 
 reptile_pic <- get_phylopic_image("bf7d9c5f-83c0-435a-b09f-dc6111ece257", size = "512")
+
+reptile_pic <- get_phylopic_image("f2a5ae73-c899-4e47-b0ad-b6eac3a99350", size = "512")
+
 
 
 #'------------------------------------------------------------------------------@Comparisonothertaxa
@@ -74,22 +77,43 @@ data_4_taxa$taxa <- factor(data_4_taxa$taxa, levels = c("birds", "reptiles", "ma
 fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) + 
   geom_bar(position="stack", stat="identity",color="grey20") +
   scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800"), name = "IUCN status", 
-                    guide = guide_legend(reverse = TRUE))+
+                    guide = guide_legend(reverse = FALSE))+
   theme_bw() +
   xlab("Taxa")+ylab("Percentage")+
-  #draw_image(birds_pic,     x = 1, y = 50, ysize = 12, alpha = 1)+
-  #add_phylopic(mammals_pic,   x = 2, y = 50, ysize = 10, alpha = 1)+
-  #add_phylopic(amphibians_pic,x = 3, y = 50, ysize = 10, alpha = 1)+
-  #add_phylopic(fish_pic,      x = 4, y = 50, ysize = 8, alpha = 1) +
-  theme( axis.text=element_text(size=16),axis.title=element_text(size=18,face="bold"))
-ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 12, units= "in",dpi= 300)
+  add_phylopic(birds_pic,     x = 1, y = 50, ysize = 13, alpha = 1)+
+  add_phylopic(reptile_pic,     x = 2, y = 50, ysize = 10, alpha = 1)+
+  add_phylopic(amphibians_pic,   x = 3, y = 50, ysize = 8, alpha = 1)+
+  add_phylopic(mammals_pic,x = 4, y = 50, ysize = 10, alpha = 1)+
+  add_phylopic(fish_pic,      x = 5, y = 50, ysize = 7.5, alpha = 1) +
+  theme( axis.text=element_text(size=16),
+         axis.title=element_text(size=18,face="bold"),
+         legend.title=element_text(size=16,face="bold"),
+         legend.text=element_text(size=14))
+
+grob_birds <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "birds",]$n)), x=0.1,  y=0.95, hjust=0,
+                          gp=gpar(fontsize=12,fontface="bold")))
+grob_reptiles <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "reptiles",]$n)), x=0.1,  y=0.95, hjust=0,
+                          gp=gpar(fontsize=12,fontface="bold")))
+grob_mammals <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "mammals",]$n)), x=0.1,  y=0.95, hjust=0,
+                          gp=gpar(fontsize=12,fontface="bold")))
+grob_amphibians <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "amphibians",]$n)), x=0.1,  y=0.95, hjust=0,
+                          gp=gpar(fontsize=12,fontface="bold")))
+grob_fishes <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "fishes",]$n)), x=0.1,  y=0.95, hjust=0,
+                          gp=gpar(fontsize=12,fontface="bold")))
+
+# Ajouter au graphique
+fig1 <- fig1 + annotation_custom(grob_birds,xmin = 0.7, xmax = 1.5, ymin = 96, ymax = 103)
+
+fig1 <- fig1 + annotation_custom(grob_reptiles,xmin = 1.7, xmax = 2.5, ymin = 96, ymax = 103)
+
+fig1 <- fig1 + annotation_custom(grob_mammals,xmin = 2.7, xmax = 3.5, ymin = 96, ymax = 103)
+
+fig1 <- fig1 + annotation_custom(grob_amphibians,xmin = 3.7, xmax = 4.5, ymin = 96, ymax = 103)
+
+fig1 <- fig1 + annotation_custom(grob_fishes,xmin = 4.7, xmax = 5.5, ymin = 96, ymax = 103)
 
 
-
- fig1 + annotation_custom(rasterGrob(as.raster(mammals_pic)), xmin = 1, xmax = 2, ymin = 40, ymax = 50)
-
-draw_image(mammals_pic,  x = 0.3, y = 0.4, scale = .2) +
-  draw_plot(fig1)
+ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 10, units= "in",dpi= 300)
 
 #'---------------------------------------------------------------------@variable_importance
 

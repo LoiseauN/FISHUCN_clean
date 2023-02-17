@@ -1,22 +1,36 @@
-base_url <- function() "https://api.phylopic.org/images/"
-
-get_phylopic_image <- function(uuid, size = "512") {
+get_phylopic_image <- function(uuid, size = 512) {
+  
+  
+  ## Check args ----
   
   if (missing(uuid)) {
-    stop("You must provide an uuid", .call = FALSE)
+    stop("You must provide an UUID (argument 'uuid')", call. = FALSE)
   }
   
   if (!is.character(uuid) || length(uuid) != 1) {
-    stop("Argument 'uuid' must be a character of length 1", .call = FALSE)
+    stop("Argument 'uuid' must be a character of length 1", call. = FALSE)
   }
   
-  page <- httr::GET(paste0(base_url(), uuid))
+  if (!is.vector(size) || length(size) != 1) {
+    stop("Argument 'size' must be a vector ('character' or 'integer') of ", 
+         "length 1", call. = FALSE)
+  }
+  
+  
+  ## Send request ----
+  
+  base_url <- "https://api.phylopic.org/images/"
+  
+  page <- httr::GET(paste0(base_url, uuid))
   
   if (page$"status_code" != 200) {
-    stop("Unable to reach the page", .call = FALSE)
+    stop("The resource cannot be found", call. = FALSE)
   }
   
-  content <- httr::content(page, as = "text")
+  
+  ## Extract response ----
+  
+  content <- httr::content(page, as = "text", encoding = "UTF-8")
   content <- jsonlite::fromJSON(content)
   content <- content[[1]]
   
@@ -28,35 +42,48 @@ get_phylopic_image <- function(uuid, size = "512") {
   sizes <- unlist(lapply(strsplit(images$"sizes", "x"), function(x) x[1]))
   
   if (!(size %in% sizes)) {
-    stop("Unavailable size", .call = FALSE)
+    stop("Size not found. Available sizes are: '", 
+         paste(sizes, collapse = "', '"), "'.", call. = FALSE)
   }
   
   
   ## Get image link ----
   
-  pos <- which(sizes == size)
+  link <- images[which(sizes == size), "href"]
   
-  link <- images[pos, "href"]
   
-  filename <- tempfile()
-  invisible(utils::download.file(url = link, destfile = filename, quiet = TRUE))
+  ## Download png ----
   
-  png::readPNG(filename)
+  filename <- paste0(tempfile(), ".png")
+  utils::download.file(url = link, destfile = filename, quiet = TRUE)
+  
+  
+  ## Import raster ----
+  
+  img <- png::readPNG(filename, native = FALSE)
+  
+  
+  ## Convert to RGBA (without background color) ----
+  
+  if (dim(img)[3] == 2) {
+    
+    img_rgb <- array(1, dim = c(dim(img)[1], dim(img)[2], 4))
+    
+    img_rgb[ , , 1] <- ifelse(img[ , , 2] == 0, 1, 0) # red
+    img_rgb[ , , 2] <- ifelse(img[ , , 2] == 0, 1, 0) # green
+    img_rgb[ , , 3] <- ifelse(img[ , , 2] == 0, 1, 0) # blue
+    img_rgb[ , , 4] <- ifelse(img[ , , 2] == 0, 0, 1) # alpha
+    
+  } else {
+    
+    img_rgb <- img
+  }
+  
+  img_rgb
 }
 
 
-mammals_pic    <- get_phylopic_image("8cad2b22-30d3-4cbd-86a3-a6d2d004b201", 
-                                     size = "512")
+mammals_pic <- get_phylopic_image("8cad2b22-30d3-4cbd-86a3-a6d2d004b201")
 
-birds_pic      <- get_phylopic_image("34d9872c-b7d0-416f-8ac6-1f9f952982c8", 
-                                     size = "512")
-
-fish_pic       <- get_phylopic_image("86c40d81-2613-4bb4-ad57-fb460be56ae5", 
-                                     size = "512")
-
-amphibians_pic <- get_phylopic_image("cd0cdc36-ecfa-414f-af87-1b5e0ec0c69b", 
-                                     size = "512")
-
-reptile_pic    <- get_phylopic_image("bf7d9c5f-83c0-435a-b09f-dc6111ece257", 
-                                     size = "512")
-
+ggplot2::ggplot(x = Sepal.Length, y = Sepal.Width, data = iris, geom = "point") +
+  rphylopic::add_phylopic(mammals_pic, alpha = 1)
