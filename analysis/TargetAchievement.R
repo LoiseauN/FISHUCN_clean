@@ -18,7 +18,7 @@ target_func <- function(SR, qt, log=TRUE){
   return(Tar)
 }
 
-PctMPAI_IV$perc_cover <- as.numeric(as.character(PctMPAI_IV$perc_cover))
+
 
 # -------------------------------------------------------------------------------------------- Compute target achievement
 # Correct target with the range of species following  Jones et al. 2020
@@ -28,6 +28,8 @@ PctMPAI_IV$perc_cover <- as.numeric(as.character(PctMPAI_IV$perc_cover))
 load(here::here("data/PctMPAI_IV.RData")) 
 load(here::here("data/FishDistribArea_all.RData")) 
 load(here::here("outputs/dat_network.RData")) 
+
+PctMPAI_IV$perc_cover <- as.numeric(as.character(PctMPAI_IV$perc_cover))
 MPA_Protect <- FishDistribArea_all[FishDistribArea_all$species %in% dat_network$species,]
 
 MPA_Protect$DistrArea <- MPA_Protect$DistrArea/1e+6
@@ -61,17 +63,29 @@ MPA_Protect$log_Target_achievement_I_IV <- log10(MPA_Protect$Target_achievement_
 MPA_Protect$log_cover<- log10(MPA_Protect$perc_cover+1)
 
 
+MPA_Protect$Target_achievement_I_IV_1 <- (MPA_Protect$Target_achievement_I_IV+1)
+MPA_Protect$cover_1<- (MPA_Protect$cover_1+1)
+
 Cover <- ggstatsplot::ggbetweenstats(
-  data = MPA_Protect, #data_protected,
+  data = MPA_Protect, 
+  comparisons = list(c("0", "1")),
   x = IUCN_final,
-  y = log_cover,
-  bf.message = F
+  y = cover_1,
+  bf.message = F,
+  results.subtitle = F,
+  pairwise.display	 = "all"
 )+
   scale_color_manual(values=c("#FC4E07" , "#E7B800","#00AFBB")) +
   labs(
     x = "IUCN Status",
-    y = "Log (% Cover + 1)"
-  ) 
+    y = "% Cover"
+  ) + 
+  #scale_y_reverse()+
+  scale_y_log10(  breaks = seq(0,25, by = 5))+
+  coord_trans(y = "log10")
+
+Cover 
+
 
 Target_achievement <- ggstatsplot::ggbetweenstats(
   data = MPA_Protect, #data_protected,
@@ -84,7 +98,7 @@ Target_achievement <- ggstatsplot::ggbetweenstats(
   labs(
     x = "IUCN Status",
     y = "Log (Target_achievement (I - IV) + 1)"
-  ) 
+  ) + scale_y_reverse()
 
 plot_protection <- grid.arrange(Cover,Target_achievement, ncol = 2)
 
@@ -126,3 +140,69 @@ Target_achievement <- ggstatsplot::ggbetweenstats(
     y = "Log (Target_achievement (I - IV) + 1)"
   ) 
 
+
+
+
+
+
+
+
+
+
+
+# NEW PLOT 
+
+my_comparisons <- list(
+  c("Threatened", "No Status"),
+  c("No Status", "Non Threatened"),
+  c("Threatened", "Non Threatened")
+)
+
+options(scipen=10000)
+Target_BEFORE <- ggviolin(
+  data = MPA_Protect, 
+  x = "IUCN_cat",
+  y = "Target_achievement_I_IV",
+  fill = "IUCN_cat",
+  palette = c("#FC4E07" , "#E7B800","#00AFBB"),
+  add.params = list(fill = "white"),
+  add = "boxplot")+
+  theme_bw()+
+  theme(legend.position = "none") +
+  scale_y_continuous(
+    trans  = compose_trans("log10"),
+    breaks = c(100, 1, 0)
+  ) +
+  # scale_y_log10(breaks = c(0,1,100),trans= "reverse") +
+  geom_jitter(aes(color =IUCN_cat), 
+              shape = 16, 
+              position = position_jitter(0.2), 
+              size = 0.1) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(5,4,3),
+                     tip.length = 0
+  )
+
+
+
+Target_AFTER <- ggviolin(
+  data = MPA_Protect, 
+  x = "IUCN_final",
+  y = "Target_achievement_I_IV",
+  fill = "IUCN_final",
+  palette = c("#FC4E07" , "#E7B800","#00AFBB"),
+  add.params = list(fill = "white"),
+  add = "boxplot")+
+  theme_bw()+
+  theme(legend.position = "none") +
+  scale_y_continuous(
+    trans  = compose_trans("log10", "reverse"),
+    breaks = c(100, 1, 0)
+  ) +
+  # scale_y_log10(breaks = c(0,1,100),trans= "reverse") +
+  geom_jitter(aes(color =IUCN_final), 
+              shape = 16, 
+              position = position_jitter(0.2), 
+              size = 0.1) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(-5,-4,-3),
+                     tip.length = 0
+  )
