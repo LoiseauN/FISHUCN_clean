@@ -2,9 +2,6 @@
 dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
                                              "predict_complementary")])
 
-dat_network <- dat_network[dat_network$"species" %in% MPA_Protect$"species", ]
-
-
 dat_network <- addLevel(dat_network, "Threatened")
 dat_network <- addLevel(dat_network, "Non Threatened")
 dat_network <- addLevel(dat_network, "No Status")
@@ -34,12 +31,6 @@ for (i in 1:nrow(dat_network)) {
   }
 }
 
-
-## Remove the freshwater ----
-notfresh <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_brackish"),]
-rownames(notfresh) <- str_replace(rownames(notfresh), "-", "_")
-
-dat_network    <-  dat_network[dat_network$species %in% rownames(notfresh),]
 
 ## Replace NA IUCN status ----
 
