@@ -25,8 +25,6 @@ fish_pic       <- get_phylopic_image("86c40d81-2613-4bb4-ad57-fb460be56ae5", siz
 
 amphibians_pic <- get_phylopic_image("28e237f7-9fcd-47be-8a4c-94c0ad057455", size = "512")
 
-reptile_pic <- get_phylopic_image("bf7d9c5f-83c0-435a-b09f-dc6111ece257", size = "512")
-
 reptile_pic <- get_phylopic_image("f2a5ae73-c899-4e47-b0ad-b6eac3a99350", size = "512")
 
 

@@ -1,25 +1,3 @@
-
-
-
-## FUNCTION TO COMPUTE THE CONSERVATION TARGET 
-target_func <- function(SR, qt, log=TRUE){
-  SR_i <- SR
-  qt_i <- qt
-  
-  if(log) {
-    SR <- log(SR)
-    qt <- log(qt)
-  }	
-  dat <- data.frame(matrix(c(100,10,qt), ncol=2, dimnames=list(NULL, c("Target", "SR"))))
-  lm_target <- lm(Target~SR, data=dat)
-  Tar <- predict(lm_target,newdata=as.data.frame(SR))
-  Tar[SR_i<=qt_i[1]] <- 100
-  Tar[SR_i>=qt_i[2]] <- 10
-  return(Tar)
-}
-
-
-
 # -------------------------------------------------------------------------------------------- Compute target achievement
 # Correct target with the range of species following  Jones et al. 2020
 #  < 10,000 km2, 100% coverage 
@@ -64,7 +42,7 @@ MPA_Protect$log_cover<- log10(MPA_Protect$perc_cover+1)
 
 
 MPA_Protect$Target_achievement_I_IV_1 <- (MPA_Protect$Target_achievement_I_IV+1)
-MPA_Protect$cover_1<- (MPA_Protect$cover_1+1)
+MPA_Protect$cover_1<- (MPA_Protect$perc_cover+1)
 
 Cover <- ggstatsplot::ggbetweenstats(
   data = MPA_Protect, 
@@ -159,6 +137,8 @@ my_comparisons <- list(
 )
 
 options(scipen=10000)
+
+#Target_BEFORE ---------------------------------------------------------------------------------
 Target_BEFORE <- ggviolin(
   data = MPA_Protect, 
   x = "IUCN_cat",
@@ -168,22 +148,26 @@ Target_BEFORE <- ggviolin(
   add.params = list(fill = "white"),
   add = "boxplot")+
   theme_bw()+
-  theme(legend.position = "none") +
+  theme(legend.position = "none",
+        axis.title.x=element_blank(),
+        plot.margin = ggplot2::margin(0, 0, 5.5, 5.5)
+  ) +
+  ylab("BEFORE")+
   scale_y_continuous(
-    trans  = compose_trans("log10"),
+    trans  = compose_trans("log10","reverse"),
     breaks = c(100, 1, 0)
   ) +
-  # scale_y_log10(breaks = c(0,1,100),trans= "reverse") +
+
   geom_jitter(aes(color =IUCN_cat), 
               shape = 16, 
               position = position_jitter(0.2), 
               size = 0.1) +
-  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(5,4,3),
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(-3.4,-3,-2.6),
                      tip.length = 0
   )
 
 
-
+#Target_AFTER ---------------------------------------------------------------------------------
 Target_AFTER <- ggviolin(
   data = MPA_Protect, 
   x = "IUCN_final",
@@ -193,16 +177,98 @@ Target_AFTER <- ggviolin(
   add.params = list(fill = "white"),
   add = "boxplot")+
   theme_bw()+
-  theme(legend.position = "none") +
+  theme(legend.position = "none",
+        axis.title.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        plot.margin = ggplot2::margin(5.5, 0, 0, 5.5)) +
   scale_y_continuous(
-    trans  = compose_trans("log10", "reverse"),
+    trans  = compose_trans("log10"),
     breaks = c(100, 1, 0)
   ) +
-  # scale_y_log10(breaks = c(0,1,100),trans= "reverse") +
-  geom_jitter(aes(color =IUCN_final), 
+  ylab("AFTER")+
+  scale_x_discrete(labels=c("Threatened" = " ", "No Status" = " ",
+                              "Non Threatened" = " ")) + 
+   geom_jitter(aes(color =IUCN_final), 
               shape = 16, 
               position = position_jitter(0.2), 
               size = 0.1) +
-  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(-5,-4,-3),
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(3,2.6,2.2),
                      tip.length = 0
   )
+
+
+#Cover_BEFORE ---------------------------------------------------------------------------------
+Cover_BEFORE <- ggviolin(
+  data = MPA_Protect, 
+  x = "IUCN_cat",
+  y = "perc_cover",
+  fill = "IUCN_cat",
+  palette = c("#FC4E07" , "#E7B800","#00AFBB"),
+  add.params = list(fill = "white"),
+  add = "boxplot")+
+  theme_bw()+
+  theme(legend.position = "none",
+        axis.title.x=element_blank()) +
+  ylab(" ")+
+  scale_y_continuous(
+    trans  = compose_trans("log10","reverse"),
+    breaks = c(100, 1, 0)
+  ) +
+  geom_jitter(aes(color =IUCN_cat), 
+              shape = 16, 
+              position = position_jitter(0.2), 
+              size = 0.1) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(-3.4,-3,-2.6),
+                     tip.length = 0
+  )
+
+
+#Cover_AFTER ---------------------------------------------------------------------------------
+Cover_AFTER <- ggviolin(
+  data = MPA_Protect, 
+  x = "IUCN_final",
+  y = "perc_cover",
+  fill = "IUCN_final",
+  palette = c("#FC4E07" , "#E7B800","#00AFBB"),
+  add.params = list(fill = "white"),
+  add = "boxplot")+
+  theme_bw()+
+  theme(legend.position = "none",
+        axis.title.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        plot.margin = ggplot2::margin(5.5, 5.5, 0, 0)) +
+  scale_y_continuous(
+    trans  = compose_trans("log10"),
+    breaks = c(100, 1, 0)
+  ) +
+  ylab(" ")+
+  scale_x_discrete(labels=c("Threatened" = " ", "No Status" = " ",
+                            "Non Threatened" = " ")) + 
+  # scale_y_log10(breaks = c(0,1,100),trans= "reverse") +
+  geom_jitter(aes(color =IUCN_final), 
+              shape = 16, alpha = 0.5,
+              position = position_jitter(0.2), 
+              size = 0.1) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(3,2.6,2.2),
+                     tip.length = 0
+  )
+
+
+ggarrange(Target_AFTER,Cover_AFTER,Target_BEFORE, Cover_BEFORE,nrow = 2,ncol = 2)
+
+#Target_AFTER 
+Target_AFTER plot.margin = ggplot2::margin(5.5, 0, 0, 5.5)
+
+#Cover_AFTER
+plot.margin = ggplot2::margin(5.5, 5.5, 0, 0)
+
+#Target_BEFORE
+plot.margin = ggplot2::margin(0, 0, 5.5, 5.5)
+
+#Cover_BEFORE
+plot.margin = ggplot2::margin(0, 5.5, 5.5, 0)
+
+
+
+Target_BEFORE
+Target_AFTER

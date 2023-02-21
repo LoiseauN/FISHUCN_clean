@@ -81,9 +81,3 @@ get_phylopic_image <- function(uuid, size = 512) {
   
   img_rgb
 }
-
-
-mammals_pic <- get_phylopic_image("8cad2b22-30d3-4cbd-86a3-a6d2d004b201")
-
-ggplot2::ggplot(x = Sepal.Length, y = Sepal.Width, data = iris, geom = "point") +
-  rphylopic::add_phylopic(mammals_pic, alpha = 1)
