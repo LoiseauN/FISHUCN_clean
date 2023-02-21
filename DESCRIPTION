@@ -24,7 +24,7 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Depends:
+Depends: 
     tidyverse,
     ranger,
     missForest,
@@ -33,3 +33,37 @@ Depends:
     tidymodels,
     ranger,
     caret
+Imports: 
+    ape,
+    caper,
+    circlize,
+    cowplot,
+    devtools,
+    dplyr,
+    edarf,
+    exactextractr,
+    fishtree,
+    ggplot2,
+    ggstatsplot,
+    ggthemes,
+    ggtree,
+    gridExtra,
+    harrypotter,
+    httr,
+    jsonlite,
+    mFD,
+    plyr,
+    png,
+    raster,
+    remotes,
+    rfishbase,
+    rnaturalearth,
+    rphylopic,
+    rredlist,
+    sf,
+    sp,
+    stars,
+    tidytree,
+    treeio,
+    utils,
+    wesanderson

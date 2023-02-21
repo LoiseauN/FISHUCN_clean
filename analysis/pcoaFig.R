@@ -12,8 +12,8 @@
 
 ## Parameters ----
 
-n     <- 1                          # ID of the first sub-plot
-plots <- list()                     # Sub-plots storage
+n       <- 1                          # ID of the first sub-plot
+plots   <- list()                     # Sub-plots storage
 All_res <- merge(MPA_Protect,dat_network,by="species")
 All_res$IUCN_final <- as.factor(All_res$IUCN_final)
 
