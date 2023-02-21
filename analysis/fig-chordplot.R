@@ -1,29 +1,34 @@
 #' Circular Chord Diagram
+
+load(here::here("outputs", "data_zonation.RData"))
+
 dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
                                              "predict_complementary")])
 
-dat_network <- addLevel(dat_network, "Threatened")
-dat_network <- addLevel(dat_network, "Non Threatened")
-dat_network <- addLevel(dat_network, "No Status")
+## Rename levels ----
 
-for (i in 1:ncol(dat_network)) {
-  dat_network[ , i] <- as.factor(as.character(dat_network[ , i]))
+for (i in 2:ncol(dat_network)) {
+  
+  dat_network[ , i] <- as.character(dat_network[ , i])
+  
+  dat_network[ , i] <- plyr::mapvalues(dat_network[ , i], 
+                                       from = "NThr", 
+                                       to   = "Non Threatened")
+  dat_network[ , i] <- plyr::mapvalues(dat_network[ , i], 
+                                       from = "Thr", 
+                                       to   = "Threatened")
 }
 
 
-dat_network <- as.data.frame(sapply(dat_network, mapvalues, 
-                                    from = c("Thr"), to = c("Threatened")))
-
-dat_network <- as.data.frame(sapply(dat_network, mapvalues, 
-                                    from = c("NThr"), to = c("Non Threatened")))
-
+## Create IUCN final column ----
 
 dat_network$"IUCN_final" <- NA
 
 for (i in 1:nrow(dat_network)) {
+  
   if (is.na(dat_network$"IUCN_cat"[i])) {
     
-    dat_network$"IUCN_final"[i] <- dat_network$"predict"[i]
+    dat_network$"IUCN_final"[i] <- dat_network$"predict_complementary"[i]
     
   } else {
     
@@ -32,25 +37,22 @@ for (i in 1:nrow(dat_network)) {
 }
 
 
-## Replace NA IUCN status ----
+## Replace missing IUCN status ----
 
 dat_network[is.na(dat_network$"IUCN_final"), "IUCN_final"] <- "No Status"
 dat_network[is.na(dat_network$"IUCN_cat"), "IUCN_cat"]     <- "No Status"
 
-pos <- which(dat_network$'IUCN_final' == "NaN")
-if (length(pos)) dat_network[pos, "IUCN_final"] <- "No Status"
 
-for (i in 1:nrow(dat_network)) {
-  if (is.na(dat_network$"predict_complementary"[i]) && 
-      dat_network$"IUCN_cat"[i] == "No Status") {
-    dat_network$"predict_complementary"[i] <- "No Status"
-  }
-}
+## Create levels ----
+
+level_s <- c("Threatened", "No Status", "Non Threatened")
 
 dat_network$"IUCN_cat"   <- factor(dat_network$"IUCN_cat", 
-                                 levels = c("Threatened", "No Status", "Non Threatened"))
+                                 levels = level_s)
+
 dat_network$"IUCN_final" <- factor(dat_network$"IUCN_final", 
-                                 levels = c("Threatened", "No Status", "Non Threatened"))
+                                 levels = level_s)
+
 
 ## Confusion matrix ----
 
@@ -83,27 +85,27 @@ circlize::circos.clear()
 circlize::circos.par(start.degree = -90, canvas.xlim = c(-1.2, 1.2), 
                      canvas.ylim = c(-1, 1.25), points.overflow.warning = FALSE)
 circlize::chordDiagram(mat, grid.col = grid.col1a, 
-                       row.col = c("#FC4E0700", "#E7B800FF", "#00AFBB00"),
-                       big.gap = 5,
+                       row.col = c("#FC4E0700", "#E7B80000", "#00AFBB00"),
+                       big.gap = 20,
                        annotationTrack = c("grid"),
                        order = ordre, directional = -1, 
                        annotationTrackHeight = c(0.20))
 
 segments(x0 = 0, y0 = -1, y1 = 1, lty = 2, col = "#00000080")
 
-text(x = -1.15, y = 1.15, labels = "Before ML/DL", pos = 4, cex = 1, font = 2)
-text(x = 1.15, y = 1.15, labels = "After ML/DL", pos = 2, cex = 1, font = 2)
+text(x = -0.25, y = 1.15, labels = "BEFORE", pos = 2, cex = 1, font = 1)
+text(x =  0.25, y = 1.15, labels = "AFTER", pos = 4, cex = 1, font = 1)
 
 par(new = TRUE, fg = "transparent", col = "transparent")
 
 circlize::chordDiagram(mat, grid.col = grid.col1a, 
-                       row.col = c("#FC4E0733", "#E7B80000", "#00AFBB33"),
-                       big.gap = 5,
-                       annotationTrack = c("grid"),
-                       order = ordre, directional = -1, 
+                       row.col = c("#E7B80080", "#00AFBB20", "#FC4E0780"),
+                       big.gap = 20,
+                       annotationTrack = c("grid"), 
+                       order = ordre, directional = -1,
                        annotationTrackHeight = c(0.20))
 
-for(si in circlize::get.all.sector.index()) {
+for (si in circlize::get.all.sector.index()) {
   
   xlim = circlize::get.cell.meta.data("xlim", sector.index = si, track.index = 1)
   ylim = circlize::get.cell.meta.data("ylim", sector.index = si, track.index = 1)
@@ -111,13 +113,13 @@ for(si in circlize::get.all.sector.index()) {
   val <- paste0(perc_values[names(perc_values) == si], "%")
   lab <- gsub("A_|B_", "", si)
   
+  # circlize::circos.text(mean(xlim), mean(ylim), val, sector.index = si, track.index = 1, 
+  #                       facing = "bending.inside", niceFacing = TRUE, col = "black", 
+  #                       font = 1, adj = c(0.5, 0.5))
+  
   circlize::circos.text(mean(xlim), mean(ylim), val, sector.index = si, track.index = 1, 
                         facing = "bending.inside", niceFacing = TRUE, col = "black", 
-                        font = 1, adj = c(0.5, 0.5))
-  
-  circlize::circos.text(mean(xlim), mean(ylim), lab, sector.index = si, track.index = 1, 
-                        facing = "bending.inside", niceFacing = TRUE, col = "black", 
-                        font = 1, adj = c(0.5, -3),cex = 0.75)
+                        font = 1, adj = c(0.5, -3), cex = 0.75)
 }
 
 dev.off()
