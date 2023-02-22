@@ -132,7 +132,7 @@ fig2 <- gridExtra::grid.arrange(partial_plot[[1]],
 fig2 <-  gridExtra::grid.arrange(importance_plot,fig2,ncol=2)
 
   # importance_plot + annotation_custom(ggplotGrob(partial_plot[[2]]), xmin = 1, xmax = 6, 
-                                                       ymin = 20, ymax = 35.65)
+# ymin = 20, ymax = 35.65)
 
 
 

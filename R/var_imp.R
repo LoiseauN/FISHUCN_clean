@@ -27,8 +27,8 @@ var_imp = function(rel_inf){
     ggplot( aes(x=rowname, y=importance.mod.,fill=importance.mod.))+ 
        geom_bar(stat="identity", position="dodge")+ 
    harrypotter::scale_fill_hp(option = "Ravenclaw") + 
-   scale_x_discrete(labels=c("Reproduction mode","Aquarium", "Fertility","Price Category","Climate",
-                             "Body Shape","Genus","Family","Position in Water Column","Growth Rate","Max Length (log)",
+   scale_x_discrete(labels=c("Reproduction mode","Interest for aquarium", "Fertility","Price category","Climate niche",
+                             "Body Shape","Genus","Family","Position in water column","Growth rate","Max length (log)",
                              "Range size (log)")) +
    coord_flip()+
       xlab("") +
