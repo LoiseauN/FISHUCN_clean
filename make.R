@@ -72,8 +72,7 @@ species_traits <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_br
 save(species_traits,file = here::here("outputs/species_traits.RData"))
 
 
-## Removing freshwater ----
-FishDistribArea_all <-  FishDistribArea_all[FishDistribArea_all$species %in% 
+ishDistribArea_all <-  FishDistribArea_all[FishDistribArea_all$species %in% 
                                               str_replace(rownames(species_traits), "-", "_"),]
 
 #Selecting variables of interest
