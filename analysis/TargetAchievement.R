@@ -44,6 +44,93 @@ MPA_Protect$log_cover<- log10(MPA_Protect$perc_cover+1)
 MPA_Protect$Target_achievement_I_IV_1 <- (MPA_Protect$Target_achievement_I_IV+1)
 MPA_Protect$cover_1<- (MPA_Protect$perc_cover+1)
 
+
+
+#MY CHOICE FOR PLOTS 
+
+
+my_comparisons <- list(
+  c("Threatened", "No Status"),
+  c("No Status", "Non Threatened"),
+  c("Threatened", "Non Threatened")
+)
+
+options(scipen=10000)
+
+#Target_AFTER ---------------------------------------------------------------------------------
+Target_AFTER <- ggviolin(
+  data = MPA_Protect, 
+  x = "IUCN_final",
+  y = "Target_achievement_I_IV",
+  fill = "IUCN_final",
+  palette = c("#FC4E07" , "#E7B800","#00AFBB"),
+  add.params = list(fill = "white"),
+  add = "boxplot")+
+  theme_bw()+ylim(0,100)+
+  theme(legend.position = "none",
+        axis.title.x=element_blank())+
+  scale_y_continuous(
+    trans  = compose_trans("log10"), #,
+    breaks = c(100, 50, 25, 0)
+    #breaks = rev(c(seq(0,100, by = 10)))
+  ) +
+  ylab("Target achievement") +
+   geom_jitter(aes(color =IUCN_final), 
+              shape = 16, 
+              position = position_jitter(0.2), 
+              size = 0.1) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",#label.y = c(3,2.6,2.2),
+                     tip.length = 0
+  )
+
+Target_AFTER
+
+#Cover_AFTER ---------------------------------------------------------------------------------
+Cover_AFTER <- ggviolin(
+  data = MPA_Protect, 
+  x = "IUCN_final",
+  y = "cover_1",
+  fill = "IUCN_final",
+  palette = c("#FC4E07" , "#E7B800","#00AFBB"),
+  add.params = list(fill = "white"),
+  add = "boxplot")+
+  theme_bw()+
+  theme(legend.position = "none",
+        axis.title.x=element_blank())+
+  scale_y_continuous(
+    trans  = compose_trans("log10"),
+    #breaks = c(100, 1, 0)
+    breaks = rev(c(seq(0,100, by = 10)))
+  ) + 
+  ylab("MPA Cover") +
+  geom_jitter(aes(color =IUCN_final), 
+              shape = 16, 
+              position = position_jitter(0.2), 
+              size = 0.1) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",#label.y = c(3,2.6,2.2),
+                     tip.length = 0
+  )
+
+ggarrange(Target_AFTER,Cover_AFTER,ncol = 2)
+
+ggpar(Cover_AFTER, ylim=c(0,100))
+
+
+
+
+
+# ---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
+
+
+
+
+
+
 Cover <- ggstatsplot::ggbetweenstats(
   data = MPA_Protect, 
   comparisons = list(c("0", "1")),
@@ -59,7 +146,7 @@ Cover <- ggstatsplot::ggbetweenstats(
     y = "% Cover"
   ) + 
   #scale_y_reverse()+
-  scale_y_log10(  breaks = seq(0,25, by = 5))+
+  scale_y_log10(breaks = seq(0,25, by = 5))+
   coord_trans(y = "log10")
 
 Cover 
@@ -130,13 +217,6 @@ Target_achievement <- ggstatsplot::ggbetweenstats(
 
 # NEW PLOT 
 
-my_comparisons <- list(
-  c("Threatened", "No Status"),
-  c("No Status", "Non Threatened"),
-  c("Threatened", "Non Threatened")
-)
-
-options(scipen=10000)
 
 #Target_BEFORE ---------------------------------------------------------------------------------
 Target_BEFORE <- ggviolin(
