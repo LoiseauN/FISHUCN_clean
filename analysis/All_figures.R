@@ -34,10 +34,10 @@ data_4_taxa <- data.frame(taxa   = c(rep("amphibians", nrow(all_status[all_statu
                                      rep("mammals", nrow(all_status[all_status$className == "Mammals",])),
                                      rep("reptiles", nrow(all_status[all_status$className == "Reptiles",])),
                                      rep("birds", nrow(all_status[all_status$className == "Birds",])),
-                                     rep("fishes", nrow(FB_final))),
+                                     rep("marine fishes", nrow(FB_final))),
                           
                           status = as.factor(c(all_status$rlCodes,
-                                                as.character(FB_final$IUCN))),
+                                               as.character(FB_final$IUCN))),
                           nb_sp = c(all_status$n,rep(1,nrow(FB_final))))
 
 
@@ -59,17 +59,16 @@ colnames(data_4_taxa) <- c("taxa", "status", "nb_sp")
 data_4_taxa <- data_4_taxa[order(data_4_taxa$taxa),]
 data_4_taxa$total_taxa <- c(rep(sum(data_4_taxa[data_4_taxa$taxa == "amphibians",]$n),3),
                             rep(sum(data_4_taxa[data_4_taxa$taxa == "birds",]$n),3),
-                            rep(sum(data_4_taxa[data_4_taxa$taxa == "fishes",]$n),3),
                             rep(sum(data_4_taxa[data_4_taxa$taxa == "mammals",]$n),3),
+                            rep(sum(data_4_taxa[data_4_taxa$taxa == "marine fishes",]$n),3),
                             rep(sum(data_4_taxa[data_4_taxa$taxa == "reptiles",]$n),3))
-                            
-                            
+
+
 data_4_taxa$Freq  <- (data_4_taxa$nb_sp/data_4_taxa$total_taxa)*100 
 
 data_4_taxa$status <- factor(data_4_taxa$status, levels = c("Threatened", "Non Threatened", "No Status"))
 
-data_4_taxa$taxa <- factor(data_4_taxa$taxa, levels = c("birds", "reptiles", "mammals","amphibians", "fishes"))
-
+data_4_taxa$taxa <- factor(data_4_taxa$taxa, levels = c("birds", "reptiles", "mammals","amphibians", "marine fishes"))
 
 
 fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) + 
@@ -78,26 +77,26 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
                     guide = guide_legend(reverse = FALSE))+
   theme_bw() +
   xlab("Taxa")+ylab("Percentage")+
-  add_phylopic(birds_pic,     x = 1, y = 50, ysize = 13, alpha = 1)+
-  add_phylopic(reptile_pic,     x = 2, y = 50, ysize = 10, alpha = 1)+
-  add_phylopic(amphibians_pic,   x = 3, y = 50, ysize = 8, alpha = 1)+
-  add_phylopic(mammals_pic,x = 4, y = 50, ysize = 10, alpha = 1)+
-  add_phylopic(fish_pic,      x = 5, y = 50, ysize = 7.5, alpha = 1) +
+  rphylopic::add_phylopic(birds_pic,     x = 1, y = 50, ysize = 13, alpha = 1)+
+  rphylopic::add_phylopic(reptile_pic,     x = 2, y = 50, ysize = 10, alpha = 1)+
+  rphylopic::add_phylopic(amphibians_pic,   x = 3, y = 50, ysize = 8, alpha = 1)+
+  rphylopic::add_phylopic(mammals_pic,x = 4, y = 50, ysize = 10, alpha = 1)+
+  rphylopic::add_phylopic(fish_pic,      x = 5, y = 50, ysize = 7.5, alpha = 1) +
   theme( axis.text=element_text(size=16),
          axis.title=element_text(size=18,face="bold"),
          legend.title=element_text(size=16,face="bold"),
          legend.text=element_text(size=14))
 
 grob_birds <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "birds",]$n)), x=0.1,  y=0.95, hjust=0,
-                          gp=gpar(fontsize=12,fontface="bold")))
+                                gp=gpar(fontsize=12,fontface="bold")))
 grob_reptiles <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "reptiles",]$n)), x=0.1,  y=0.95, hjust=0,
-                          gp=gpar(fontsize=12,fontface="bold")))
+                                   gp=gpar(fontsize=12,fontface="bold")))
 grob_mammals <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "mammals",]$n)), x=0.1,  y=0.95, hjust=0,
-                          gp=gpar(fontsize=12,fontface="bold")))
+                                  gp=gpar(fontsize=12,fontface="bold")))
 grob_amphibians <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "amphibians",]$n)), x=0.1,  y=0.95, hjust=0,
-                          gp=gpar(fontsize=12,fontface="bold")))
-grob_fishes <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "fishes",]$n)), x=0.1,  y=0.95, hjust=0,
-                          gp=gpar(fontsize=12,fontface="bold")))
+                                     gp=gpar(fontsize=12,fontface="bold")))
+grob_fishes <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "marine fishes",]$n)), x=0.1,  y=0.95, hjust=0,
+                                 gp=gpar(fontsize=12,fontface="bold")))
 
 # Ajouter au graphique
 fig1 <- fig1 + annotation_custom(grob_birds,xmin = 0.7, xmax = 1.5, ymin = 96, ymax = 103)
@@ -109,7 +108,7 @@ fig1 <- fig1 + annotation_custom(grob_mammals,xmin = 2.7, xmax = 3.5, ymin = 96,
 fig1 <- fig1 + annotation_custom(grob_amphibians,xmin = 3.7, xmax = 4.5, ymin = 96, ymax = 103)
 
 fig1 <- fig1 + annotation_custom(grob_fishes,xmin = 4.7, xmax = 5.5, ymin = 96, ymax = 103)
-
+fig1
 
 ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 10, units= "in",dpi= 300)
 

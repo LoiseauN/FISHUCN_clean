@@ -78,8 +78,9 @@ Target_BEFORE <- ggviolin(
         plot.margin = ggplot2::margin(0, 0, 5.5, 5.5)
   ) +
   ylab("BEFORE")+
+  ggtitle(" ")+
   scale_y_continuous(
-    trans  = compose_trans("log10","reverse"),
+    trans  = compose_trans("log10"),#,"reverse"),
     breaks = c(100, 1, 0)
   ) +
   
@@ -87,7 +88,7 @@ Target_BEFORE <- ggviolin(
               shape = 16, 
               position = position_jitter(0.2), 
               size = 0.1) +
-  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(-3.4,-3,-2.6),
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(3,2.6,2.2), #c(-3.4,-3,-2.6),
                      tip.length = 0
   )
 
@@ -110,7 +111,8 @@ Target_AFTER <- ggviolin(
     trans  = compose_trans("log10"),
     breaks = c(100, 1, 0)
   ) +
-  ylab("AFTER")+
+  ylab("AFTER") +
+  ggtitle("Target achievement") +
   scale_x_discrete(labels=c("Threatened" = " ", "No Status" = " ",
                             "Non Threatened" = " ")) + 
   geom_jitter(aes(color =IUCN_final), 
@@ -135,15 +137,16 @@ Cover_BEFORE <- ggviolin(
   theme(legend.position = "none",
         axis.title.x=element_blank()) +
   ylab(" ")+
+  ggtitle(" ")+
   scale_y_continuous(
-    trans  = compose_trans("log10","reverse"),
+    trans  = compose_trans("log10"),#,"reverse"),
     breaks = c(100, 1, 0)
   ) +
   geom_jitter(aes(color =IUCN_cat), 
               shape = 16, 
               position = position_jitter(0.2), 
               size = 0.1) +
-  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(-3.4,-3,-2.6),
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif",label.y = c(3,2.6,2.2), #c(-3.4,-3,-2.6),
                      tip.length = 0
   )
 
@@ -165,8 +168,9 @@ Cover_AFTER <- ggviolin(
   scale_y_continuous(
     trans  = compose_trans("log10"),
     breaks = c(100, 1, 0)
-  ) +
-  ylab(" ")+
+  ) + 
+  ylab(" ")+ 
+  ggtitle("MPA Cover")+
   scale_x_discrete(labels=c("Threatened" = " ", "No Status" = " ",
                             "Non Threatened" = " ")) + 
   # scale_y_log10(breaks = c(0,1,100),trans= "reverse") +
