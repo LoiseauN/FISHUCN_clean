@@ -2,8 +2,6 @@ CellsIn = exactextractr::exact_extract(mask,mollBorder,include_xy=TRUE, include_
 
 dim(CellsIn[[1]])
 
-all_geo_res <- all_geo_res2
-
 all_geo_res <- merge(all_geo_res,CellsIn, by.x = "ID",by.y = "cell" )
 
 
