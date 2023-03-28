@@ -324,3 +324,16 @@ pl <- list(a,c,d,b,e,f)
 ml <- marrangeGrob(pl,ncol=2,nrow=3)
 
 ggsave(file = here::here("figures/Figure7.png"),ml,width = 12, height = 12, units= "in",dpi= 300)
+
+
+#'---------------------------------------------------------------------@TabeFamily
+
+#TO DO PERCENTAGE?
+dat_taxo <- dat_phylo[!is.na(dat_phylo$keep==1),]
+dat_taxo <-merge(dat_taxo,data_noNA,by.x="label",by.y="row.names",all.x = T)
+dat_taxo<- dat_taxo[rowSums(is.na(dat_taxo)) != ncol(dat_taxo), ]
+
+
+table_taxo <- aggregate(Non_Threatened ~ Family, data = dat_taxo, sum,na.action = na.omit)
+table_taxo <- table_taxo %>% arrange(desc(Non_Threatened))
+grid.table()

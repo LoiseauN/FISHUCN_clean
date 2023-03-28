@@ -1,5 +1,7 @@
 remotes::install_github("ropensci/rnaturalearthhires")
-install.packages(c("rnaturalearth", "rnaturalearthdata"))
+#install.packages(c("rnaturalearth", "rnaturalearthdata"))
+library("rnaturalearth")
+library("rnaturalearthdata")
 
 #'-------------------------------------------
 source(here::here("R","map_function.R"))

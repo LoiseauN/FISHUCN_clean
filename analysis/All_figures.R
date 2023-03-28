@@ -210,17 +210,8 @@ if (length(pos)) dat_network[pos, "IUCN_final"] <- "No Status"
 
 #'---------------------------------------------------------------------@Percentagegainmodel
 #'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
-gainThr <- ((table(dat_network$IUCN_cat)[1]-table(dat_network$IUCN_final)[1])/table(dat_network$IUCN_cat)[1])*100
-gainNThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
-
-mean(do.call(rbind,phylo_D_Thr)[,1])
-sd(do.call(rbind,phylo_D_Thr)[,1])
-
-mean(do.call(rbind,phylo_D_NonThr)[,1])
-sd(do.call(rbind,phylo_D_NonThr)[,1])
-
-mean(do.call(rbind,phylo_D_nostatus)[,1])
-sd(do.call(rbind,phylo_D_nostatus)[,1])
+gainNThr <- ((table(dat_network$IUCN_cat)[2]-table(dat_network$IUCN_final)[2])/table(dat_network$IUCN_cat)[2])*100
+gainThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
 
 #'---------------------------------------------------------------------@Checkperfamily
 #'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
@@ -271,22 +262,14 @@ fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness
   #scale_color_gradient(low = "#00AFBB", high = "#FC4E07")+
   scale_color_hp(option = "Gryffindor")+
   theme_bw() + xlab("Cell rank BEFORE")+ ylab("Cell rank AFTER") +
-  geom_abline(slope=1, intercept = 0)
+  geom_abline(slope=1, intercept = 0)+
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14,face="bold"))
 ggsave(file = here::here("figures/Figure6a.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
 
 
-#'---------------------------------------------------------------------@TabeFamily
 
-#TO DO PERCENTAGE?
-dat_taxo <- dat_phylo[!is.na(dat_phylo$keep==1),]
-dat_taxo <-merge(dat_taxo,data_noNA,by.x="label",by.y="row.names",all.x = T)
-dat_taxo<- dat_taxo[rowSums(is.na(dat_taxo)) != ncol(dat_taxo), ]
-
-
-table_taxo <- aggregate(Non_Threatened ~ Family, data = dat_taxo, sum,na.action = na.omit)
-table_taxo <- table_taxo %>% arrange(desc(Non_Threatened))
-grid.table()
 
 
 
