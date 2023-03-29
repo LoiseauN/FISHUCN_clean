@@ -73,7 +73,8 @@ all_map <- lapply(1:length(var),function(x){
   mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
   mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
    
-  if(var[x] %in% c("DeltaRank","rankSc1","rankSc2")) {mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
+  if(var[x] %in% c("DeltaRank","rankSc1","rankSc2")) {
+    mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
     
 #'--------------------------------------------------------@Threatened
 if (var[x] =="Rthr" )  {  title =  "BEFORE Threatened" 
@@ -348,7 +349,7 @@ rm(map)
 }
 
 #'--------------------------------------------------------@DeltaRankzonation
- if  (var[x] =="DeltaRank" )  {  title =  "Delta Rank" 
+ if  (var[x] =="DeltaRank" )  {  title =  "Change in prioritization ranking" 
 # adjustcolor( "chartreuse4", alpha.f = 0.7)
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
@@ -366,15 +367,26 @@ map <- ggplot(world) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
   
   ggtitle(title) +
+  ylab(" ") +
+  xlab(" ") +
   
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
+  #ggthemes::theme_map(base_family = "serif") +
+  theme_bw()+
+  theme(legend.position = c(0.85, 0.1),
+        legend.direction = "horizontal",
         legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12),
-        legend.key.width=unit(1.5,"cm")) #+
+        plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+        legend.text     = element_text(face = "plain", size = 8),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+       # legend.key.height= unit(1.5, 'cm'),
+        #legend.key.width= unit(2, 'cm')
+        #axis.text=element_text(size=14),
+        #axis.title=element_text(size=14,face="bold")
+        ) 
+
 #guides(fill = guide_legend(nrow = 1))
-ggsave(file = here::here("figures/DeltaRank.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)
 rm(map)
 }
 

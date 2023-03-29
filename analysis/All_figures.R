@@ -264,7 +264,11 @@ fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness
   theme_bw() + xlab("Cell rank BEFORE")+ ylab("Cell rank AFTER") +
   geom_abline(slope=1, intercept = 0)+
   theme(axis.text=element_text(size=14),
-        axis.title=element_text(size=14,face="bold"))
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = c(0.80, 0.08),
+        legend.key.height= unit(1, 'cm'),
+        legend.key.width= unit(1, 'cm'),
+        legend.direction = "horizontal")
 ggsave(file = here::here("figures/Figure6a.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
 
 
