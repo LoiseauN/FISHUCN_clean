@@ -2,6 +2,10 @@ tree_fish <- fishtree::fishtree_complete_phylogeny(
   mc.cores = 4)
 tree <-  tree_fish[[1]]
 
+tree_test <- fishtree_complete_phylogeny(rank = "Acanthuridae")[[1]]
+
+H<-phytools::nodeHeights(tree)
+
 set_fish <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.character(dat_network$species))])
 
 #' ---------------------------------------------------------------------------- @Speciesperstatus
@@ -13,7 +17,6 @@ dat_phylo <- data.frame(species = dat_network$species,
                         Non_Threatened = rep(NA,nrow(dat_network)),
                         No_Status = rep(NA,nrow(dat_network))
 )
-
 
 
 
@@ -131,7 +134,6 @@ dat_phylo <- tidytree::as_tibble(dat_phylo)
 new_phylo <- tidytree::as_tibble(set_fish)
 new_phylo <- treeio::full_join(new_phylo, dat_phylo, by = "label")
 new_phylo <- tidytree::as.treedata(new_phylo)
-
 
 
 ## Add Phylogenetic Tree ----

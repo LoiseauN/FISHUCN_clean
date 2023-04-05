@@ -1,4 +1,5 @@
 
+
 #' Generate partial plot
 #'
 
@@ -10,17 +11,17 @@
 #' 
 #' 
 var_partial = function(data,var,names){
- # data =  data_noNA
- # var = c("DistrArea" , "Max_length","K") 
- # names = c("Range size (log)","Max Length (log)","Growth rate")
-
-  pal <- c("#B35800","#A8BCC1","#42A5D9")
-
+  #data =  data_noNA
+  #var = c("DistrArea" , "Max_length","K","Env_2") 
+  #names = c("Range size (log)","Max Length (log)","Growth rate", "Position in the water column")
+  
+  pal <- c("#B35800","#A8BCC1","#42A5D9","#1A69A2")
+  
   data = na.omit(data)
-    #Creating the model and predicting to new data
-    mod = ranger::ranger(IUCN ~ ., data = data, probability = F,
-                         importance ="permutation",num.trees = 1000,mtry = 3)
-
+  #Creating the model and predicting to new data
+  mod = ranger::ranger(IUCN ~ ., data = data, probability = F,
+                       importance ="permutation",num.trees = 1000,mtry = 3)
+  
   #ranger::partial(mod, 
   #       pred.var = c("DistrArea"), 
   #      trim.outliers = TRUE, chull = TRUE, parallel = TRUE,
@@ -35,14 +36,37 @@ var_partial = function(data,var,names){
     #colnames(data)[1] <- "variable"
     
     
-    part_plot <- ggplot(pd,aes(x=pd[,var[x]],y=Thr)) + #00AFBB"
-      geom_smooth(color=pal[x],fill=pal[x]) +
-      ylim(0,0.5)+
-      theme_bw()+
-      ylab("Probability")+
-      xlab(names[x])+
-      theme(legend.position="none")
-    
+    if (var[x] == "Env_2"){
+      dftext <- data.frame(pos = 1.3:6.3, var = pd$Env_2)
+      part_plot <- ggplot(pd,aes(x=pd[,var[x]],y=Thr)) + #00AFBB"
+        geom_bar(stat="identity", position="dodge",color=pal[x],fill=pal[x])+ 
+        ylim(0,0.1)+
+        theme_bw()+
+        ylab("Probability")+
+        xlab(names[x])+
+        theme(legend.position ="none",
+              axis.text.x = element_blank(), 
+              axis.ticks.x = element_blank(),
+              panel.grid.minor = element_blank()) +
+        geom_text(data= dftext,
+                  mapping= aes(x=pos, y=0.05, label = var),
+                  size=3, 
+                  angle=90,
+                  vjust=-0.4, 
+                  hjust=0) 
+      
+    } else {
+      
+      
+      part_plot <- ggplot(pd,aes(x=pd[,var[x]],y=Thr)) + #00AFBB"
+        geom_smooth(color=pal[x],fill=pal[x]) +
+        ylim(0,0.5)+
+        theme_bw()+
+        ylab("Probability")+
+        xlab(names[x])+
+        theme(legend.position="none",
+              panel.grid.minor = element_blank())
+    }
     return(part_plot)
     
   })

@@ -115,8 +115,9 @@ ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 10, un
 #'---------------------------------------------------------------------@variable_importance
 
 partial_plot <- var_partial(data =  data_noNA,
-                            var = c("DistrArea" , "Max_length","K"),
-                            names = c("Range size (log)","Max Length (log)", "Growth rate")) 
+                            var = c("DistrArea" , "Max_length","K","Env_2"),
+                            names = c("Range size (log)","Max Length (log)", "Growth rate",
+                                      "Position in the water column")) 
 
 
 importance_plot = var_imp(test_IUCN[[1]])      
@@ -124,18 +125,20 @@ importance_plot = var_imp(test_IUCN[[1]])
 #importance_plot <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[1]]), xmin = 6, xmax = 11, 
 #ymin = 20, ymax = 35.65)
 
-fig2 <- gridExtra::grid.arrange(partial_plot[[1]],
-                                partial_plot[[2]],
-                                partial_plot[[3]])
+#fig2 <- gridExtra::grid.arrange(partial_plot[[1]],
+#                                partial_plot[[2]],
+#                                partial_plot[[3]],
+#                                partial_plot[[4]])
 
-fig2 <-  gridExtra::grid.arrange(importance_plot,fig2,ncol=2)
-
-  # importance_plot + annotation_custom(ggplotGrob(partial_plot[[2]]), xmin = 1, xmax = 6, 
+#fig2 <-  gridExtra::grid.arrange(importance_plot,fig2,ncol=3)
+fig2 <- importance_plot + (partial_plot[[1]] /
+                   partial_plot[[2]])+ 
+                  (partial_plot[[3]] /
+                   partial_plot[[4]])
+   # importance_plot + annotation_custom(ggplotGrob(partial_plot[[2]]), xmin = 1, xmax = 6, 
 # ymin = 20, ymax = 35.65)
 
-
-
-ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 8, units= "in",dpi= 300)
+ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 6, units= "in",dpi= 300)
 
 
 #'---------------------------------------------------------------------@ResultsPrediction
@@ -256,6 +259,8 @@ all_geo_res <- all_geo_res[order(all_geo_res$richness, decreasing=FALSE), ]
 all_geo_res <- na.omit(all_geo_res)
 all_geo_res <- all_geo_res[all_geo_res$richness  > 0,]
 
+all_geo_res2 <- all_geo_res[sample(all_geo_res,10)]
+df[sample(df, 2)]
 fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
   geom_point(size=2.5,alpha = 0.3,shape=16) + 
   #scale_color_distiller(palette = "Spectral")+

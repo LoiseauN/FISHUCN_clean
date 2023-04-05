@@ -25,7 +25,12 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "pbmcapply", "plyr", "ranger", "raster", "RCurl", "rfishbase", 
            "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
            "tidyverse", "viridis", "XML", "circlize","edarf","rgdal",
-          "sp","rgeos","sf","wesanderson","ggpubr")
+          "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter")
+
+library(randomForest)
+library(caret)
+library(ROCR)
+
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
