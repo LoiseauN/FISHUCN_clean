@@ -15,7 +15,7 @@ var_partial = function(data,var,names){
   #var = c("DistrArea" , "Max_length","K","Env_2") 
   #names = c("Range size (log)","Max Length (log)","Growth rate", "Position in the water column")
   
-  pal <- c("#B35800","#A8BCC1","#42A5D9","#1A69A2")
+  pal <- c("#B35800","#A8BCC1","#42A5D9","#3573A4")
   
   data = na.omit(data)
   #Creating the model and predicting to new data
@@ -37,8 +37,14 @@ var_partial = function(data,var,names){
     
     
     if (var[x] == "Env_2"){
-      dftext <- data.frame(pos = 1.3:6.3, var = pd$Env_2)
-      part_plot <- ggplot(pd,aes(x=pd[,var[x]],y=Thr)) + #00AFBB"
+      dftext <- data.frame(pos = 1.2:6.2, var = c("bathy-demersal",
+                                                  "bathy-pelagic",
+                                                  "bentho-pelagic",
+                                                  "demersal",
+                                                  "pelagic",
+                                                  "reef-associated"))
+
+        part_plot <- ggplot(pd,aes(x=pd[,var[x]],y=Thr)) + #00AFBB"
         geom_bar(stat="identity", position="dodge",color=pal[x],fill=pal[x])+ 
         ylim(0,0.1)+
         theme_bw()+

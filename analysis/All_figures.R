@@ -140,9 +140,7 @@ fig2 <- importance_plot + (partial_plot[[1]] /
 
 ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 6, units= "in",dpi= 300)
 
-
 #'---------------------------------------------------------------------@ResultsPrediction
-
 #Network
 addLevel <- function(x, newlevel=NULL) {
   if(is.factor(x)) {

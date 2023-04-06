@@ -16,9 +16,10 @@ world <- sf::st_transform(world, crs=mol)
 # import layers border
 mollBorder <- st_read(here::here("data","mollBorder","mollBorder.shp"))
 
+# mask
+mask.full=raster::raster(here::here("data","mask.full.tif"))
 
 #My data
-mask.full=raster::raster(here::here("data","mask.full.tif"))
 all_geo_res$Perthrbefore <- all_geo_res$Rthr/(all_geo_res$Rthr+all_geo_res$Rnothr+all_geo_res$Rnostatus)
 all_geo_res$Perthrfinal <- all_geo_res$Rfinalthr/(all_geo_res$Rfinalthr+all_geo_res$Rfinalnothr+all_geo_res$Rfinalnostatus)
 
@@ -42,10 +43,12 @@ var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
 all_map <- lapply(1:length(var),function(x){
 
   if(! var[x] %in% c("DeltaRank","rankSc1","rankSc2")){ 
+  
     mask = mask.full
     df <- all_geo_res[,var[x]]
     df[is.na(df)] <- 0
     mask[all_geo_res$ID] = df
+    
   }
 
   else{ 
@@ -77,7 +80,8 @@ all_map <- lapply(1:length(var),function(x){
     mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
     
 #'--------------------------------------------------------@Threatened
-if (var[x] =="Rthr" )  {  title =  "BEFORE Threatened" 
+if (var[x] =="Rthr" )  {  
+  
 pal <- wesanderson::wes_palette("Zissou1", max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
@@ -92,8 +96,6 @@ map <- ggplot(world) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
   
   ggthemes::theme_map(base_family = "serif") +
   
