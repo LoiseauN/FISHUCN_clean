@@ -36,7 +36,7 @@ all_geo_res[is.na(all_geo_res)] <- 0
 
 
 var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
-        "Rfinalnostatus","rankSc1","rankSc2","DeltaThr","DeltaRank","Perthrbefore","Pernothrfinal")
+        "Rfinalnostatus","DeltaRank")
 
 
 
@@ -78,39 +78,54 @@ all_map <- lapply(1:length(var),function(x){
    
   if(var[x] %in% c("DeltaRank","rankSc1","rankSc2")) {
     mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
-    
+  #pal <- wes_palette("Zissou1", max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), type = "continuous")
+  
 #'--------------------------------------------------------@Threatened
-if (var[x] =="Rthr" )  {  
+if (var[x] =="Rthr" || var[x] =="Rfinalthr" )  {  
   
-pal <- wesanderson::wes_palette("Zissou1", max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T), type = "continuous")
-
-map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  scale_fill_gradientn(colours = pal, 
-                        limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
-                                   max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr))))+
-  scale_colour_gradientn(colours = pal, 
-                        limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
-                                   max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr))))+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
   
-  ggthemes::theme_map(base_family = "serif") +
-  
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
-  ggsave(file = here::here("figures/IUCN_Threatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-  rm(map)
+  map <- ggplot(world) +
+    geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
+    scale_fill_distiller(palette='RdYlBu',limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
+                                                    max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)))) + 
+    scale_color_distiller(palette='RdYlBu',limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
+                                                      max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)))) + 
+    scale_alpha(range=c(0.5,0.5))+
+    #scale_fill_manual(name = "mask.full", values = my_colors) +
+    #scale_fill_hp(option = "Ravenclaw", 
+    #              limits = c(min(all_geo_res$DeltaRank),na.rm=T),
+    #                         max(all_geo_res$DeltaRank,na.rm=T))+
+    geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+    geom_graticules(mol) +
+    geom_mapframe(mol, colour = "white", size = 2.0) +
+    #geom_mapframe(mol, colour = "black", size = 0.4) +
+    
+    
+    ylab(" ") +
+    xlab(" ") +
+    
+    #ggthemes::theme_map(base_family = "serif") +
+    theme_bw()+
+    theme(legend.position = c(0.85, 0.1),
+          legend.direction = "horizontal",
+          legend.title    = element_blank(), 
+          plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+          legend.text     = element_text(face = "plain", size = 8),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank()
+          # legend.key.height= unit(1.5, 'cm'),
+          #legend.key.width= unit(2, 'cm')
+          #axis.text=element_text(size=14),
+          #axis.title=element_text(size=14,face="bold")
+          ) 
+  #ggsave(file = here::here("figures/IUCN_Threatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+  #rm(map)
   }
   
 #'--------------------------------------------------------@Non-Threatened
-pal <- wes_palette("Zissou1", max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), type = "continuous")
 
- if (var[x] =="Rnothr" )  {  title =  "BEFORE Non-Threatened"  
+ if (var[x] =="Rnothr" || var[x] == "Rfinalnothr")  { 
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   scale_fill_gradientn(colours = pal, 
@@ -133,12 +148,12 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
         plot.title      = element_text(face = "bold",  size = 18),
         legend.text     = element_text(face = "plain", size = 12)) #+
 
-ggsave(file = here::here("figures/IUCN_NonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
+#ggsave(file = here::here("figures/IUCN_NonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+#rm(map)
 }
 
 #'--------------------------------------------------------@No-Status
- if  (var[x] =="Rnostatus" )  {  title =  "BEFORE No-Status"  
+ if  (var[x] =="Rnostatus" var[x] =="Rfinalnostatus")  {  title =  "BEFORE No-Status"  
 pal <- wes_palette("Zissou1", max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
@@ -166,189 +181,9 @@ ggsave(file = here::here("figures/IUCN_NoStatus.png"),map,width = 12, height = 8
 rm(map)
 }
 
-#'--------------------------------------------------------@IUCNThreatenedpredicted
-
- if  (var[x] =="Rfinalthr" )  {  title =  "AFTER Threatened"  
-pal <- wes_palette("Zissou1", max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T), type = "continuous")
-
-map <- ggplot(world) +
-geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  scale_fill_gradientn(colours = pal, 
-                        limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T), 
-                                   max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T)))+
-  scale_colour_gradientn(colours = pal, 
-                        limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T), 
-                                   max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr),na.rm=T)))+
-    geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
-  
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
-
-ggsave(file = here::here("figures/IUCNandpredictedThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
-}
-
-    
-#'--------------------------------------------------------@IUCNNonThreatenedpredicted
-if  (var[x] =="Rfinalnothr" )  {title =  "AFTER Non-Threatened"   
-pal <- wes_palette("Zissou1",  max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), type = "continuous")
-
-map <- ggplot(world) +
-geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  scale_fill_gradientn(colours = pal, 
-                         limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), 
-                                    max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
-  scale_colour_gradientn(colours = pal, 
-                         limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), 
-                                    max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
-    geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
-  
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
-
-ggsave(file = here::here("figures/IUCNandpredictedNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
-}
-
-#'--------------------------------------------------------@IUCNNo-Statuspredicted
-
- if  (var[x] =="Rfinalnostatus" )  {  title =  "AFTER No-Status"  
-pal <- wes_palette("Zissou1",  max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), type = "continuous")
-
-map <- ggplot(world) +
-geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  scale_fill_gradientn(colours = pal, 
-                         limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), 
-                                    max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
-  scale_colour_gradientn(colours = pal, 
-                        limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), 
-                                   max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
-    geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
-  
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
-
-ggsave(file = here::here("figures/IUCNandpredictedNoStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
-}
 
 
 
-#'--------------------------------------------------------@RANKBEFORE
-
-if  (var[x] =="rankSc1" )  {  title =  "BEFORE Rank"  
-pal <- wes_palette("Zissou1",  max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), type = "continuous")
-
-map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
-  scale_fill_gradientn(colours = pal, na.value = "#458B00B3",
-                       limits = c(min(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), 
-                                  max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T)))+
-  scale_colour_gradientn(colours = pal, na.value = "#458B00B3",
-                         limits = c(min(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), 
-                                    max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T)))+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
-  
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
-
-ggsave(file = here::here("figures/RankBefore.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
-}
-
-
-
-#'--------------------------------------------------------@RANKAFTER
-
-if  (var[x] =="rankSc2" )  {  title =  "AFTER Rank"  
-pal <- wes_palette("Zissou1",  max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), type = "continuous")
-
-map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
-  scale_fill_gradientn(colours = pal, na.value = "#458B00B3",
-                       limits = c(min(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), 
-                                  max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T)))+
-  scale_colour_gradientn(colours = pal, na.value = "#458B00B3",
-                         limits = c(min(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), 
-                                    max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T)))+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
-  
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
-
-ggsave(file = here::here("figures/RankAfter.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
-}
-#'--------------------------------------------------------@DeltaThreatened
-
-#min(mask.full.polygon$mask.full[log10(mask.full.polygon$mask.full+1)>0])
-
-
- if  (var[x] =="DeltaThr" )  {  title =  "Delta Richness Threatened"  
-map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
-  #viridis::scale_fill_viridis(option = "inferno")+
-  scale_fill_gradient2(low = "white",mid="#00AFBB", midpoint = 0,
-                      high="#FC4E07", space ="Lab" )+
-  scale_colour_gradient2(low = "white",mid="#00AFBB", midpoint = 0,
-                       high="#FC4E07", space ="Lab" )+
-
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
-  
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
-#guides(fill = guide_legend(nrow = 1))
-ggsave(file = here::here("figures/DeltaRichness.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
-}
 
 #'--------------------------------------------------------@DeltaRankzonation
  if  (var[x] =="DeltaRank" )  {  title =  "Change in prioritization ranking" 
@@ -392,60 +227,9 @@ ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, uni
 rm(map)
 }
 
-#'--------------------------------------------------------@PerTHRbefore
-if (var[x] =="Perthrbefore" )  {  title =  "Percentage THR IUCN" 
-map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
-  scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
-                      limits = c(min(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T), 
-                                 max(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T)))+
-  scale_colour_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
-                        limits = c(min(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T), 
-                                   max(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T)))+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
-  
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
-#guides(fill = guide_legend(nrow = 1))
-ggsave(file = here::here("figures/PerTHRbefore.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
-}
+
 
     
-#'--------------------------------------------------------@PerTHRfinal
-if (var[x] =="Perthrfinal" )  {  title =  "Percentage IUCN + predicted THR " 
-map <- ggplot(world) +
-  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
-  scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
-                      limits = c(min(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T), 
-                                 max(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T)))+
-  scale_colour_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
-                        limits = c(min(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T), 
-                                   max(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T)))+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
-  geom_graticules(mol) +
-  geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
-  
-  ggthemes::theme_map(base_family = "serif") +
-  theme(legend.position = "bottom", 
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18),
-        legend.text     = element_text(face = "plain", size = 12)) #+
-#guides(fill = guide_legend(nrow = 1))
-ggsave(file = here::here("figures/PerTHRfinal.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
-}
 
   
 })

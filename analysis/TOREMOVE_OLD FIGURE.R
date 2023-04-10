@@ -1,3 +1,149 @@
+#'--------------------------------------------------------@PerTHRbefore
+if (var[x] =="Perthrbefore" )  {  title =  "Percentage THR IUCN" 
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
+  scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
+                      limits = c(min(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T), 
+                                 max(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T)))+
+  scale_colour_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
+                        limits = c(min(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T), 
+                                   max(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T)))+
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+ggsave(file = here::here("figures/PerTHRbefore.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
+}
+
+#'--------------------------------------------------------@DeltaThreatened
+
+#min(mask.full.polygon$mask.full[log10(mask.full.polygon$mask.full+1)>0])
+
+
+if  (var[x] =="DeltaThr" )  {  title =  "Delta Richness Threatened"  
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
+  #viridis::scale_fill_viridis(option = "inferno")+
+  scale_fill_gradient2(low = "white",mid="#00AFBB", midpoint = 0,
+                       high="#FC4E07", space ="Lab" )+
+  scale_colour_gradient2(low = "white",mid="#00AFBB", midpoint = 0,
+                         high="#FC4E07", space ="Lab" )+
+  
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+ggsave(file = here::here("figures/DeltaRichness.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
+}
+
+
+#'--------------------------------------------------------@RANKBEFORE
+
+if  (var[x] =="rankSc1" )  {  title =  "BEFORE Rank"  
+pal <- wes_palette("Zissou1",  max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), type = "continuous")
+
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
+  scale_fill_gradientn(colours = pal, na.value = "#458B00B3",
+                       limits = c(min(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), 
+                                  max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T)))+
+  scale_colour_gradientn(colours = pal, na.value = "#458B00B3",
+                         limits = c(min(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), 
+                                    max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T)))+
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+
+ggsave(file = here::here("figures/RankBefore.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
+}
+
+
+
+#'--------------------------------------------------------@RANKAFTER
+
+if  (var[x] =="rankSc2" )  {  title =  "AFTER Rank"  
+pal <- wes_palette("Zissou1",  max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), type = "continuous")
+
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
+  scale_fill_gradientn(colours = pal, na.value = "#458B00B3",
+                       limits = c(min(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), 
+                                  max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T)))+
+  scale_colour_gradientn(colours = pal, na.value = "#458B00B3",
+                         limits = c(min(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T), 
+                                    max(c(all_geo_res$rankSc1,all_geo_res$rankSc2),na.rm=T)))+
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+
+ggsave(file = here::here("figures/RankAfter.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
+}
+#'--------------------------------------------------------@PerTHRfinal
+if (var[x] =="Perthrfinal" )  {  title =  "Percentage IUCN + predicted THR " 
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full)) +
+  scale_fill_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
+                      limits = c(min(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T), 
+                                 max(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T)))+
+  scale_colour_gradient(low="#00AFBB",high="#FC4E07", space ="Lab" , 
+                        limits = c(min(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T), 
+                                   max(c(all_geo_res$PerTHRbefore,all_geo_res$PerTHRfinal),na.rm=T)))+
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12)) #+
+#guides(fill = guide_legend(nrow = 1))
+ggsave(file = here::here("figures/PerTHRfinal.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+rm(map)
+}
 
 df <- data.frame(id = rep(dat_network$species,2),
                  stage = as.factor(c(rep("Before Prediction",nrow(dat_network)), rep("After Prediction",nrow(dat_network)))),
