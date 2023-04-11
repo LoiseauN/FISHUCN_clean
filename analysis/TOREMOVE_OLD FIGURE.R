@@ -1,3 +1,9 @@
+#scale_fill_distiller(palette='RdYlBu',limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
+#                                                max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)))) + 
+#scale_color_distiller(palette='RdYlBu',limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
+#                                                  max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)))) + 
+
+
 #'--------------------------------------------------------@PerTHRbefore
 if (var[x] =="Perthrbefore" )  {  title =  "Percentage THR IUCN" 
 map <- ggplot(world) +

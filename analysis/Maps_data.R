@@ -83,23 +83,20 @@ all_map <- lapply(1:length(var),function(x){
 #'--------------------------------------------------------@Threatened
 if (var[x] =="Rthr" || var[x] =="Rfinalthr" )  {  
   
-  
   map <- ggplot(world) +
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-    scale_fill_distiller(palette='RdYlBu',limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
-                                                    max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)))) + 
-    scale_color_distiller(palette='RdYlBu',limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
-                                                      max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)))) + 
-    scale_alpha(range=c(0.5,0.5))+
+    #scale_alpha(range=c(0.5,0.5))+
     #scale_fill_manual(name = "mask.full", values = my_colors) +
-    #scale_fill_hp(option = "Ravenclaw", 
-    #              limits = c(min(all_geo_res$DeltaRank),na.rm=T),
-    #                         max(all_geo_res$DeltaRank,na.rm=T))+
+    scale_fill_hp(option = "Ravenclaw", 
+                  limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
+                             max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr))))+
+    scale_color_hp(option = "Ravenclaw", 
+                  limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
+                             max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr))))+
     geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
     geom_graticules(mol) +
     geom_mapframe(mol, colour = "white", size = 2.0) +
     #geom_mapframe(mol, colour = "black", size = 0.4) +
-    
     
     ylab(" ") +
     xlab(" ") +
@@ -128,10 +125,10 @@ if (var[x] =="Rthr" || var[x] =="Rfinalthr" )  {
  if (var[x] =="Rnothr" || var[x] == "Rfinalnothr")  { 
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  scale_fill_gradientn(colours = pal, 
+  scale_fill_hp(option = "Ravenclaw", 
                        limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), 
                                   max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
-  scale_colour_gradientn(colours = pal, 
+  scale_color_hp(option = "Ravenclaw", 
                        limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), 
                                    max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
  
@@ -139,8 +136,6 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
-  
-  ggtitle(title) +
   
   ggthemes::theme_map(base_family = "serif") +
   theme(legend.position = "bottom", 
@@ -153,15 +148,15 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
 }
 
 #'--------------------------------------------------------@No-Status
- if  (var[x] =="Rnostatus" var[x] =="Rfinalnostatus")  {  title =  "BEFORE No-Status"  
+ if  (var[x] =="Rnostatus" || var[x] == "Rfinalnostatus")  {  
 pal <- wes_palette("Zissou1", max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), type = "continuous")
 
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
-  scale_fill_gradientn(colours = pal, 
+  scale_fill_hp(option = "Ravenclaw", 
                         limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), 
                                    max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
-  scale_colour_gradientn(colours = pal, 
+  scale_color_hp(option = "Ravenclaw", 
                          limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), 
                                   max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
@@ -177,16 +172,12 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
         plot.title      = element_text(face = "bold",  size = 18),
         legend.text     = element_text(face = "plain", size = 12)) #+
 
-ggsave(file = here::here("figures/IUCN_NoStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
+#ggsave(file = here::here("figures/IUCN_NoStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+#rm(map)
 }
 
-
-
-
-
 #'--------------------------------------------------------@DeltaRankzonation
- if  (var[x] =="DeltaRank" )  {  title =  "Change in prioritization ranking" 
+ if  (var[x] =="DeltaRank" )  {  
 # adjustcolor( "chartreuse4", alpha.f = 0.7)
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
@@ -203,7 +194,6 @@ map <- ggplot(world) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   geom_mapframe(mol, colour = "black", size = 0.4) +
   
-  ggtitle(title) +
   ylab(" ") +
   xlab(" ") +
   
@@ -223,17 +213,37 @@ map <- ggplot(world) +
         ) 
 
 #guides(fill = guide_legend(nrow = 1))
-ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-rm(map)
-}
-
-
-
-    
-
+#ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+#rm(map)
+ }
   
+  return(map)
+
 })
 
+save(all_map,file = here::here("figures/all_map.RData"))
 
 
+figure5 <- gridExtra::grid.arrange(all_map[[1]],
+                                   all_map[[2]],
+                                   all_map[[3]],
+                                   all_map[[4]],
+                                   all_map[[5]],
+                                   all_map[[6]], ncol = 2)
 
+var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
+        "Rfinalnostatus","DeltaRank")
+figure6 <- all_map[[1]] / 
+          all_map[[2]]+
+          all_map[[3]]/
+          all_map[[4]]+
+          all_map[[5]]/
+          all_map[[6]]
+ggsave(file = here::here("figures/Figure6.png"),figure6,width = 12, height = 12, units= "in",dpi= 300)
+
+  
+  
+  importance_plot + (partial_plot[[1]] /
+                     partial_plot[[2]])+ 
+  (partial_plot[[3]] /
+     partial_plot[[4]])
