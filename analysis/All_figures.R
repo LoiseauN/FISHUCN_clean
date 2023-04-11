@@ -257,8 +257,7 @@ all_geo_res <- all_geo_res[order(all_geo_res$richness, decreasing=FALSE), ]
 all_geo_res <- na.omit(all_geo_res)
 all_geo_res <- all_geo_res[all_geo_res$richness  > 0,]
 
-all_geo_res2 <- all_geo_res[sample(all_geo_res,10)]
-df[sample(df, 2)]
+
 fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
   geom_point(size=2.5,alpha = 0.3,shape=16) + 
   #scale_color_distiller(palette = "Spectral")+

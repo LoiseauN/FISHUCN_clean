@@ -1,3 +1,18 @@
+#pal <- wes_palette("Zissou1", max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), type = "continuous")
+
+all_geo_res$Perthrbefore <- all_geo_res$Rthr/(all_geo_res$Rthr+all_geo_res$Rnothr+all_geo_res$Rnostatus)
+all_geo_res$Perthrfinal <- all_geo_res$Rfinalthr/(all_geo_res$Rfinalthr+all_geo_res$Rfinalnothr+all_geo_res$Rfinalnostatus)
+
+all_geo_res$Pernothrbefore <- all_geo_res$Rnothr/(all_geo_res$Rthr+all_geo_res$Rnothr+all_geo_res$Rnostatus)
+all_geo_res$Pernothrfinal <- all_geo_res$Rfinalnothr/(all_geo_res$Rfinalthr+all_geo_res$Rfinalnothr+all_geo_res$Rfinalnostatus)
+
+all_geo_res$Pernostatusbefore <- all_geo_res$Rnostatus/(all_geo_res$Rthr+all_geo_res$Rnothr+all_geo_res$Rnostatus)
+all_geo_res$Pernostatusfinal <- all_geo_res$Rfinalnostatus/(all_geo_res$Rfinalthr+all_geo_res$Rfinalnothr+all_geo_res$Rfinalnostatus)
+
+
+
+#scale_alpha(range=c(0.5,0.5))+
+#scale_fill_manual(name = "mask.full", values = my_colors) +
 #scale_fill_distiller(palette='RdYlBu',limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
 #                                                max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)))) + 
 #scale_color_distiller(palette='RdYlBu',limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
