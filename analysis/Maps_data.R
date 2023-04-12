@@ -20,7 +20,6 @@ mollBorder <- st_read(here::here("data","mollBorder","mollBorder.shp"))
 mask.full=raster::raster(here::here("data","mask.full.tif"))
 
 #My data
-all_geo_res$richness <-  all_geo_res$Rthr+all_geo_res$Rnothr+all_geo_res$Rnostatus
 
 all_geo_res[is.na(all_geo_res)] <- 0
 
@@ -106,7 +105,7 @@ if (var[x] =="Rthr" || var[x] =="Rfinalthr" )  {
           axis.text=element_text(size=14),
           axis.title=element_text(size=14,face="bold")
           ) 
-  #ggsave(file = here::here("figures/IUCN_Threatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+  ggsave(file = here::here("figures/IUCN_Threatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
   #rm(map)
   }
   
