@@ -82,7 +82,8 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   rphylopic::add_phylopic(mammals_pic,   x = 3, y = 50, ysize = 10, alpha = 1)+
   rphylopic::add_phylopic(amphibians_pic,x = 4, y = 50, ysize = 8, alpha = 1)+
   rphylopic::add_phylopic(fish_pic,      x = 5, y = 50, ysize = 7.5, alpha = 1) +
-  theme( axis.text=element_text(size=16),
+  theme( legend.position = "bottom",
+         axis.text=element_text(size=16),
          axis.title=element_text(size=18,face="bold"),
          legend.title=element_text(size=16,face="bold"),
          legend.text=element_text(size=14))

@@ -10,8 +10,7 @@ rastlist <- unlist(lapply(1:length(rastlist), function(x){
 
 allrasters <- stack(rastlist)
 
-
-crs(allrasters) <- "+proj=lcc +lat_1=48 +lat_2=33 +lon_0=-100 +ellps=WGS84"
+crs(allrasters) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 projection(allrasters)
 
 # Convert raster to SpatialPointsDataFrame
@@ -29,14 +28,6 @@ r.pts@data <- data.frame(r.pts@data, long=coordinates(r.pts)[,1],
 head(r.pts@data)
 
 
-
-
-
-
-
-
-
-
 #df <-  data.frame(getValues(allrasters))
 df  <- data.frame(ID = seq(from = 1, to = nrow(r.pts@data),by=1),
                   Rthr = r.pts@data$richness_initTHR,
@@ -48,9 +39,6 @@ df  <- data.frame(ID = seq(from = 1, to = nrow(r.pts@data),by=1),
                   long = r.pts@data$long,
                   lat = r.pts@data$lat
                   )
-
-
-
 #df  <-  merge(Zrank_main,df,by = "ID",all.x=T)
 
 df  <-  merge(Zrank_main,df,by = "ID",all=T)
