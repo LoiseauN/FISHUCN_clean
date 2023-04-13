@@ -504,3 +504,231 @@ dat_taxo<- dat_taxo[rowSums(is.na(dat_taxo)) != ncol(dat_taxo), ]
 table_taxo <- aggregate(Non_Threatened ~ Family, data = dat_taxo, sum,na.action = na.omit)
 table_taxo <- table_taxo %>% arrange(desc(Non_Threatened))
 grid.table()
+
+
+
+
+
+
+
+#My data
+mask.full=raster::raster(here::here("data","mask.full.tif"))
+
+mask = mask.full
+df <- all_geo_res[,var[x]]
+df[is.na(df)] <- 0
+mask[all_geo_res$ID] = df
+
+#raster to stars
+mask <- stars::st_as_stars(mask)
+mask.full.polygon <- sf::st_as_sf(mask,as.point = F)
+mask.full.polygon <-  fortify(mask.full.polygon)
+
+mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol)
+
+
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = scale(mask.full), color = scale(mask.full))) +
+  #viridis::scale_fill_viridis(option = "inferno")+
+  scale_fill_gradient2(midpoint= 0, low="#00AFBB", mid="white",
+                       high="#FC4E07", space ="Lab" )+
+  scale_color_gradient2(midpoint= 0, low="#00AFBB", mid="white",
+                        high="#FC4E07", space ="Lab" )+
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  #scale_fill_hp(option = "Ravenclaw", 
+  #              limits = c(min(all_geo_res$DeltaRank),na.rm=T),
+  #                         max(all_geo_res$DeltaRank,na.rm=T))+
+  geom_sf(data = world, fill = "black", color = "black", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  ggtitle(title) +
+  
+  ggthemes::theme_map(base_family = "serif") +
+  theme(legend.position = "bottom", 
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18),
+        legend.text     = element_text(face = "plain", size = 12))
+
+
+
+
+
+
+
+
+
+
+
+
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
+  scale_fill_distiller(palette='RdYlBu') + 
+  scale_color_distiller(palette='RdYlBu',) + 
+  scale_alpha(range=c(0.5,0.5))+
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  #scale_fill_hp(option = "Ravenclaw", 
+  #              limits = c(min(all_geo_res$DeltaRank),na.rm=T),
+  #                         max(all_geo_res$DeltaRank,na.rm=T))+
+  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  geom_graticules(mol) +
+  geom_mapframe(mol, colour = "white", size = 2.0) +
+  #geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  
+  ylab(" ") +
+  xlab(" ") +
+  
+  #ggthemes::theme_map(base_family = "serif") +
+  theme_bw()+
+  theme(legend.position = c(0.85, 0.1),
+        legend.direction = "horizontal",
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+        legend.text     = element_text(face = "plain", size = 8),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank()
+        # legend.key.height= unit(1.5, 'cm'),
+        #legend.key.width= unit(2, 'cm')
+        #axis.text=element_text(size=14),
+        #axis.title=element_text(size=14,face="bold")
+  ) 
+ggsave(file = here::here("figures/testMap.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+
+
+
+
+map <- ggplot(world) +
+  geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
+  harrypotter::scale_fill_hp(house = "ravenclaw",na.value = "transparent",name = " ") +
+  harrypotter::scale_color_hp(house = "ravenclaw",na.value = "transparent",name = " ") +
+  scale_alpha(range=c(0.5,0.5))+
+  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  #scale_fill_hp(option = "Ravenclaw", 
+  #              limits = c(min(all_geo_res$DeltaRank),na.rm=T),
+  #                         max(all_geo_res$DeltaRank,na.rm=T))+
+  geom_sf(data = world, fill = "white" ,#"#bebebe", 
+          color = "black",#"white" 
+          size = 0.1) +
+  geom_graticules(mol) +
+  #geom_mapframe(mol, colour = "white", size = 2.0) +
+  #geom_mapframe(mol, colour = "black", size = 0.4) +
+  
+  
+  ylab(" ") +
+  xlab(" ") +
+  
+  #ggthemes::theme_map(base_family = "serif") +
+  cowplot::theme_minimal_grid()   +
+  theme(legend.position = c(0.85, 0.1),
+        legend.direction = "horizontal",
+        legend.title    = element_blank(), 
+        plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+        legend.text     = element_text(face = "plain", size = 8),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank()
+        # legend.key.height= unit(1.5, 'cm'),
+        #legend.key.width= unit(2, 'cm')
+        #axis.text=element_text(size=14),
+        #axis.title=element_text(size=14,face="bold")
+  ) 
+
+
+
+
+
+
+
+
+
+
+
+CellsIn = exactextractr::exact_extract(mask,mollBorder,include_xy=TRUE, include_cell = TRUE)
+
+dim(CellsIn[[1]])
+all_geo_res <- all_geo_res2
+
+all_geo_res <- merge(all_geo_res,CellsIn, by.x = "ID",by.y = "cell" )
+
+
+
+# NEED TO COMPUTE A PERCENTAGE OU TAUX DE VARIATION VERS LE HAUT OU LE BAS
+
+fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
+  geom_point(size=2.5,alpha = 0.3,shape=16) +
+  #scale_color_distiller(palette = "Spectral")+
+  scale_color_gradient(low = "#00AFBB", high = "#FC4E07")+
+  theme_bw() + xlab("Cell rank BEFORE")+ ylab("Cell rank AFTER") +
+  geom_abline(slope=1, intercept = 0)
+ggsave(file = here::here("figures/Figure5.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
+
+all_geo_res2$richness <- all_geo_res2$Rthr+all_geo_res2$Rnothr+all_geo_res2$Rnostatus
+
+all_geo_res2 <- na.omit(all_geo_res2)
+all_geo_res  <- all_geo_res2[sample(nrow(all_geo_res2), 1000), ]
+
+all_geo_res$ScalerankSc1<- scale(all_geo_res$rankSc1)
+all_geo_res$ScalerankSc2<- scale(all_geo_res$rankSc2)
+all_geo_res$Scalerichness<- scale(all_geo_res$richness)
+
+all_geo_res$taux <- ((all_geo_res$rankSc1-all_geo_res$rankSc2)/all_geo_res$rankSc1)*100
+
+plot(all_geo_res$richness, # x-axis
+     all_geo_res$rankSc1-all_geo_res$rankSc2, # y axis
+     type="n",yaxt="n",ylim=c(min(all_geo_res$rankSc1),max(all_geo_res$rankSc1)),
+     xlim=c(min(all_geo_res$richness),max(all_geo_res$richness)), # empty plot, sets axis limits.
+     xaxt="n",ylab="",lty=1,
+     main="Change in prioritization",
+     pch=16,cex.main=1.4)
+
+mtext(side=2,
+      "Change in ranking"
+      ,cex=.8,line=1) # y axis title
+abline(v=0, col="lightgray") # gridlines
+abline(v=0.2, col="lightgray")
+abline(v=0.4, col="lightgray")
+abline(v=0.6, col="lightgray")
+abline(v=0.8, col="lightgray")
+abline(v=1, col="lightgray")
+## Note: the next 3 lines of code are designed for a
+## specific plot size. They will need to be adjusted if resized.
+text(x=1.05,y=0.007,"Delta",col="darkgray",cex=1.1)
+text(x=1.05,y=-.007,"Rank",col="darkgray",cex=1.1)
+
+for (i in 1:nrow(all_geo_res)){
+  segments(x0=all_geo_res$richness[i],
+           x1=all_geo_res$richness[i],
+           y0=all_geo_res$rankSc1[i],
+           y1=all_geo_res$rankSc2[i],
+           col=wes_palette(name="Zissou1")[1],lwd=2)
+}
+
+
+abline(h=0,col="darkgray") # x axis = 0
+points(all_geo_res$richness,
+       all_geo_res$rankSc1,
+       yaxt="n",ylim=c(0,1),xlim=c(0,1),
+       xaxt="n",lty=1,bg="darkgray",
+       pch=23,cex=.9)
+points(all_geo_res$richness,
+       all_geo_res$rankSc2,
+       yaxt="n",ylim=c(0,1),xlim=c(0,1),
+       xaxt="n",lty=1,pch=21,
+       bg="black",cex=.9)
+
+axis(2,at=c(seq(-.3,.3,by=.1)),
+     labels=c("-30%","-20%","-10%","0%","10%","20%","30%"),
+     cex.axis=1,las=1)
+axis(1,at=c(seq(0,1,by=.1)),labels=c("0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"),tick=TRUE,cex.axis=.8)
+axis(1,at=c(seq(0,1,by=.1)),
+     labels=FALSE,tick=FALSE,cex.axis=1)
+#legend(x=.8,y=-.15,c("Men","Women"," "," "),pt.bg=c("darkgray",wes_palette(name="Rushmore")[1],wes_palette(name="Rushmore")[3],wes_palette(name="Rushmore")[5]),pch=c(23,21,21,21),cex=.9,y.intersp=.5,x.intersp=1,bty="n")
+legend(x=.82,y=.3,c("Men","Women"),
+       pt.bg=c("darkgray","black"),
+       pch=c(23,21),cex=1.1,y.intersp=.6,
+       x.intersp=1,bty="n")
+
+dev.off()
