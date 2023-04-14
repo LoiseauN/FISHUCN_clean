@@ -25,12 +25,8 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "pbmcapply", "plyr", "ranger", "raster", "RCurl", "rfishbase", 
            "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
            "tidyverse", "viridis", "XML", "circlize","edarf","rgdal",
-          "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter")
-
-library(randomForest)
-library(caret)
-library(ROCR)
-
+          "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter",
+          "randomForest","caret","ROCR")
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
@@ -41,7 +37,6 @@ devtools::install_github("zmjones/edarf", subdir = "pkg")
 
 files.source <- list.files(here::here("R"), pattern = "\\.R$", 
                            full.names = TRUE)
-invisible(sapply(files.source[-14], source)) ##### pcoaFig.R is not a function
 
 ## Loading all data ----
 

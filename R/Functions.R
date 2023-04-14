@@ -10,6 +10,7 @@ addLevel <- function(x, newlevel=NULL) {
 }
 
 
+
 #------------------Rescale Function----------------------
 
 #Function to rescale proba

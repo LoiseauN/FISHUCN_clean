@@ -1,55 +1,58 @@
+#' Merging all resultats
+#'
+#' This script to merge all data for each cell. 
+#'
+#' @author  Nicolas LOISEAU, \email{nicolas.loiseau1@@gmail.com},
+#'         
+#'
+#' @date 
 
+#Read in all TIFF files of richness per status
+files <- list.files(here::here("outputs", "tif_outputs"), pattern = "\\.tif$",
+                    full.names = TRUE)
 
-#first import all files in a single folder as a list 
-rastlist <- list.files(path = here::here("outputs/tif_outputs"), pattern='.tif', 
-                       all.files=TRUE, full.names=FALSE)
+#Load zonation outputs
+load(here::here("outputs", "Zrank_main.RData"))
 
-rastlist <- unlist(lapply(1:length(rastlist), function(x){
-  paste0(here::here("outputs/tif_outputs"),"/",rastlist[x])
-}))
+#Combine all TIFF files into a single raster stack
+ras  <- raster::stack(files)
 
-allrasters <- stack(rastlist)
+#Get the x,y coordinates of all raster cells
+xy   <- raster::xyFromCell(ras, 1:raster::ncell(ras))
+vals <- ras[]
 
-crs(allrasters) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-projection(allrasters)
+#Combine the x,y coordinates and cell values into a dataframe
+dat <- data.frame("cell_id" = 1:nrow(xy), xy, vals)
 
-# Convert raster to SpatialPointsDataFrame
-r.pts <- rasterToPoints(allrasters, spatial=TRUE)
-proj4string(r.pts)
+#Computed overall richness
+dat$richness <-  dat$richness_finalNonTHR+dat$richness_finalNoStatus+dat$richness_finalTHR
 
-# reproject sp object
-geo.prj <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0" 
-r.pts <- spTransform(r.pts, CRS(geo.prj)) 
-proj4string(r.pts)
+#Remove any rows from "dat" where "richness" is less than 
+dat <- dat[which(dat[ , "richness"] > 0), ]
 
-# Assign coordinates to @data slot, display first 6 rows of data.frame
-r.pts@data <- data.frame(r.pts@data, long=coordinates(r.pts)[,1],
-                         lat=coordinates(r.pts)[,2])                         
-head(r.pts@data)
+#Convert "dat" to a spatial dataframe called "dat_sf" with coordinate reference system (CRS) information.
+dat_sf <- sf::st_as_sf(dat, coords = c("x", "y"), crs = raster::proj4string(ras))
+dat_sf <- sf::st_transform(dat_sf, crs = 4326)
 
+#Extract the coordinate data
+dat <- data.frame(sf::st_coordinates(dat_sf), sf::st_drop_geometry(dat_sf))
 
-#df <-  data.frame(getValues(allrasters))
-df  <- data.frame(ID = seq(from = 1, to = nrow(r.pts@data),by=1),
-                  Rthr = r.pts@data$richness_initTHR,
-                  Rnothr = r.pts@data$richness_initNonTHR,
-                  Rnostatus = r.pts@data$richness_initNoStatus,
-                  Rfinalthr = r.pts@data$richness_finalTHR,
-                  Rfinalnothr = r.pts@data$richness_finalNonTHR,
-                  Rfinalnostatus = r.pts@data$richness_finalNoStatus,
-                  long = r.pts@data$long,
-                  lat = r.pts@data$lat
-                  )
-#df  <-  merge(Zrank_main,df,by = "ID",all.x=T)
+#Rename the columns
+colnames(dat)<- c("long","lat","ID",
+                 "richness_finalNT",
+                  "richness_finalNS",
+                  "richness_finalTH",
+                  "richness_initNT",
+                  "richness_initNS",
+                  "richness_initTH",
+                  "richness")
 
-df  <-  merge(Zrank_main,df,by = "ID",all=T)
-df$DeltaRank   <-  df$rankSc2-df$rankSc1
-df$DeltaThr  <-   df$Rfinalthr-df$Rthr
+#Merge data with zonation outputs : Zrank_main
+all_geo_res <- merge(dat,Zrank_main, by ="ID",all.x = T)
 
-df  <-  merge(df,all_geo_res[,c("ID","MPA")],by = "ID",all.x=T)
+#Compute difference in zonation rank
+all_geo_res$DeltaRank <- all_geo_res$rankSc2-all_geo_res$rankSc1
+all_geo_res[is.na(all_geo_res)] <- 0
 
-df$richness <-  df$Rthr+df$Rnothr+df$Rnostatus
-
-all_geo_res <- df
+#Save the final dataset
 save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
-
-

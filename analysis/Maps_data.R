@@ -24,8 +24,13 @@ mask.full=raster::raster(here::here("data","mask.full.tif"))
 all_geo_res[is.na(all_geo_res)] <- 0
 
 
-var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
-        "Rfinalnostatus","DeltaRank")
+var = c("richness_finalNT",
+        "richness_finalNS",
+        "richness_finalTH",
+        "richness_initNT",
+        "richness_initNS",
+        "richness_initTH",
+        "richness")
 
 
 

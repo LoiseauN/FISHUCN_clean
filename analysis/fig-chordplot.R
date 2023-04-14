@@ -53,9 +53,9 @@ dat_network$"IUCN_cat"   <- factor(dat_network$"IUCN_cat",
 dat_network$"IUCN_final" <- factor(dat_network$"IUCN_final", 
                                  levels = level_s)
 
+save(dat_network, file = here::here("outputs", "dat_network.RData"))
 
 ## Confusion matrix ----
-
 mat <- table(dat_network$"IUCN_cat", dat_network$"IUCN_final")
 
 rownames(mat) <- paste0("A_", rownames(mat))

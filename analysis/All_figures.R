@@ -141,82 +141,18 @@ fig2 <- importance_plot + (partial_plot[[1]] /
 
 ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 6, units= "in",dpi= 300)
 
-#'---------------------------------------------------------------------@ResultsPrediction
-#Network
-addLevel <- function(x, newlevel=NULL) {
-  if(is.factor(x)) {
-    if (is.na(match(newlevel, levels(x))))
-      return(factor(x, levels=c(levels(x), newlevel)))
-  }
-  return(x)
-}
-
-
-
-dat_network <- data.frame(data_zonation[,c("species","IUCN_cat","predict_complementary")])
-
-dat_network <- dat_network[dat_network$species %in%MPA_Protect$species,]
-
-
-dat_network <- addLevel(dat_network, "Threatened")
-dat_network <- addLevel(dat_network, "Non Threatened")
-dat_network <- addLevel(dat_network, "No Status")
-
-
-for (i in 1:ncol(dat_network)){dat_network[,i] <- as.factor(as.character(dat_network[,i]))}
-
-
- dat_network<-as.data.frame(sapply(dat_network,
-                                  mapvalues, from = c("Thr"), 
-                                  to = c("Threatened")))
-
-dat_network<-as.data.frame(sapply(dat_network,
-                                  mapvalues, from = c("NThr"), 
-                                  to = c("Non Threatened")))
-
-
-#dat_network<-as.data.frame(sapply(dat_network,
- #                                 mapvalues, from = c("LC","NT","nt","NC"), 
-  #                                to = c("Non Threatened","Non Threatened",
-   #                                      "Non Threatened","Non Threatened")))
-
-
-
-
-dat_network$IUCN_final <- NA
-
-for (i in 1:nrow (dat_network)){
-  if(is.na(dat_network$IUCN_cat[i])){ dat_network$IUCN_final[i]=dat_network$predict[i]
-  
-  }else{
-    
-    dat_network$IUCN_final[i]=dat_network$IUCN_cat[i]
-    
-  }
-}
-
-
-dat_network[is.na(dat_network$IUCN_final),]$IUCN_final <- "No Status"
-dat_network[is.na(dat_network$IUCN_cat),]$IUCN_cat <- "No Status"
-
-for (i in 1:nrow(dat_network)){
-  if(is.na(dat_network$predict_complementary[i]) & dat_network$IUCN_cat[i] == "No Status") {
-    dat_network$predict_complementary[i] <- "No Status"
-  
-      }
-  }
-
-pos <- which(dat_network$'IUCN_final' == "NaN")
-if (length(pos)) dat_network[pos, "IUCN_final"] <- "No Status"
 
 
 #'---------------------------------------------------------------------@Percentagegainmodel
 #'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
-gainNThr <- ((table(dat_network$IUCN_cat)[2]-table(dat_network$IUCN_final)[2])/table(dat_network$IUCN_cat)[2])*100
-gainThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
+load(file = here::here("outputs", "dat_network.RData"))
+
+gainNThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
+gainThr <- ((table(dat_network$IUCN_cat)[1]-table(dat_network$IUCN_final)[1])/table(dat_network$IUCN_cat)[1])*100
 
 #'---------------------------------------------------------------------@Checkperfamily
-#'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
+load(file = here::here("outputs", "FB_final.RData"))
+
 res <- merge(dat_network, FB_final[,c("Genus","Family")], by.x="species", by.y="row.names")
 
 res$predict_complementary <- as.factor(res$predict_complementary )
@@ -242,21 +178,8 @@ res <-  res[order(res$percenTHR,decreasing = T),]
 
 
 #'---------------------------------------------------------------------@zonationanalyses
-#Zrank_main$diff <- Zrank_main$rankSc2-Zrank_main$rankSc1
-
-#fig_rank_hex <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2) ) +
-#  geom_hex(bins = 100) +
-#  scale_fill_continuous(type = "viridis") +
-#  theme_bw() + xlab("IUCN only")+ ylab("IUCN + Predicted")
-#ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
-#all_geo_res <- all_geo_res[,-c(10,11)]
-#all_geo_res <- merge(all_geo_res,Zrank_main,by = "ID",all.x=T)
-#all_geo_res$DeltaRank <- all_geo_res$rankSc2-all_geo_res$rankSc1
-  
-  
 all_geo_res <- all_geo_res[order(all_geo_res$richness, decreasing=FALSE), ]
 all_geo_res <- na.omit(all_geo_res)
-all_geo_res <- all_geo_res[all_geo_res$richness  > 0,]
 
 
 fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
