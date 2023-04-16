@@ -83,16 +83,3 @@ var_partial = function(data,var,names){
   
 }
 
-
-
-#Zrank_main$diff <- Zrank_main$rankSc2-Zrank_main$rankSc1
-
-#fig_rank_hex <- ggplot(Zrank_main, aes(x=rankSc1, y=rankSc2) ) +
-#  geom_hex(bins = 100) +
-#  scale_fill_continuous(type = "viridis") +
-#  theme_bw() + xlab("IUCN only")+ ylab("IUCN + Predicted")
-#ggsave(file = here::here("figures/fig_rank_hex.png"),width = 12, height = 12, units= "in",dpi= 300)
-#all_geo_res <- all_geo_res[,-c(10,11)]
-#all_geo_res <- merge(all_geo_res,Zrank_main,by = "ID",all.x=T)
-#all_geo_res$DeltaRank <- all_geo_res$rankSc2-all_geo_res$rankSc1
-

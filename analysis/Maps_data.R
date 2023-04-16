@@ -76,6 +76,14 @@ all_map <- lapply(1:length(var),function(x){
 #'--------------------------------------------------------@Threatened
 if (var[x] =="Rthr" || var[x] =="Rfinalthr" )  {  
   
+  "richness_finalNT",
+  "richness_finalNS",
+  "richness_finalTH",
+  "richness_initNT",
+  "richness_initNS",
+  "richness_initTH",
+  "richness")
+
   map <- ggplot(world) +
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
     #scale_alpha(range=c(0.5,0.5))+
@@ -116,6 +124,14 @@ if (var[x] =="Rthr" || var[x] =="Rfinalthr" )  {
   
 #'--------------------------------------------------------@Non-Threatened
 
+  "richness_finalNT",
+  "richness_finalNS",
+  "richness_finalTH",
+  "richness_initNT",
+  "richness_initNS",
+  "richness_initTH",
+  "richness")
+
  if (var[x] =="Rnothr" || var[x] == "Rfinalnothr")  { 
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
@@ -151,6 +167,14 @@ ggsave(file = here::here("figures/IUCN_NonThreatened.png"),map,width = 12, heigh
 }
 
 #'--------------------------------------------------------@No-Status
+
+"richness_finalNT",
+"richness_finalNS",
+"richness_finalTH",
+"richness_initNT",
+"richness_initNS",
+"richness_initTH",
+"richness")
 
  if  (var[x] =="Rnostatus" || var[x] == "Rfinalnostatus")  {  
    map <- ggplot(world) +
@@ -188,6 +212,14 @@ ggsave(file = here::here("figures/IUCN_NoStatus.png"),map,width = 12, height = 8
 
 #'--------------------------------------------------------@DeltaRankzonation
  if  (var[x] =="DeltaRank" )  {  
+   "richness_finalNT",
+   "richness_finalNS",
+   "richness_finalTH",
+   "richness_initNT",
+   "richness_initNS",
+   "richness_initTH",
+   "richness")
+
 # adjustcolor( "chartreuse4", alpha.f = 0.7)
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
@@ -242,8 +274,7 @@ figure5 <- gridExtra::grid.arrange(all_map[[1]],
                                    all_map[[5]],
                                    all_map[[6]], ncol = 2)
 
-var = c("Rthr","Rnothr","Rnostatus","Rfinalthr","Rfinalnothr",
-        "Rfinalnostatus","DeltaRank")
+
 figure6 <- all_map[[1]] / 
           all_map[[2]]+
           all_map[[3]]/
