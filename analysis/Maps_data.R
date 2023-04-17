@@ -74,15 +74,9 @@ all_map <- lapply(1:length(var),function(x){
     mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
   
 #'--------------------------------------------------------@Threatened
-if (var[x] =="Rthr" || var[x] =="Rfinalthr" )  {  
+if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {  
   
-  "richness_finalNT",
-  "richness_finalNS",
-  "richness_finalTH",
-  "richness_initNT",
-  "richness_initNS",
-  "richness_initTH",
-  "richness")
+ 
 
   map <- ggplot(world) +
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
@@ -90,11 +84,11 @@ if (var[x] =="Rthr" || var[x] =="Rfinalthr" )  {
     #scale_fill_manual(name = "mask.full", values = my_colors) +
 
     scale_fill_hp(option = "Ravenclaw", 
-                  limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
-                             max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr))))+
+                  limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
+                             max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH))))+
     scale_color_hp(option = "Ravenclaw", 
-                  limits = c(min(c(all_geo_res$Rthr,all_geo_res$Rfinalthr)), 
-                             max(c(all_geo_res$Rthr,all_geo_res$Rfinalthr))))+
+                  limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
+                             max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH))))+
     geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
     geom_graticules(mol) +
     geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -118,29 +112,24 @@ if (var[x] =="Rthr" || var[x] =="Rfinalthr" )  {
           axis.text=element_text(size=14),
           axis.title=element_text(size=14,face="bold")
           ) 
-  ggsave(file = here::here("figures/IUCN_Threatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+  if (var[x] =="richness_initTH")   { ggsave(file = here::here("figures/IUCN_InitialThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+  
+  if (var[x] =="richness_finalTH")  { ggsave(file = here::here("figures/IUCN_FinalThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
   #rm(map)
   }
   
 #'--------------------------------------------------------@Non-Threatened
 
-  "richness_finalNT",
-  "richness_finalNS",
-  "richness_finalTH",
-  "richness_initNT",
-  "richness_initNS",
-  "richness_initTH",
-  "richness")
 
- if (var[x] =="Rnothr" || var[x] == "Rfinalnothr")  { 
+ if (var[x] =="richness_initNT" || var[x] == "richness_finalNT")  { 
 map <- ggplot(world) +
 geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
   scale_fill_hp(option = "Ravenclaw", 
-                       limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), 
-                                  max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
+                       limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT),na.rm=T), 
+                                  max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT),na.rm=T)))+
   scale_color_hp(option = "Ravenclaw", 
-                       limits = c(min(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), 
-                                   max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T)))+
+                       limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT),na.rm=T), 
+                                   max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT),na.rm=T)))+
  
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
@@ -161,30 +150,25 @@ geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
         axis.text=element_text(size=14),
         axis.title=element_text(size=14,face="bold")
   ) 
+if (var[x] =="richness_initNT")   { ggsave(file = here::here("figures/IUCN_InitialNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 
-ggsave(file = here::here("figures/IUCN_NonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_FinalNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+
 #rm(map)
 }
 
 #'--------------------------------------------------------@No-Status
 
-"richness_finalNT",
-"richness_finalNS",
-"richness_finalTH",
-"richness_initNT",
-"richness_initNS",
-"richness_initTH",
-"richness")
 
- if  (var[x] =="Rnostatus" || var[x] == "Rfinalnostatus")  {  
+ if  (var[x] =="richness_initNS" || var[x] == "richness_finalNS")  {  
    map <- ggplot(world) +
      geom_sf(data = mask.full.polygon, aes(fill = mask.full), color = NA) +
      scale_fill_hp(option = "Ravenclaw", 
-                   limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), 
-                              max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
+                   limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS),na.rm=T), 
+                              max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS),na.rm=T)))+
      scale_color_hp(option = "Ravenclaw", 
-                    limits = c(min(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T), 
-                               max(c(all_geo_res$Rnostatus,all_geo_res$Rfinalnostatus),na.rm=T)))+
+                    limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS),na.rm=T), 
+                               max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS),na.rm=T)))+
      
      geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
      geom_graticules(mol) +
@@ -206,19 +190,14 @@ ggsave(file = here::here("figures/IUCN_NonThreatened.png"),map,width = 12, heigh
            axis.title=element_text(size=14,face="bold")
      ) 
    
-ggsave(file = here::here("figures/IUCN_NoStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+   if (var[x] =="richness_initNS")   { ggsave(file = here::here("figures/IUCN_InitialNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+   
+   if (var[x] =="richness_finalNS")  { ggsave(file = here::here("figures/IUCN_FinalNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 #rm(map)
 }
 
 #'--------------------------------------------------------@DeltaRankzonation
- if  (var[x] =="DeltaRank" )  {  
-   "richness_finalNT",
-   "richness_finalNS",
-   "richness_finalTH",
-   "richness_initNT",
-   "richness_initNS",
-   "richness_initTH",
-   "richness")
+ if  (var[x] =="DeltaRank_SameWeight" )  {  
 
 # adjustcolor( "chartreuse4", alpha.f = 0.7)
 map <- ggplot(world) +

@@ -51,7 +51,9 @@ colnames(dat)<- c("long","lat","ID",
 all_geo_res <- merge(dat,Zrank_main, by ="ID",all.x = T)
 
 #Compute difference in zonation rank
-all_geo_res$DeltaRank <- all_geo_res$rankSc2-all_geo_res$rankSc1
+all_geo_res$DeltaRank_Proba <- all_geo_res$PredictProba_IUCN_weigth-all_geo_res$IUCN_weigth
+all_geo_res$DeltaRank_SameWeight <- all_geo_res$PredictProba_IUCN_weigth-all_geo_res$Predict_IUCN_same_weigth
+
 all_geo_res[is.na(all_geo_res)] <- 0
 
 #Save the final dataset
