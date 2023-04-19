@@ -5,7 +5,7 @@ library("rnaturalearthdata")
 
 #'-------------------------------------------
 source(here::here("R","map_function.R"))
-
+load(here::here("outputs","all_geo_res.RData"))
 # import layers world
 world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 
@@ -20,8 +20,8 @@ mollBorder <- st_read(here::here("data","mollBorder","mollBorder.shp"))
 mask.full=raster::raster(here::here("data","mask.full.tif"))
 
 #My data
-
 all_geo_res[is.na(all_geo_res)] <- 0
+
 
 
 var = c("richness_finalNT",
@@ -46,6 +46,7 @@ all_map <- lapply(1:length(var),function(x){
   }
 
   else{ 
+    #load(here::here("outputs","all_geo_res.RData"))
     mask = mask.full
     df <- all_geo_res[,var[x]]
     df[is.na(df)] <- 0
@@ -70,7 +71,7 @@ all_map <- lapply(1:length(var),function(x){
   mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
   mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
    
-  if(var[x] %in% c("DeltaRank")) {
+  if(var[x] %in% c("DeltaRank_SameWeight")) {
     mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
   
 #'--------------------------------------------------------@Threatened
@@ -216,14 +217,10 @@ map <- ggplot(world) +
                         high="#FC4E07", space ="Lab",na.value = "palegreen3")+
   scale_color_gradient2(midpoint= 0, low="#00AFBB", mid="white",
                        high="#FC4E07", space ="Lab",na.value = "palegreen3")+
-  #scale_fill_manual(name = "mask.full", values = my_colors) +
-  #scale_fill_hp(option = "Ravenclaw", 
-  #              limits = c(min(all_geo_res$DeltaRank),na.rm=T),
-  #                         max(all_geo_res$DeltaRank,na.rm=T))+
   geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
-  geom_mapframe(mol, colour = "black", size = 0.4) +
+  #geom_mapframe(mol, colour = "black", size = 0.4) +
   
   ylab(" ") +
   xlab(" ") +
@@ -251,29 +248,3 @@ ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, uni
   
 
 })
-
-save(all_map,file = here::here("figures/all_map.RData"))
-
-
-figure5 <- gridExtra::grid.arrange(all_map[[1]],
-                                   all_map[[2]],
-                                   all_map[[3]],
-                                   all_map[[4]],
-                                   all_map[[5]],
-                                   all_map[[6]], ncol = 2)
-
-
-figure6 <- all_map[[1]] / 
-          all_map[[2]]+
-          all_map[[3]]/
-          all_map[[4]]+
-          all_map[[5]]/
-          all_map[[6]]
-ggsave(file = here::here("figures/Figure6.png"),figure6,width = 12, height = 12, units= "in",dpi= 300)
-
-  
-  
-  importance_plot + (partial_plot[[1]] /
-                     partial_plot[[2]])+ 
-  (partial_plot[[3]] /
-     partial_plot[[4]])
