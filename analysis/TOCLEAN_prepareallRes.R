@@ -28,7 +28,7 @@ dat <- data.frame("cell_id" = 1:nrow(xy), xy, vals)
 dat$richness <-  dat$richness_finalNonTHR+dat$richness_finalNoStatus+dat$richness_finalTHR
 
 #Remove any rows from "dat" where "richness" is less than 
-dat <- dat[which(dat[ , "richness"] > 0), ]
+#dat <- dat[which(dat[ , "richness"] > 0), ]
 
 #Convert "dat" to a spatial dataframe called "dat_sf" with coordinate reference system (CRS) information.
 dat_sf <- sf::st_as_sf(dat, coords = c("x", "y"), crs = raster::proj4string(ras))
@@ -54,7 +54,7 @@ all_geo_res <- merge(dat,Zrank_main, by ="ID",all.x = T)
 all_geo_res$DeltaRank_Proba <- all_geo_res$PredictProba_IUCN_weigth-all_geo_res$IUCN_weigth
 all_geo_res$DeltaRank_SameWeight <- all_geo_res$PredictProba_IUCN_weigth-all_geo_res$Predict_IUCN_same_weigth
 
-all_geo_res[is.na(all_geo_res)] <- 0
+#all_geo_res[is.na(all_geo_res)] <- 0
 
 #Save the final dataset
 save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))

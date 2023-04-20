@@ -20,9 +20,7 @@ mollBorder <- st_read(here::here("data","mollBorder","mollBorder.shp"))
 mask.full=raster::raster(here::here("data","mask.full.tif"))
 
 #My data
-all_geo_res[is.na(all_geo_res)] <- 0
-
-
+#all_geo_res[is.na(all_geo_res)] <- 0
 
 var = c("richness_finalNT",
         "richness_finalNS",
@@ -49,7 +47,7 @@ all_map <- lapply(1:length(var),function(x){
     #load(here::here("outputs","all_geo_res.RData"))
     mask = mask.full
     df <- all_geo_res[,var[x]]
-    df[is.na(df)] <- 0
+    #df[is.na(df)] <- 0
     df <- data.frame(df,getValues(mask.full))
     colnames(df) <- c(var[x],"MPA")
     df[,var[x]][df$MPA==100] <- -1000000
