@@ -100,12 +100,12 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
           legend.direction = "horizontal",
           legend.title    = element_blank(), 
           plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
-          legend.text     = element_text(face = "plain", size = 8),
+          legend.text     = element_text(face = "plain", size = 14),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.border = element_blank(),
           #legend.key.height= unit(1.5, 'cm'),
-          legend.key.width= unit(2, 'cm'),
+          legend.key.width= unit(4, 'cm'),
           axis.text=element_text(size=14),
           axis.title=element_text(size=14,face="bold")
           ) 
@@ -144,12 +144,12 @@ map <- ggplot(world)+
         legend.direction = "horizontal",
         legend.title    = element_blank(), 
         plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
-        legend.text     = element_text(face = "plain", size = 8),
+        legend.text     = element_text(face = "plain", size = 14),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         #legend.key.height= unit(1.5, 'cm'),
-        legend.key.width= unit(2, 'cm'),
+        legend.key.width= unit(4, 'cm'),
         axis.text=element_text(size=14),
         axis.title=element_text(size=14,face="bold")
   ) 
@@ -189,12 +189,12 @@ if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_Final
            legend.direction = "horizontal",
            legend.title    = element_blank(), 
            plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
-           legend.text     = element_text(face = "plain", size = 8),
+           legend.text     = element_text(face = "plain", size = 14),
            panel.grid.major = element_blank(),
            panel.grid.minor = element_blank(),
            panel.border = element_blank(),
            #legend.key.height= unit(1.5, 'cm'),
-           legend.key.width= unit(2, 'cm'),
+           legend.key.width= unit(4, 'cm'),
            axis.text=element_text(size=14),
            axis.title=element_text(size=14,face="bold")
      ) 
@@ -229,12 +229,12 @@ map <- ggplot(world) +
         legend.direction = "horizontal",
         legend.title    = element_blank(), 
         plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
-        legend.text     = element_text(face = "plain", size = 8),
+        legend.text     = element_text(face = "plain", size = 14),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         #legend.key.height= unit(1.5, 'cm'),
-        legend.key.width= unit(2, 'cm'),
+        legend.key.width= unit(4, 'cm'),
         axis.text=element_text(size=14),
         axis.title=element_text(size=14,face="bold")
   ) 
