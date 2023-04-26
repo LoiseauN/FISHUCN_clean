@@ -28,13 +28,14 @@ var = c("richness_finalNT",
         "richness_initNT",
         "richness_initNS",
         "richness_initTH",
-        "DeltaRank_SameWeight")
+        "DeltaRank_SameWeight",
+        "DeltaRank_Proba")
 
 
 
 all_map <- lapply(1:length(var),function(x){
 
-  if(! var[x] %in% c("DeltaRank_SameWeight")){ 
+  if(! var[x] %in% c("DeltaRank_SameWeight","DeltaRank_Proba")){ 
   
     mask = mask.full
     df <- all_geo_res[,var[x]]
@@ -69,7 +70,7 @@ all_map <- lapply(1:length(var),function(x){
   mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
   mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
    
-  if(var[x] %in% c("DeltaRank_SameWeight")) {
+  if(var[x] %in% c("DeltaRank_SameWeight","DeltaRank_Proba")) {
     mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
   
 #'--------------------------------------------------------@Threatened
@@ -77,16 +78,19 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
   
   map <- ggplot(world) +
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-    #scale_alpha(range=c(0.5,0.5))+
-    #scale_fill_manual(name = "mask.full", values = my_colors) +
+    scale_colour_gradientn(
+      colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
+    
+    scale_fill_gradientn(
+      colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
 
-    scale_fill_hp(option = "Ravenclaw", 
-                  limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
-                             max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH))))+
-    scale_color_hp(option = "Ravenclaw", 
-                  limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
-                             max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH))))+
-    geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+    #scale_fill_hp(option = "Ravenclaw", 
+           #       limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
+                #             max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH))))+
+   # scale_color_hp(option = "Ravenclaw", 
+        #          limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
+           #                  max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH))))+
+    geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
     geom_graticules(mol) +
     geom_mapframe(mol, colour = "white", size = 2.0) +
     #geom_mapframe(mol, colour = "black", size = 0.4) +
@@ -100,7 +104,7 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
           legend.direction = "horizontal",
           legend.title    = element_blank(), 
           plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
-          legend.text     = element_text(face = "plain", size = 14),
+          legend.text     = element_text(face = "plain", size = 16),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.border = element_blank(),
@@ -121,16 +125,19 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
  if (var[x] =="richness_initNT" || var[x] == "richness_finalNT")  { 
 map <- ggplot(world)+
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-  #scale_alpha(range=c(0.5,0.5))+
-  #scale_fill_manual(name = "mask.full", values = my_colors) +
+  scale_colour_gradientn(
+    colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
   
-  scale_fill_hp(option = "Ravenclaw", 
-                limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
-                           max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT))))+
-  scale_color_hp(option = "Ravenclaw", 
-                 limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
-                            max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT))))+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+  scale_fill_gradientn(
+    colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
+  
+  #scale_fill_hp(option = "Ravenclaw", 
+  #              limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
+  #                         max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT))))+
+  #scale_color_hp(option = "Ravenclaw", 
+  #               limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
+   #                         max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT))))+
+  geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   #geom_mapframe(mol, colour = "black", size = 0.4) +
@@ -144,7 +151,7 @@ map <- ggplot(world)+
         legend.direction = "horizontal",
         legend.title    = element_blank(), 
         plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
-        legend.text     = element_text(face = "plain", size = 14),
+        legend.text     = element_text(face = "plain", size = 16),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
@@ -166,16 +173,19 @@ if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_Final
  if  (var[x] =="richness_initNS" || var[x] == "richness_finalNS")  {  
    map <- ggplot(world) +
      geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-     #scale_alpha(range=c(0.5,0.5))+
-     #scale_fill_manual(name = "mask.full", values = my_colors) +
+     scale_colour_gradientn(
+       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
      
-     scale_fill_hp(option = "Ravenclaw", 
-                   limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
-                              max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS))))+
-     scale_color_hp(option = "Ravenclaw", 
-                    limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
-                               max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS))))+
-     geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+     scale_fill_gradientn(
+       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
+     
+    # scale_fill_hp(option = "Ravenclaw", 
+     #              limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
+      #                        max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS))))+
+    # scale_color_hp(option = "Ravenclaw", 
+      #              limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
+     #                          max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS))))+
+     geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
      geom_graticules(mol) +
      geom_mapframe(mol, colour = "white", size = 2.0) +
      #geom_mapframe(mol, colour = "black", size = 0.4) +
@@ -189,7 +199,7 @@ if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_Final
            legend.direction = "horizontal",
            legend.title    = element_blank(), 
            plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
-           legend.text     = element_text(face = "plain", size = 14),
+           legend.text     = element_text(face = "plain", size = 16),
            panel.grid.major = element_blank(),
            panel.grid.minor = element_blank(),
            panel.border = element_blank(),
@@ -204,18 +214,29 @@ if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_Final
    if (var[x] =="richness_finalNS")  { ggsave(file = here::here("figures/IUCN_FinalNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 #rm(map)
 }
-
+  
 #'--------------------------------------------------------@DeltaRankzonation
- if  (var[x] =="DeltaRank_SameWeight" )  {  
+ if  (var[x] =="DeltaRank_SameWeight" || var[x] == "DeltaRank_Proba")  {  
 
 # adjustcolor( "chartreuse4", alpha.f = 0.7)
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-   scale_fill_gradient2(midpoint= 0, low="#00AFBB", mid="white",
-                        high="#FC4E07", space ="Lab",na.value = "palegreen3")+
-  scale_color_gradient2(midpoint= 0, low="#00AFBB", mid="white",
-                       high="#FC4E07", space ="Lab",na.value = "palegreen3")+
-  geom_sf(data = world, fill = "#bebebe", color = "white", size = 0.1) +
+
+  scale_colour_gradientn(na.value = "#66CDAA66",
+                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100),
+                         limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
+                                    max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                                   
+  
+  scale_fill_gradientn(na.value = "#66CDAA66",
+                       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100),
+                       limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
+                                                            max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
+ 
+  #scale_fill_gradient2(midpoint= 0, low="#2166AC", mid="white",
+     #                   high="#B2182B", space ="Lab",na.value = "#7CCD7C80")+
+  #scale_color_gradient2(midpoint= 0, low="#2166AC", mid="white",#00AFBB
+    #                   high="#B2182B", space ="Lab",na.value = "#7CCD7C80")+
+  geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
   #geom_mapframe(mol, colour = "black", size = 0.4) +
@@ -227,9 +248,9 @@ map <- ggplot(world) +
   theme_bw()+
   theme(legend.position = "bottom",#c(0.85, 0.1),
         legend.direction = "horizontal",
-        legend.title    = element_blank(), 
+        legend.title    = element_blank(),#"Change in priority", 
         plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
-        legend.text     = element_text(face = "plain", size = 14),
+        legend.text     = element_text(face = "plain", size = 16),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
@@ -239,10 +260,10 @@ map <- ggplot(world) +
         axis.title=element_text(size=14,face="bold")
   ) 
 
-#guides(fill = guide_legend(nrow = 1))
-ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)
-#rm(map)
+if (var[x] =="DeltaRank_SameWeight")   { ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+
+if (var[x] =="DeltaRank_Proba")  {  ggsave(file = here::here("figures/Figure6Supplentary.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+
  }
   
-
-})
+  })

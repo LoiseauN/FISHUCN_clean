@@ -214,8 +214,12 @@ save(all_predict,file = "outputs/all_predict.Rdata")
 
 
 
-#THEN  FUNCTION THAT MAKES CONSENSUS OF BOTH METHODS FOR SUPPLEMENTARY
+#TO CORRECT THEN  FUNCTION THAT MAKES CONSENSUS OF BOTH METHODS FOR SUPPLEMENTARY
+all_predict <- IUCN_consensus(IUCN_preds_machine_final,IUCN_preds_deep_final)
 
+#------------------Figure------------------------
 
+#Figure 2 
+chid_chord(data_zonation, sup = TRUE)
 
-
+#Figure 2

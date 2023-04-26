@@ -1,9 +1,18 @@
 #' Circular Chord Diagram
 
-load(here::here("outputs", "data_zonation.RData"))
 
-dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
-                                             "predict_complementary")])
+chid_chord <- function(data_zonation,sup){ 
+  
+  load(here::here("outputs", "data_zonation.RData"))
+  
+  # for consensensus 
+    if(sup == TRUE){dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
+                                                              "predict_consensus")])  }
+  # for complementarity 
+  else{dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
+                                                    "predict_complementary")]) }
+
+  colnames(dat_network)[3] <- "predict"
 
 ## Rename levels ----
 
@@ -28,7 +37,7 @@ for (i in 1:nrow(dat_network)) {
   
   if (is.na(dat_network$"IUCN_cat"[i])) {
     
-    dat_network$"IUCN_final"[i] <- dat_network$"predict_complementary"[i]
+    dat_network$"IUCN_final"[i] <- dat_network$"predict"[i]
     
   } else {
     
@@ -53,7 +62,7 @@ dat_network$"IUCN_cat"   <- factor(dat_network$"IUCN_cat",
 dat_network$"IUCN_final" <- factor(dat_network$"IUCN_final", 
                                  levels = level_s)
 
-save(dat_network, file = here::here("outputs", "dat_network.RData"))
+#save(dat_network, file = here::here("outputs", "dat_network.RData"))
 
 ## Confusion matrix ----
 mat <- table(dat_network$"IUCN_cat", dat_network$"IUCN_final")
@@ -75,10 +84,11 @@ grid.col1a = c(A_Threatened = "#FC4E07", `A_Non Threatened` = "#00AFBB", `A_No S
 
 
 
+if(sup == TRUE) {png(here::here("figures", "figure_2_supp.png"), height = 6, width = 6, 
+                    units = "in", res = 300) }
 
-png(here::here("figures", "figure_2bis.png"), height = 6, width = 6, 
-    units = "in", res = 300)
-
+else {png(here::here("figures", "figure_2bis.png"), height = 6, width = 6, 
+                    units = "in", res = 300) }
 
 par(new = FALSE, fg = "black", col = "black")
 circlize::circos.clear()
@@ -123,3 +133,4 @@ for (si in circlize::get.all.sector.index()) {
 }
 
 dev.off()
+}
