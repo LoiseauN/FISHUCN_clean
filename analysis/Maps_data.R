@@ -223,14 +223,14 @@ map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
 
   scale_colour_gradientn(na.value = "#66CDAA66",
-                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100),
-                         limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
-                                    max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                                   
+                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+#,
+                           #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
+                           #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                              
   
   scale_fill_gradientn(na.value = "#66CDAA66",
-                       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100),
-                       limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
-                                                            max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
+                       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+#,
+                       #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
+                       #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
  
   #scale_fill_gradient2(midpoint= 0, low="#2166AC", mid="white",
      #                   high="#B2182B", space ="Lab",na.value = "#7CCD7C80")+
