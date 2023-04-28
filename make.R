@@ -37,6 +37,7 @@ devtools::install_github("zmjones/edarf", subdir = "pkg")
 
 files.source <- list.files(here::here("R"), pattern = "\\.R$", 
                            full.names = TRUE)
+sapply(files.source,source,.GlobalEnv)
 
 ## Loading all data ----
 
