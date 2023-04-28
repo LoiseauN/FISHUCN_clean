@@ -66,7 +66,7 @@ species_traits = FB_scrap()
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 
 #remove(freshwaterfish)
-species_traits <- species_traits[species_traits$Env_1 %in% c("Marine","Marine_brackish"),]
+species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
 
 #Save species_traits
 save(species_traits,file = here::here("outputs/species_traits.RData"))
@@ -90,7 +90,7 @@ FB_vars = FB_scrapped %>%
          Depth_max = log10(Depth_max+1))
 
 #Get IUCN status
-IUCN_status <- get_iucn_status(IUCN_status)
+IUCN_status <- get_iucn_status(FB_vars)
 save(IUCN_status,file = "outputs/IUCN_status.RData")
 
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
