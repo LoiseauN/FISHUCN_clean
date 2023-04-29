@@ -38,8 +38,6 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
 
 # SCENARIO 1: 
 # 1 for everyone
-
-
 # SCENARIO 2  :  Weighted in function of the machine learning probability with negative influence for non threaten
 # NA  by IUCN and predit = 2 (for SM 2 and 1)
 # NonThreatened by IUCN  = 1 
@@ -47,9 +45,11 @@ rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$
 # Threatened by IUCN = 6
 # Threatened predit = 2 + probability (range between 2 and 5)
 
+# SCENARIO 2  :  Weighted in function of the machine learning prediction but same weight than IUCN
 data_zonation$weight_zonation_IUCN_and_Predict <- NA
 data_zonation$weight_zonation_IUCN_alone <- NA
 data_zonation$scenario1_NoWeight <- 1
+data_zonation$weight_zonation_Predict_sameWeigthIUCN <- NA
 
   for(i in 1:nrow(data_zonation)){
    
@@ -58,11 +58,13 @@ data_zonation$scenario1_NoWeight <- 1
     if(data_zonation$IUCN_cat[i] %in% "Thr"){
       data_zonation$weight_zonation_IUCN_alone[i] <- 6
       data_zonation$weight_zonation_IUCN_and_Predict[i] <-  6  
+      data_zonation$weight_zonation_Predict_sameWeigthIUCN[i] <-  6  
       }
 
      else if (data_zonation$IUCN_cat[i] %in% "NThr"){
        data_zonation$weight_zonation_IUCN_alone[i] <- 1
        data_zonation$weight_zonation_IUCN_and_Predict[i] <- 1
+       data_zonation$weight_zonation_Predict_sameWeigthIUCN[i] <-  1 
       }
 
     else{ 
@@ -71,7 +73,7 @@ data_zonation$scenario1_NoWeight <- 1
       
       data_zonation$weight_zonation_IUCN_alone[i] <- 2
       data_zonation$weight_zonation_IUCN_and_Predict[i] <- 2 # ou 1.5 
-      
+      data_zonation$weight_zonation_Predict_sameWeigthIUCN[i] <-  2
     }
     
       else if(data_zonation$predict_complementary[i] %in% "NThr"){
@@ -79,13 +81,14 @@ data_zonation$scenario1_NoWeight <- 1
       #Non Threatened predict par model
         data_zonation$weight_zonation_IUCN_alone[i] <- 1
         data_zonation$weight_zonation_IUCN_and_Predict[i] <- data_zonation[data_zonation$species %in% data_zonation$species[i],]$proba_rescale
-    }
+        data_zonation$weight_zonation_Predict_sameWeigthIUCN[i] <-  1
+        }
     
       else if(data_zonation$predict_complementary[i] %in% "Thr"){
       
         data_zonation$weight_zonation_IUCN_alone[i] <- 1
         data_zonation$weight_zonation_IUCN_and_Predict[i] <- data_zonation[data_zonation$species %in% data_zonation$species[i],]$proba_rescale
-
+        data_zonation$weight_zonation_Predict_sameWeigthIUCN[i] <-  6
          }
     
       }
@@ -95,7 +98,8 @@ data_zonation$scenario1_NoWeight <- 1
     
  boxplot(data_zonation$scenario1_NoWeight,
         data_zonation$weight_zonation_IUCN_alone,
-        data_zonation$weight_zonation_IUCN_and_Predict)
+        data_zonation$weight_zonation_IUCN_and_Predict,
+        data_zonation$weight_zonation_Predict_sameWeigthIUCN)
  
  save(data_zonation,file= here::here("outputs","data_zonation.RData"))
  
@@ -114,9 +118,9 @@ data_zonation$scenario1_NoWeight <- 1
  IUCNonly <- data_zonation[,c("species","weight_zonation_IUCN_alone")]
  IUCNandpredict <- data_zonation[,c("species","weight_zonation_IUCN_and_Predict")]
  NoWeight <- data_zonation[,c("species","scenario1_NoWeight")] 
+ IUCNandpredict_sameweigth <- data_zonation[,c("species","weight_zonation_Predict_sameWeigthIUCN")] 
  
- 
- data_final_zonation <-list(IUCNonly,IUCNandpredict,NoWeight)
+ data_final_zonation <-list(IUCNonly,IUCNandpredict,NoWeight,IUCNandpredict_sameweigth)
  save(data_final_zonation,file= here::here("outputs","data_final_zonation.RData"))
  
  
