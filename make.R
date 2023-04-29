@@ -43,8 +43,8 @@ sapply(files.source,source,.GlobalEnv)
 
 files   <- list.files(here::here("data"), pattern = "\\.rds$", 
                       full.names = TRUE)
-FB_vars <- lapply(files, readRDS) %>% 
-  dplyr::bind_rows()
+#FB_vars <- lapply(files, readRDS) %>% 
+#  dplyr::bind_rows()
 
 
 files     <- list.files(here::here("data"), pattern = "\\.RData$", 
@@ -67,7 +67,7 @@ species_traits = FB_scrap()
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 
 #remove(freshwaterfish)
-species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
+#species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
 
 #Save species_traits
 save(species_traits,file = here::here("outputs/species_traits.RData"))
