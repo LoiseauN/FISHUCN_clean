@@ -177,7 +177,7 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 #Applying missforest
 data_noNA = missForest_applied(FB_IUCN_final,0.55,test_missForest)
-save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
+#save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
 
@@ -220,7 +220,10 @@ all_predict <- IUCN_consensus(IUCN_preds_machine_final,IUCN_preds_deep_final)
 
 #------------------Figure------------------------
 
-#Figure 2 
+  #Figure 2 
+  chid_chord(data_zonation, sup = FALSE)
+#For See
 chid_chord(data_zonation, sup = TRUE)
+#Figure 7
 
-#Figure 2
+figRank(data = all_geo_res, sup = FALSE)

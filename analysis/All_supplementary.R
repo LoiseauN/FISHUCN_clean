@@ -58,4 +58,3 @@ if(var[x] %in% c("DeltaRank_SameWeight")) {
 
 
 
-DeltaRank_Proba
