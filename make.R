@@ -67,7 +67,7 @@ species_traits = FB_scrap()
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 
 #remove(freshwaterfish)
-#species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
+species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
 
 #Save species_traits
 save(species_traits,file = here::here("outputs/species_traits.RData"))
@@ -110,7 +110,7 @@ FB_final$IUCN = as.factor(FB_final$IUCN)
 #Sorting out some problems with data 
 
 FB_final[FB_final==""]<-NA
-FB_final <- FB_final[rowSums(is.na(FB_final)) != 23, ]
+FB_final <- FB_final[rowSums(is.na(FB_final)) != 16, ]
 
 save(FB_final,file = "outputs/FB_final.Rdata")
 
