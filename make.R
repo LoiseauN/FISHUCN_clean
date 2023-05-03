@@ -220,10 +220,12 @@ all_predict <- IUCN_consensus(IUCN_preds_machine_final,IUCN_preds_deep_final)
 
 #------------------Figure------------------------
 
-  #Figure 2 
-  chid_chord(data_zonation, sup = FALSE)
-#For See
+#Figure 2 
+chid_chord(data_zonation, sup = FALSE)
+#For Supp
 chid_chord(data_zonation, sup = TRUE)
-#Figure 7
 
+#Figure 7
 figRank(data = all_geo_res, sup = FALSE)
+#For Supp
+figRank(data = all_geo_res, sup = TRUE)

@@ -11,6 +11,7 @@ figRank <- function(data,sup){
 
 
   data <- na.omit(data)
+  #data <- data[sample(c(1:nrow(data)), 100000, replace = TRUE),]
   #compute log richness and order
   data$logrichness <- log10(data$richness)  
   data <- data[data$richness>0,]
@@ -18,7 +19,7 @@ figRank <- function(data,sup){
 
   
   if(sup == TRUE){
-    data$rankSc2 <- data$DeltaRank_Proba
+    data$rankSc2 <- data$PredictProba_IUCN_weigth
     data$rankSc1 <- data$IUCN_weigth 
     
   }else{
