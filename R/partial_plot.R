@@ -53,7 +53,8 @@ var_partial = function(data,var,names){
         theme(legend.position ="none",
               axis.text.x = element_blank(), 
               axis.ticks.x = element_blank(),
-              panel.grid.minor = element_blank()) +
+              panel.grid.minor = element_blank(),
+              axis.title=element_text(size=20)) +
         geom_text(data= dftext,
                   mapping= aes(x=pos, y=0.05, label = var),
                   size=3, 
@@ -71,7 +72,9 @@ var_partial = function(data,var,names){
         ylab("Probability")+
         xlab(names[x])+
         theme(legend.position="none",
-              panel.grid.minor = element_blank())
+              panel.grid.minor = element_blank(),
+              axis.title=element_text(size=20),
+              axis.text = element_text(size = 18))
     }
     return(part_plot)
     

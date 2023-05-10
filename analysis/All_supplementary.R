@@ -60,6 +60,7 @@ if(var[x] %in% c("DeltaRank_SameWeight")) {
 
 #'---------------------------------------------------------------------@Checkperfamily
 load(file = here::here("outputs", "FB_final.RData"))
+load(file = here::here("outputs", "dat_network.RData"))
 
 res <- merge(dat_network, FB_final[,c("Genus","Family")], by.x="species", by.y="row.names")
 
@@ -77,40 +78,30 @@ res <- reshape2::melt(res, id.vars=c("Family","richness"))
 res <-  res[order(res$richness,decreasing = T),]
 res <- res[res$richness>0,]
 
-ggplot(res,aes(x = reorder(Family, richness), y= value, fill = variable)) +
+res$status <- factor(res$variable, levels = c("Threatened", "Non Threatened", "No Status"))
+
+all <- ggplot(res,aes(x = reorder(Family, richness), y= value, fill = status)) +
   geom_bar(stat = "identity",position ="stack")+ 
-  coord_flip()
+  coord_flip()+
+  scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800"), name = "IUCN status", 
+                    guide = guide_legend(reverse = FALSE))+
+  theme_bw() +
+  xlab("Family")+ylab("Number of species")+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+   panel.background = element_blank(),axis.text.y = element_text(size = 5))
 
-ggplot(df_long, aes(x = as.numeric(reorder(Family, richness)), y = value, fill = id))+
-  geom_bar(stat = "identity", position = "dodge", width = 0.7)+
-  scale_fill_manual(values=c("red", "black")) + 
-  theme_bw()+
-  facet_zoom(xy = Site_reorder%in%c("site14", "site9", "site8", "site1", "site11"), horizontal=FALSE) + 
-  scale_x_continuous(
-    breaks = 1:length(levels(df_long$Site_reorder)),
-    label = levels(df_long$Site_reorder)
-  )+
-  labs(x = "", y = " ")+
-  theme(legend.position = c(0.90, 0.90), legend.background = element_rect(fill="transparent"),
-        legend.title = element_blank(), axis.text.x=element_text(angle=55, vjust=1,  hjust=1,size = 8))
   
-  
-  
+zoom <- ggplot(res,aes(x = reorder(Family, richness), y= value, fill = status)) +
+  geom_bar(stat = "identity",position ="stack")+ 
+  coord_flip()+
+  scale_x_discrete(limits = rev(c(unique(res$Family[c(1:90)])))) +
+  scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800"))+
+  theme_bw() +
+  xlab(" ")+ylab(" ")+
+  theme(legend.position = "none")
 
-  library(tidyr) 
-  library(dplyr)
-  library(ggplot2)
-  library(ggforce)
-  df_reorder <-  transform(df, 
-                           Site_reorder = reorder(Site, -measured))
-  df_long <- df_reorder %>% gather("id", "value", 2:3) 
-  
-  
-  ggplot(df_long, aes(x = Site_reorder, y = value, fill = id))+
-    geom_bar(stat = "identity", position = "dodge", width = 0.7)+
-    scale_fill_manual(values=c("red", "black")) + 
-    theme_bw()+
-    facet_zoom(x = Site_reorder%in%c("site14", "site9", "site8", "site1", "site11"))+
-    labs(x = "", y = " ")+
-    theme(legend.position = c(0.90, 0.90), legend.background = element_rect(fill="transparent"),
-          legend.title = element_blank(), axis.text.x=element_text(angle=55, vjust=1,  hjust=1,size = 8))
+
+fig_S3 <- all+annotation_custom(ggplotGrob(zoom), xmin = 0, xmax = 200,ymin = 100, ymax = 450)
+
+ggsave(here::here("figures","fig_S3.png"), plot = fig_S3,
+       width = 12, height = 12, dpi = 300, units = "in", device='png')

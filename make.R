@@ -26,7 +26,7 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
            "tidyverse", "viridis", "XML", "circlize","edarf","rgdal",
           "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter",
-          "randomForest","caret","ROCR")
+          "randomForest","caret","ROCR","RColorBrewer")
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
@@ -176,7 +176,7 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.55,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.6,test_missForest)
 #save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
@@ -224,7 +224,7 @@ chid_chord(data_zonation, sup = FALSE)
 #For Supp
 chid_chord(data_zonation, sup = TRUE)
 
-#Figure 7
+#to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
 figRank(data = all_geo_res, sup = FALSE)
 #For Supp
 figRank(data = all_geo_res, sup = TRUE)

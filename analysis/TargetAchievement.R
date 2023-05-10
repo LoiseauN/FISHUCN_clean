@@ -186,7 +186,7 @@ Cover_AFTER <- ggviolin(
 ggarrange(Target_AFTER,Cover_AFTER,Target_BEFORE, Cover_BEFORE,nrow = 2,ncol = 2)
 
 #Target_AFTER 
-Target_AFTER plot.margin = ggplot2::margin(5.5, 0, 0, 5.5)
+plot.margin = ggplot2::margin(5.5, 0, 0, 5.5)
 
 #Cover_AFTER
 plot.margin = ggplot2::margin(5.5, 5.5, 0, 0)

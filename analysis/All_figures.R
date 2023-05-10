@@ -83,10 +83,11 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   rphylopic::add_phylopic(amphibians_pic,x = 4, y = 50, ysize = 8, alpha = 1)+
   rphylopic::add_phylopic(fish_pic,      x = 5, y = 50, ysize = 7.5, alpha = 1) +
   theme( legend.position = "bottom",
-         axis.text=element_text(size=16),
-         axis.title=element_text(size=18,face="bold"),
-         legend.title=element_text(size=16,face="bold"),
-         legend.text=element_text(size=14))
+         axis.text=element_text(size=18),
+         axis.title=element_text(size=20),
+         legend.title=element_text(size=20),
+         legend.text=element_text(size=18))
+
 
 grob_birds <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "birds",]$n)), x=0.1,  y=0.95, hjust=0,
                                 gp=gpar(fontsize=12,fontface="bold")))
@@ -123,21 +124,12 @@ partial_plot <- var_partial(data =  data_noNA,
 
 importance_plot = var_imp(test_IUCN[[1]])      
 
-#importance_plot <- importance_plot + annotation_custom(ggplotGrob(partial_plot[[1]]), xmin = 6, xmax = 11, 
-#ymin = 20, ymax = 35.65)
 
-#fig2 <- gridExtra::grid.arrange(partial_plot[[1]],
-#                                partial_plot[[2]],
-#                                partial_plot[[3]],
-#                                partial_plot[[4]])
-
-#fig2 <-  gridExtra::grid.arrange(importance_plot,fig2,ncol=3)
 fig2 <- importance_plot + (partial_plot[[1]] /
                    partial_plot[[2]])+ 
                   (partial_plot[[3]] /
                    partial_plot[[4]])
-   # importance_plot + annotation_custom(ggplotGrob(partial_plot[[2]]), xmin = 1, xmax = 6, 
-# ymin = 20, ymax = 35.65)
+
 
 ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 6, units= "in",dpi= 300)
 
@@ -149,30 +141,6 @@ load(file = here::here("outputs", "dat_network.RData"))
 
 gainNThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
 gainThr <- ((table(dat_network$IUCN_cat)[1]-table(dat_network$IUCN_final)[1])/table(dat_network$IUCN_cat)[1])*100
-
-
-
-
-#'---------------------------------------------------------------------@zonationanalyses
-all_geo_res <- all_geo_res[order(all_geo_res$richness, decreasing=FALSE), ]
-all_geo_res <- na.omit(all_geo_res)
-
-
-fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
-  geom_point(size=2.5,alpha = 0.3,shape=16) + 
-  #scale_color_distiller(palette = "Spectral")+
-  #scale_color_gradient(low = "#00AFBB", high = "#FC4E07")+
-  scale_color_hp(option = "Gryffindor")+
-  theme_bw() + xlab("Cell rank BEFORE")+ ylab("Cell rank AFTER") +
-  geom_abline(slope=1, intercept = 0)+
-  theme(axis.text=element_text(size=14),
-        axis.title=element_text(size=14,face="bold"),
-        legend.position = c(0.80, 0.08),
-        legend.key.height= unit(1, 'cm'),
-        legend.key.width= unit(1, 'cm'),
-        legend.direction = "horizontal")
-ggsave(file = here::here("figures/Figure6a.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
-
 
 
 
