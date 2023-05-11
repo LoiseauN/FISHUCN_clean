@@ -78,10 +78,10 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
   
   map <- ggplot(world) +
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-    scale_colour_gradientn(
+    scale_colour_gradientn(name  = "Richness TH",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
     
-    scale_fill_gradientn(
+    scale_fill_gradientn(name  = "Richness TH",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
 
     #scale_fill_hp(option = "Ravenclaw", 
@@ -102,33 +102,29 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
     theme_bw()+
     theme(legend.position = "bottom",#c(0.85, 0.1),
           legend.direction = "horizontal",
-          legend.title    = element_blank(), 
-          plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+          legend.title    =  element_text(face = "plain", size = 16,vjust = 0.75),
           legend.text     = element_text(face = "plain", size = 16),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.border = element_blank(),
           #legend.key.height= unit(1.5, 'cm'),
           legend.key.width= unit(4, 'cm'),
-          axis.text=element_text(size=14),
-          axis.title=element_text(size=14,face="bold")
-          ) 
+          axis.text=element_text(size=18),
+          axis.title=element_text(size=20) ) 
+  
   if (var[x] =="richness_initTH")   { ggsave(file = here::here("figures/IUCN_InitialThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
   
   if (var[x] =="richness_finalTH")  { ggsave(file = here::here("figures/IUCN_FinalThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
-  #rm(map)
+  
   }
   
 #'--------------------------------------------------------@Non-Threatened
-
-
  if (var[x] =="richness_initNT" || var[x] == "richness_finalNT")  { 
-map <- ggplot(world)+
+  map <- ggplot(world)+
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-  scale_colour_gradientn(
+  scale_colour_gradientn(name  = "Richness NT", 
     colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
-  
-  scale_fill_gradientn(
+  scale_fill_gradientn(name  = "Richness NT", 
     colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
   
   #scale_fill_hp(option = "Ravenclaw", 
@@ -149,22 +145,22 @@ map <- ggplot(world)+
   theme_bw()+
   theme(legend.position = "bottom",#c(0.85, 0.1),
         legend.direction = "horizontal",
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+        legend.title    =  element_text(face = "plain", size = 16,vjust = 0.75),
         legend.text     = element_text(face = "plain", size = 16),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         #legend.key.height= unit(1.5, 'cm'),
         legend.key.width= unit(4, 'cm'),
-        axis.text=element_text(size=14),
-        axis.title=element_text(size=14,face="bold")
-  ) 
-if (var[x] =="richness_initNT")   { ggsave(file = here::here("figures/IUCN_InitialNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=20) ) 
+        #annotate("text", x = 12.5, y = 3.5, label = "Arbitrary text") +
+        #coord_cartesian(ylim = c(4, 8), clip = "off")+
 
-if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_FinalNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+  
+if (var[x] =="richness_initNT")   {ggsave(file = here::here("figures/IUCN_InitialNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 
-#rm(map)
+if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 }
 
 #'--------------------------------------------------------@No-Status
@@ -173,10 +169,10 @@ if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_Final
  if  (var[x] =="richness_initNS" || var[x] == "richness_finalNS")  {  
    map <- ggplot(world) +
      geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-     scale_colour_gradientn(
+     scale_colour_gradientn(name  = "Richness NS",
        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
      
-     scale_fill_gradientn(
+     scale_fill_gradientn(name  = "Richness NS",
        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
      
     # scale_fill_hp(option = "Ravenclaw", 
@@ -197,17 +193,15 @@ if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_Final
      theme_bw()+
      theme(legend.position = "bottom",#c(0.85, 0.1),
            legend.direction = "horizontal",
-           legend.title    = element_blank(), 
-           plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+           legend.title    =  element_text(face = "plain", size = 16,vjust = 0.75),
            legend.text     = element_text(face = "plain", size = 16),
            panel.grid.major = element_blank(),
            panel.grid.minor = element_blank(),
            panel.border = element_blank(),
            #legend.key.height= unit(1.5, 'cm'),
            legend.key.width= unit(4, 'cm'),
-           axis.text=element_text(size=14),
-           axis.title=element_text(size=14,face="bold")
-     ) 
+           axis.text=element_text(size=18),
+           axis.title=element_text(size=20) ) 
    
    if (var[x] =="richness_initNS")   { ggsave(file = here::here("figures/IUCN_InitialNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
    
