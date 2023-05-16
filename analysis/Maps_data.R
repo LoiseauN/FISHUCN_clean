@@ -32,8 +32,6 @@ var = c("richness_finalNT",
         "DeltaRank_Proba")
 
 
-var =   c( "DeltaRank_SameWeight",
-"DeltaRank_Proba")
 all_map <- lapply(1:length(var),function(x){
 
   if(! var[x] %in% c("DeltaRank_SameWeight","DeltaRank_Proba")){ 
@@ -214,12 +212,12 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
 
-  scale_colour_gradientn(na.value = "#66CDAA66", name  = "Delta Rank",
+  scale_colour_gradientn(na.value = "#66CDAA66", name  = "Rank after - rank before",
                          colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+#,
                            #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
                            #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                              
   
-  scale_fill_gradientn(na.value = "#66CDAA66",name  = "Delta Rank",
+  scale_fill_gradientn(na.value = "#66CDAA66",name  = "Rank after - rank before",
                        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+#,
                        #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
                        #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
