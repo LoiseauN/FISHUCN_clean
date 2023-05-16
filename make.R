@@ -61,6 +61,11 @@ data_list <- lapply(files, load, .GlobalEnv)
 
 
 #------------------Running code------------------------
+#Get IUCN status
+IUCN_status <- get_iucn_status(FishDistribArea_all)
+save(IUCN_status,file = "outputs/IUCN_status.RData")
+
+
 #Scrap Data from Fishbase
 species_traits = FB_scrap()
 
@@ -90,9 +95,6 @@ FB_vars = FB_scrapped %>%
   mutate(Depth_min = log10(Depth_min+1),
          Depth_max = log10(Depth_max+1))
 
-#Get IUCN status
-IUCN_status <- get_iucn_status(FB_vars)
-save(IUCN_status,file = "outputs/IUCN_status.RData")
 
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 

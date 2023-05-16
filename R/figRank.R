@@ -135,7 +135,7 @@ figRank <- function(data,sup){
     theme(legend.position = "none",
           panel.grid.major = element_blank(), 
           panel.grid.minor = element_blank(),
-          axis.title=element_text(size=18),
+          axis.title=element_text(size=16),
           axis.text = element_text(size = 16))+
     ylim(-75,85)+
     scale_y_continuous(breaks=seq(-80,90,20))+
