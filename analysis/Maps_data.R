@@ -32,7 +32,6 @@ var = c("richness_finalNT",
         "DeltaRank_Proba")
 
 
-
 all_map <- lapply(1:length(var),function(x){
 
   if(! var[x] %in% c("DeltaRank_SameWeight","DeltaRank_Proba")){ 
@@ -78,10 +77,10 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
   
   map <- ggplot(world) +
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-    scale_colour_gradientn(
+    scale_colour_gradientn(name  = "Richness TH",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
     
-    scale_fill_gradientn(
+    scale_fill_gradientn(name  = "Richness TH",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
 
     #scale_fill_hp(option = "Ravenclaw", 
@@ -102,69 +101,59 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
     theme_bw()+
     theme(legend.position = "bottom",#c(0.85, 0.1),
           legend.direction = "horizontal",
-          legend.title    = element_blank(), 
-          plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+          legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
           legend.text     = element_text(face = "plain", size = 16),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.border = element_blank(),
           #legend.key.height= unit(1.5, 'cm'),
           legend.key.width= unit(4, 'cm'),
-          axis.text=element_text(size=14),
-          axis.title=element_text(size=14,face="bold")
-          ) 
+          axis.text=element_text(size=18),
+          axis.title=element_text(size=20),
+          legend.box="horizontal") +
+          guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
+          size = guide_legend(title.position="top", title.hjust = 0.5))
+  
   if (var[x] =="richness_initTH")   { ggsave(file = here::here("figures/IUCN_InitialThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
   
   if (var[x] =="richness_finalTH")  { ggsave(file = here::here("figures/IUCN_FinalThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
-  #rm(map)
+  
   }
   
 #'--------------------------------------------------------@Non-Threatened
-
-
  if (var[x] =="richness_initNT" || var[x] == "richness_finalNT")  { 
-map <- ggplot(world)+
+  map <- ggplot(world)+
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-  scale_colour_gradientn(
+  scale_colour_gradientn(name  = "Richness NT", 
     colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
-  
-  scale_fill_gradientn(
+  scale_fill_gradientn(name  = "Richness NT", 
     colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
-  
-  #scale_fill_hp(option = "Ravenclaw", 
-  #              limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
-  #                         max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT))))+
-  #scale_color_hp(option = "Ravenclaw", 
-  #               limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
-   #                         max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT))))+
-  geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
+   geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
-  #geom_mapframe(mol, colour = "black", size = 0.4) +
-  
+
   ylab(" ") +
   xlab(" ") +
   
-  #ggthemes::theme_map(base_family = "serif") +
   theme_bw()+
-  theme(legend.position = "bottom",#c(0.85, 0.1),
-        legend.direction = "horizontal",
-        legend.title    = element_blank(), 
-        plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
-        legend.text     = element_text(face = "plain", size = 16),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.border = element_blank(),
-        #legend.key.height= unit(1.5, 'cm'),
-        legend.key.width= unit(4, 'cm'),
-        axis.text=element_text(size=14),
-        axis.title=element_text(size=14,face="bold")
-  ) 
-if (var[x] =="richness_initNT")   { ggsave(file = here::here("figures/IUCN_InitialNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+    theme(legend.position = "bottom",#c(0.85, 0.1),
+          legend.direction = "horizontal",
+          legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
+          legend.text     = element_text(face = "plain", size = 16),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          #legend.key.height= unit(1.5, 'cm'),
+          legend.key.width= unit(4, 'cm'),
+          axis.text=element_text(size=18),
+          axis.title=element_text(size=20),
+          legend.box="horizontal") +
+          guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
+          size = guide_legend(title.position="top", title.hjust = 0.5))
+  
+if (var[x] =="richness_initNT")   {ggsave(file = here::here("figures/IUCN_InitialNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 
-if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_FinalNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
-
-#rm(map)
+if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 }
 
 #'--------------------------------------------------------@No-Status
@@ -173,10 +162,10 @@ if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_Final
  if  (var[x] =="richness_initNS" || var[x] == "richness_finalNS")  {  
    map <- ggplot(world) +
      geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-     scale_colour_gradientn(
+     scale_colour_gradientn(name  = "Richness NS",
        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
      
-     scale_fill_gradientn(
+     scale_fill_gradientn(name  = "Richness NS",
        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
      
     # scale_fill_hp(option = "Ravenclaw", 
@@ -197,17 +186,18 @@ if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_Final
      theme_bw()+
      theme(legend.position = "bottom",#c(0.85, 0.1),
            legend.direction = "horizontal",
-           legend.title    = element_blank(), 
-           plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+           legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
            legend.text     = element_text(face = "plain", size = 16),
            panel.grid.major = element_blank(),
            panel.grid.minor = element_blank(),
            panel.border = element_blank(),
            #legend.key.height= unit(1.5, 'cm'),
            legend.key.width= unit(4, 'cm'),
-           axis.text=element_text(size=14),
-           axis.title=element_text(size=14,face="bold")
-     ) 
+           axis.text=element_text(size=18),
+           axis.title=element_text(size=20),
+           legend.box="horizontal") +
+           guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
+           size = guide_legend(title.position="top", title.hjust = 0.5))
    
    if (var[x] =="richness_initNS")   { ggsave(file = here::here("figures/IUCN_InitialNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
    
@@ -222,12 +212,12 @@ if (var[x] =="richness_finalNT")  { ggsave(file = here::here("figures/IUCN_Final
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
 
-  scale_colour_gradientn(na.value = "#66CDAA66",
+  scale_colour_gradientn(na.value = "#66CDAA66", name  = "Rank after - rank before",
                          colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+#,
                            #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
                            #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                              
   
-  scale_fill_gradientn(na.value = "#66CDAA66",
+  scale_fill_gradientn(na.value = "#66CDAA66",name  = "Rank after - rank before",
                        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+#,
                        #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
                        #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
@@ -248,21 +238,22 @@ map <- ggplot(world) +
   theme_bw()+
   theme(legend.position = "bottom",#c(0.85, 0.1),
         legend.direction = "horizontal",
-        legend.title    = element_blank(),#"Change in priority", 
-        plot.title      = element_text(face = "bold",  size = 18, hjust = 1),
+        legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
         legend.text     = element_text(face = "plain", size = 16),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         #legend.key.height= unit(1.5, 'cm'),
         legend.key.width= unit(4, 'cm'),
-        axis.text=element_text(size=14),
-        axis.title=element_text(size=14,face="bold")
-  ) 
+        axis.text=element_text(size=18),
+        axis.title=element_text(size=20),
+        legend.box="horizontal") +
+  guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
+         size = guide_legend(title.position="top", title.hjust = 0.5))
 
 if (var[x] =="DeltaRank_SameWeight")   { ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 
-if (var[x] =="DeltaRank_Proba")  {  ggsave(file = here::here("figures/Figure6Supplentary.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+if (var[x] =="DeltaRank_Proba")  { ggsave(file = here::here("figures/Figure6Supplentary.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 
  }
   

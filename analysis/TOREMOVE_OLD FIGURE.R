@@ -1,3 +1,29 @@
+#'---------------------------------------------------------------------@zonationanalyses
+all_geo_res <- all_geo_res[order(all_geo_res$richness, decreasing=FALSE), ]
+all_geo_res <- na.omit(all_geo_res)
+
+
+fig_rank <- ggplot(all_geo_res, aes(x=rankSc1, y=rankSc2, color = log10(richness))) +
+  geom_point(size=2.5,alpha = 0.3,shape=16) + 
+  #scale_color_distiller(palette = "Spectral")+
+  #scale_color_gradient(low = "#00AFBB", high = "#FC4E07")+
+  scale_color_hp(option = "Gryffindor")+
+  theme_bw() + xlab("Cell rank BEFORE")+ ylab("Cell rank AFTER") +
+  geom_abline(slope=1, intercept = 0)+
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14,face="bold"),
+        legend.position = c(0.80, 0.08),
+        legend.key.height= unit(1, 'cm'),
+        legend.key.width= unit(1, 'cm'),
+        legend.direction = "horizontal")
+ggsave(file = here::here("figures/Figure6a.png"),fig_rank,width = 12, height = 12, units= "in",dpi= 300)
+
+
+
+
+
+
+
 #pal <- wes_palette("Zissou1", max(c(all_geo_res$Rnothr,all_geo_res$Rfinalnothr),na.rm=T), type = "continuous")
 
 all_geo_res$Perthrbefore <- all_geo_res$Rthr/(all_geo_res$Rthr+all_geo_res$Rnothr+all_geo_res$Rnostatus)

@@ -26,7 +26,7 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
            "tidyverse", "viridis", "XML", "circlize","edarf","rgdal",
           "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter",
-          "randomForest","caret","ROCR")
+          "randomForest","caret","ROCR","RColorBrewer")
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
@@ -61,13 +61,18 @@ data_list <- lapply(files, load, .GlobalEnv)
 
 
 #------------------Running code------------------------
+#Get IUCN status
+IUCN_status <- get_iucn_status(FishDistribArea_all)
+save(IUCN_status,file = "outputs/IUCN_status.RData")
+
+
 #Scrap Data from Fishbase
 species_traits = FB_scrap()
 
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 
 #remove(freshwaterfish)
-#species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
+species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
 
 #Save species_traits
 save(species_traits,file = here::here("outputs/species_traits.RData"))
@@ -90,9 +95,6 @@ FB_vars = FB_scrapped %>%
   mutate(Depth_min = log10(Depth_min+1),
          Depth_max = log10(Depth_max+1))
 
-#Get IUCN status
-IUCN_status <- get_iucn_status(FB_vars)
-save(IUCN_status,file = "outputs/IUCN_status.RData")
 
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
@@ -110,7 +112,7 @@ FB_final$IUCN = as.factor(FB_final$IUCN)
 #Sorting out some problems with data 
 
 FB_final[FB_final==""]<-NA
-FB_final <- FB_final[rowSums(is.na(FB_final)) != 23, ]
+FB_final <- FB_final[rowSums(is.na(FB_final)) != 16, ]
 
 save(FB_final,file = "outputs/FB_final.Rdata")
 
@@ -151,7 +153,7 @@ taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>%
   dplyr::select(name, query) %>% 
   dplyr::rename(Family = "name",
                 Genus = "query")
-
+save(taxo,file = here::here("taxo.RData"))
 taxo <- unique(taxo)
 FB_IUCN_taxo_nona <- FB_IUCN_taxo_na %>% left_join(taxo,by="Genus")
 rownames(FB_IUCN_taxo_nona) <- rownames(FB_IUCN_taxo_na)
@@ -176,8 +178,8 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.55,test_missForest)
-save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
+data_noNA = missForest_applied(FB_IUCN_final,0.6,test_missForest)
+#save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
 
@@ -214,13 +216,17 @@ all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_fin
 save(all_predict,file = "outputs/all_predict.Rdata")
 
 
-
 #TO CORRECT THEN  FUNCTION THAT MAKES CONSENSUS OF BOTH METHODS FOR SUPPLEMENTARY
 all_predict <- IUCN_consensus(IUCN_preds_machine_final,IUCN_preds_deep_final)
 
 #------------------Figure------------------------
 
 #Figure 2 
+chid_chord(data_zonation, sup = FALSE)
+#For Supp
 chid_chord(data_zonation, sup = TRUE)
 
-#Figure 2
+#to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
+figRank(data = all_geo_res, sup = FALSE)
+#For Supp
+figRank(data = all_geo_res, sup = TRUE)

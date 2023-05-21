@@ -51,8 +51,13 @@ colnames(dat)<- c("long","lat","ID",
 all_geo_res <- merge(dat,Zrank_main, by ="ID",all.x = T)
 
 #Compute difference in zonation rank
+#compute delta rank 
+#we will use rank after - rank before which lead to positive value when
+#cells were ranked higher after the prediction and negative when ther were 
+#ranked lower (more intuitive than before - after)
+
 all_geo_res$DeltaRank_Proba <- all_geo_res$PredictProba_IUCN_weigth-all_geo_res$IUCN_weigth
-all_geo_res$DeltaRank_SameWeight <- all_geo_res$PredictProba_IUCN_weigth-all_geo_res$IUCN_weigth
+all_geo_res$DeltaRank_SameWeight <- all_geo_res$Predict_IUCN_same_weigth-all_geo_res$IUCN_weigth
 
 #all_geo_res[is.na(all_geo_res)] <- 0
 

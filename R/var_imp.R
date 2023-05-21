@@ -32,7 +32,7 @@ var_imp = function(rel_inf){
                              "Range size (log)")) +
    coord_flip()+
       xlab("") +
-      ylab("") +
+      ylab("Relative importance (%)") +
     theme_bw() +
     theme(
       panel.grid.minor.y = element_blank(),
@@ -40,7 +40,9 @@ var_imp = function(rel_inf){
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
       legend.position="none",
-      axis.text=element_text(size=14)) 
+      axis.title=element_text(size=15),
+      axis.text=element_text(size=15)
+      ) 
     
      
   
