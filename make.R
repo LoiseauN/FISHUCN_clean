@@ -153,7 +153,7 @@ taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>%
   dplyr::select(name, query) %>% 
   dplyr::rename(Family = "name",
                 Genus = "query")
-save(taxo,file = here::here("taxo.RData"))
+save(taxo,file = here::here("outputs", "taxo.RData"))
 taxo <- unique(taxo)
 FB_IUCN_taxo_nona <- FB_IUCN_taxo_na %>% left_join(taxo,by="Genus")
 rownames(FB_IUCN_taxo_nona) <- rownames(FB_IUCN_taxo_na)
