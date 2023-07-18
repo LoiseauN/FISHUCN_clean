@@ -63,7 +63,7 @@ data_list <- lapply(files, load, .GlobalEnv)
 #------------------Running code------------------------
 #Get IUCN status
 IUCN_status <- get_iucn_status(FishDistribArea_all)
-save(IUCN_status,file = "outputs/IUCN_status.RData")
+#save(IUCN_status,file = "outputs/IUCN_status.RData")
 
 
 #Scrap Data from Fishbase
