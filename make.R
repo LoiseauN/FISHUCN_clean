@@ -178,7 +178,7 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.6,test_missForest)
 #save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
