@@ -72,7 +72,7 @@ species_traits = FB_scrap()
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 
 #remove(freshwaterfish)
-species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
+#species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
 
 #Save species_traits
 save(species_traits,file = here::here("outputs/species_traits.RData"))
@@ -178,7 +178,7 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.6,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
 #save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
