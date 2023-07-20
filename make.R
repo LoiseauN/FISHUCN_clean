@@ -52,9 +52,9 @@ files     <- list.files(here::here("data"), pattern = "\\.RData$",
 data_list <- lapply(files, load, .GlobalEnv)
 
 
-files     <- list.files(here::here("outputs"), pattern = "\\.RData$|\\.Rdata$",
-                        full.names = TRUE)
-data_list <- lapply(files, load, .GlobalEnv)
+#files     <- list.files(here::here("outputs"), pattern = "\\.RData$|\\.Rdata$",
+#                        full.names = TRUE)
+#data_list <- lapply(files, load, .GlobalEnv)
 
 
 #TO CHECK HERE .Rdata for IUCN_status
@@ -62,20 +62,22 @@ data_list <- lapply(files, load, .GlobalEnv)
 
 #------------------Running code------------------------
 #Get IUCN status
-IUCN_status <- get_iucn_status(FishDistribArea_all)
-#save(IUCN_status,file = "outputs/IUCN_status.RData")
-
+IUCN_status <- get_iucn_status(FishDistribArea_all) # remove 2 species that are extinct
+save(IUCN_status,file = "outputs/IUCN_status.RData")
 
 #Scrap Data from Fishbase
 species_traits = FB_scrap()
 
-species_traits = species_traits %>% dplyr::select(-Trophic_Level)
-
-#remove(freshwaterfish)
-#species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
-
 #Save species_traits
 save(species_traits,file = here::here("outputs/species_traits.RData"))
+
+
+#species_traits = species_traits %>% dplyr::select(-Trophic_Level)
+
+
+
+#remove(freshwaterfish)
+species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
 
 
 FishDistribArea_all <-  FishDistribArea_all[FishDistribArea_all$species %in% 
@@ -109,8 +111,7 @@ FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>%
 #FB_final$Common_length = as.numeric(FB_final$Common_length)
 FB_final$IUCN = as.factor(FB_final$IUCN)
 
-#Sorting out some problems with data 
-
+#Sorting out some species with only missing data
 FB_final[FB_final==""]<-NA
 FB_final <- FB_final[rowSums(is.na(FB_final)) != 16, ]
 
@@ -139,7 +140,6 @@ FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min,Depth_max,Troph))
 FB_IUCN_more = FB_IUCN_more[!rowSums(is.na(FB_IUCN_more)) == ncol(FB_IUCN_more), ] 
 
 #BIT OF CODE TO FILL OUT TAXONOMIC NA 
-
 #Filling out genus and family where there is NA
 FB_IUCN_taxo_na = FB_IUCN_more %>% filter(is.na(Genus)) 
 
@@ -178,11 +178,10 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.6,test_missForest)
-#save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
+data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
+save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
-
 dim(FB_final) - dim(data_noNA)
 FB_nonselec <-FB_final[!rownames(FB_final) %in% rownames(data_noNA),]
 FB_nonselec <-FB_nonselec[is.na(FB_nonselec$IUCN),]
@@ -199,14 +198,14 @@ test_IUCN = IUCN_test(split,10)
 run_IUCN = IUCN_predict(split,data_noNA,10)
 save(run_IUCN,file = "outputs/run_IUCN.Rdata")
 
-#IUCN consensus (0.5 for this dummy dataset)
-IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),75)
+#IUCN 
+IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),80)
 
 # Running IUCN predictions using deep learning
 IUCN_deep_predict()
 
 #THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
-IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,75)
+IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,80)
 IUCN_preds_deep_final[IUCN_preds_deep_final=="NaN"] <- NA
 #THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY OF BOTH METHODS
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)
