@@ -1,3 +1,15 @@
+import subprocess
+import sys
+
+pkgs = ["pandas", "torch", "torchvision", "pyreadr", "joblib", "scikit-learn"]
+
+# Find packages not installed
+not_installed_pkgs = [pkg for pkg in pkgs if subprocess.call(["pip", "show", pkg]) != 0]
+
+# Install packages and their dependencies
+for pkg in not_installed_pkgs:
+    subprocess.check_call(["pip", "install", pkg])
+    
 import pandas as pd
 import torch.nn as nn
 import numpy as np
