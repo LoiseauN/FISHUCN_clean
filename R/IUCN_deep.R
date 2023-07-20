@@ -7,7 +7,8 @@
 
 IUCN_deep_predict = function(){
   python_file_train = here::here("Python/train.py")
-  system(paste0("python", python_file_train))
+  system(paste0("python3 ", python_file_train))
+  
 }
 
 #' Deep learning prediction

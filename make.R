@@ -198,15 +198,16 @@ test_IUCN = IUCN_test(split,10)
 run_IUCN = IUCN_predict(split,data_noNA,10)
 save(run_IUCN,file = "outputs/run_IUCN.Rdata")
 
-#IUCN 
+#Call outputs and keep prediction with 80% of model agree
 IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),80)
 
 # Running IUCN predictions using deep learning
 IUCN_deep_predict()
 
-#THEN CALL PYTHON SCRIPT TO GET CONSENSUS OF DEEP LEARNING
+#Call outputs and keep prediction with 80% of model agree
 IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,80)
 IUCN_preds_deep_final[IUCN_preds_deep_final=="NaN"] <- NA
+
 #THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY OF BOTH METHODS
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)
 
