@@ -4,11 +4,11 @@ import sys
 pkgs = ["pandas", "torch", "torchvision", "pyreadr", "joblib", "scikit-learn"]
 
 # Find packages not installed
-not_installed_pkgs = [pkg for pkg in pkgs if subprocess.call(["pip", "show", pkg]) != 0]
+not_installed_pkgs = [pkg for pkg in pkgs if subprocess.call(["python3", "-m", "pip", "show", pkg]) != 0]
 
 # Install packages and their dependencies
 for pkg in not_installed_pkgs:
-    subprocess.check_call(["pip", "install", pkg])
+    subprocess.check_call(["python3", "-m", "pip", "install", pkg])
     
 import pandas as pd
 import torch.nn as nn
@@ -210,7 +210,7 @@ def predict(original_df, df_all_split, nb_run_per_split): # Train XX model with 
             else :
                 res.loc[len(res)] = [df_to_predict.iloc[i].name, 'NaN',max(s*100/len(res_all),100-(s*100/len(res_all)))]
 
-    pyreadr.write_rdata('../outputs/IUCN_preds_deep.RData', res, df_name='IUCN_preds_deep')
+    pyreadr.write_rdata('../outputs/IUCN_preds_deep.Rdata', res, df_name='IUCN_preds_deep')
 
 data = pyreadr.read_r(Path('../outputs/data_noNA.Rdata'))
 for key, value in data.items(): 
