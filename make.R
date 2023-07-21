@@ -211,14 +211,12 @@ IUCN_preds_deep_final[IUCN_preds_deep_final=="NaN"] <- NA
 
 #THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY OF BOTH METHODS
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)
-
-
-
 save(all_predict,file = "outputs/all_predict.Rdata")
 
 
 #TO CORRECT THEN  FUNCTION THAT MAKES CONSENSUS OF BOTH METHODS FOR SUPPLEMENTARY
-all_predict <- IUCN_consensus(IUCN_preds_machine_final,IUCN_preds_deep_final)
+all_predict_sup <- IUCN_consensus(IUCN_preds_machine_final,IUCN_preds_deep_final)
+save(all_predict_sup,file = "outputs/all_predict_sup.Rdata")
 
 #------------------Figure------------------------
 
