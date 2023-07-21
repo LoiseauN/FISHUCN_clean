@@ -71,8 +71,8 @@ species_traits = FB_scrap()
 #Save species_traits
 save(species_traits,file = here::here("outputs/species_traits.RData"))
 
-
-#species_traits = species_traits %>% dplyr::select(-Trophic_Level)
+#Remove trophic_level from the webscrapping because only NA. Fill after in dataPrep
+species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 
 
 
@@ -105,8 +105,6 @@ FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>%
   dplyr::rename(IUCN = "IUCN_status")%>%
  column_to_rownames("species")
 
-
-
 #SOME TRANSFORMATION TO INCLUDE IN ONE OF THE FUNCTIONS
 #FB_final$Common_length = as.numeric(FB_final$Common_length)
 FB_final$IUCN = as.factor(FB_final$IUCN)
@@ -132,12 +130,13 @@ dim(FB_final)
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
 #Trying out missforest
-#HERE ADD OPTION THAT DELETES TEMPORARILY THE VARIABLES IF THEY HAVE TOO MANY NAs
 test_missForest = missForest_test(FB_IUCN,FB_final)
 
-#These variables we can't fill out : (Depth_max and)R2 was not good enough 
-FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min,Depth_max,Troph))
+#These variables we can't fill out : (Depth_min)R2 was not good enough 
+#Depth max and trophic were not very good but not a great number of missing value
+FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min))
 FB_IUCN_more = FB_IUCN_more[!rowSums(is.na(FB_IUCN_more)) == ncol(FB_IUCN_more), ] 
+
 
 #BIT OF CODE TO FILL OUT TAXONOMIC NA 
 #Filling out genus and family where there is NA
@@ -161,13 +160,13 @@ rownames(FB_IUCN_taxo_nona) <- rownames(FB_IUCN_taxo_na)
 FB_IUCN_taxo_nona = FB_IUCN_taxo_nona[!duplicated(FB_IUCN_taxo_nona), ]
 
 #Manually filling out the rest
-FB_IUCN_taxo_nona["Bembrops_greyae",13] = "Percophidae"
-FB_IUCN_taxo_nona["Verilus_anomalus",13] = "Acropomatidae"
-FB_IUCN_taxo_nona["Lissonanchus_lusherae",13] = "Gobiesocidae"
-FB_IUCN_taxo_nona["Morwong_fuscus",13] = "Cheilodactylidae"
-FB_IUCN_taxo_nona["Pseudogoniistius_nigripes",13] = "Cheilodactylidae"
-FB_IUCN_taxo_nona["Eques_lanceolatus",13] = "Sciaenidae"
-FB_IUCN_taxo_nona["Pteropelor_noronhai",13] = "Scorpaenidae"
+FB_IUCN_taxo_nona["Bembrops_greyae","Family"] = "Percophidae"
+FB_IUCN_taxo_nona["Verilus_anomalus","Family"] = "Acropomatidae"
+FB_IUCN_taxo_nona["Lissonanchus_lusherae","Family"] = "Gobiesocidae"
+FB_IUCN_taxo_nona["Morwong_fuscus","Family"] = "Cheilodactylidae"
+FB_IUCN_taxo_nona["Pseudogoniistius_nigripes","Family"] = "Cheilodactylidae"
+FB_IUCN_taxo_nona["Eques_lanceolatus","Family"] = "Sciaenidae"
+FB_IUCN_taxo_nona["Pteropelor_noronhai","Family"] = "Scorpaenidae"
 
 
 
@@ -176,9 +175,11 @@ FB_IUCN_temp = FB_IUCN_more %>% filter(!is.na(Genus))
 
 FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
-
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.6,test_missForest)
+
+impute = missForest(FB_IUCN_final,variablewise = T, verbose = T)
+
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA

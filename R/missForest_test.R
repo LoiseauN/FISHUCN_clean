@@ -11,6 +11,8 @@
 #' 
 
 missForest_test = function(data,fulldata){
+  #data = FB_IUCN
+  #fulldata = FB_final
 
   #Deleting NA in data for test of missForest and substracting IUCN column
   data_noNA = data %>% 
@@ -54,7 +56,7 @@ missForest_test = function(data,fulldata){
     prodNA(0.2)
 
 
-  data_mf = missForest(data_NA,verbose=T,variablewise=T) 
+  data_mf = missForest(data_NA,xtrue = verbose=T,variablewise=T) 
   
   #Dataframe with all predictions
   preds = data_mf$ximp
