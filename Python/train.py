@@ -1,14 +1,14 @@
 import subprocess
 import sys
-
+ 
 pkgs = ["pandas", "torch", "torchvision", "pyreadr", "joblib", "scikit-learn"]
-
+ 
 # Find packages not installed
 not_installed_pkgs = [pkg for pkg in pkgs if subprocess.call(["python3", "-m", "pip", "show", pkg]) != 0]
-
+ 
 # Install packages and their dependencies
 for pkg in not_installed_pkgs:
-    subprocess.check_call(["python3", "-m", "pip", "install", pkg])
+     subprocess.check_call(["python3", "-m", "pip", "install", pkg])
     
 import pandas as pd
 import torch.nn as nn
@@ -44,10 +44,10 @@ def prepare_data(data): # Remove all species without IUCN status and label encod
     del cat_cols[cat_cols.index('IUCN')]
     for category in cat_cols:
         data[category] = le.fit_transform(data[category])
-        joblib.dump(le, str(Path('./Label_Encoder/le_')) + category + '.joblib')
+        joblib.dump(le, str(Path(Path(__file__).parent, 'Label_Encoder', 'le_')) + category + '.joblib')
     data_no_na = data.dropna()
     data_no_na['IUCN']=le.fit_transform(data_no_na['IUCN'])
-    joblib.dump(le, str(Path('./Label_Encoder/le_IUCN.joblib')))
+    joblib.dump(le, str(Path(Path(__file__).parent, 'Label_Encoder', 'le_IUCN.joblib')))
     return data_no_na
 
 def split(data): # Create balanced database 
@@ -139,7 +139,7 @@ def predict(original_df, df_all_split, nb_run_per_split): # Train XX model with 
     cat_cols = list(set(original_df.columns) - set(num_cols))
     del cat_cols[cat_cols.index('IUCN')]
     for category in cat_cols:
-        le = joblib.load(str(Path('./Label_Encoder/le_')) + category + '.joblib')
+        le = joblib.load(str(Path(Path(__file__).parent, 'Label_Encoder', 'le_')) + category + '.joblib')
         original_df[category] = le.fit_transform(original_df[category])
         
     df_to_predict = original_df[original_df["IUCN"].isnull()]
@@ -198,7 +198,7 @@ def predict(original_df, df_all_split, nb_run_per_split): # Train XX model with 
     s2 = nb_model * 20 / 100
 
     res = pd.DataFrame(columns = ['species', 'IUCN', 'percentage'])
-    le = joblib.load(str(Path('./Label_Encoder/le_IUCN.joblib')))
+    le = joblib.load(str(Path(Path(__file__).parent, 'Label_Encoder', 'le_IUCN.joblib')))
     for i in range(len(res_all[1])):
             s = 0
             for j in range(len(res_all)):
@@ -210,9 +210,12 @@ def predict(original_df, df_all_split, nb_run_per_split): # Train XX model with 
             else :
                 res.loc[len(res)] = [df_to_predict.iloc[i].name, 'NaN',max(s*100/len(res_all),100-(s*100/len(res_all)))]
 
-    pyreadr.write_rdata('../outputs/IUCN_preds_deep.Rdata', res, df_name='IUCN_preds_deep')
+    result_path = Path(Path(__file__).parent.parent, 'outputs', 'IUCN_preds_deep.Rdata')
+    pyreadr.write_rdata(result_path, res, df_name='IUCN_preds_deep')
 
-data = pyreadr.read_r(Path('../outputs/data_noNA.Rdata'))
+file_path = Path(__file__)
+data_path = Path(file_path.parent.parent, 'outputs', 'data_noNA.Rdata')
+data = pyreadr.read_r(data_path)
 for key, value in data.items(): 
     data = value
 data_no_na = prepare_data(data)

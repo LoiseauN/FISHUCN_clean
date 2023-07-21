@@ -205,6 +205,7 @@ IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),80)
 IUCN_deep_predict()
 
 #Call outputs and keep prediction with 80% of model agree
+load(file = here::here("outputs/IUCN_preds_deep.RData"))
 IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,80)
 IUCN_preds_deep_final[IUCN_preds_deep_final=="NaN"] <- NA
 
