@@ -21,7 +21,7 @@ missForest_applied = function(data_tofill,baseline,mf_test){
   
   #Selecting out IUCN column for missforest
   data_tofill_noIUCN = data_tofill %>%
-    dplyr::select(-IUCN)
+    dplyr::select(-IUCN,)
   
   #FILTER OUT FACTORS WITH OVER 53 CATEGORIES
   #Get unique length of all the factor traits

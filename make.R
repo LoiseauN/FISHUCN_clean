@@ -98,20 +98,24 @@ FB_vars = FB_scrapped %>%
          Depth_max = log10(Depth_max+1))
 
 
+
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
 #Get IUCN status
 FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>% 
-  dplyr::rename(IUCN = "IUCN_status")%>%
- column_to_rownames("species")
+  dplyr::rename(IUCN = "IUCN_status")
 
+  rownames(FB_final) <- FB_final[,1]
+  FB_final <- FB_final[,-1]
+  
+  
 #SOME TRANSFORMATION TO INCLUDE IN ONE OF THE FUNCTIONS
 #FB_final$Common_length = as.numeric(FB_final$Common_length)
 FB_final$IUCN = as.factor(FB_final$IUCN)
 
 #Sorting out some species with only missing data
-FB_final[FB_final==""]<-NA
-FB_final <- FB_final[rowSums(is.na(FB_final)) != 16, ]
+FB_final[FB_final==""] <-NA
+FB_final <- FB_final[rowSums(is.na(FB_final)) != ncol(FB_final), ]
 
 save(FB_final,file = "outputs/FB_final.Rdata")
 
@@ -135,8 +139,9 @@ test_missForest = missForest_test(FB_IUCN,FB_final)
 #These variables we can't fill out : (Depth_min)R2 was not good enough 
 #Depth max and trophic were not very good but not a great number of missing value
 FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min))
-FB_IUCN_more = FB_IUCN_more[!rowSums(is.na(FB_IUCN_more)) == ncol(FB_IUCN_more), ] 
 
+#last check
+FB_IUCN_more = FB_IUCN_more[!rowSums(is.na(FB_IUCN_more)) == ncol(FB_IUCN_more), ] 
 
 #BIT OF CODE TO FILL OUT TAXONOMIC NA 
 #Filling out genus and family where there is NA
@@ -161,7 +166,7 @@ FB_IUCN_taxo_nona = FB_IUCN_taxo_nona[!duplicated(FB_IUCN_taxo_nona), ]
 
 #Manually filling out the rest
 FB_IUCN_taxo_nona["Bembrops_greyae","Family"] = "Percophidae"
-FB_IUCN_taxo_nona["Verilus_anomalus","Family"] = "Acropomatidae"
+#FB_IUCN_taxo_nona["Verilus_anomalus","Family"] = "Acropomatidae"
 FB_IUCN_taxo_nona["Lissonanchus_lusherae","Family"] = "Gobiesocidae"
 FB_IUCN_taxo_nona["Morwong_fuscus","Family"] = "Cheilodactylidae"
 FB_IUCN_taxo_nona["Pseudogoniistius_nigripes","Family"] = "Cheilodactylidae"
@@ -176,9 +181,9 @@ FB_IUCN_temp = FB_IUCN_more %>% filter(!is.na(Genus))
 FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.6,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
 
-impute = missForest(FB_IUCN_final,variablewise = T, verbose = T)
+impute = missForest(FB_IUCN_final[,-c(9:10)],variablewise = T, verbose = T)
 
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 

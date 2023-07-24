@@ -72,10 +72,10 @@ family_genus = rfishbase:: load_taxa(version="19.04") %>%
 family_genus$species <- gsub(" ","-",family_genus$species)
 #family_genus <- family_genus %>%  column_to_rownames("species")
 
-speciestraits <- speciestraits[,!colnames(speciestraits)%in%c("Repro.Mode","Repro.Fertil", "Repro.ParentCare")]
+speciestraits_select <- speciestraits[,!colnames(speciestraits)%in%c("Repro.Mode","Repro.Fertil", "Repro.ParentCare","Climate")]
 
 
-FB_scrapped = speciestraits %>%
+FB_scrapped = speciestraits_select %>%
   rownames_to_column("species")%>%
   left_join(distribution,by="species")%>%
  left_join(family_genus,by="species")%>%
