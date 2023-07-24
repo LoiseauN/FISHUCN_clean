@@ -43,9 +43,6 @@ sapply(files.source,source,.GlobalEnv)
 
 files   <- list.files(here::here("data"), pattern = "\\.rds$", 
                       full.names = TRUE)
-#FB_vars <- lapply(files, readRDS) %>% 
-#  dplyr::bind_rows()
-
 
 files     <- list.files(here::here("data"), pattern = "\\.RData$", 
                         full.names = TRUE)
@@ -129,8 +126,6 @@ FB_IUCN = IUCN_split(FB_final)
 #FB_IUCN <- FB_IUCN[,-22]
 #FB_vars <- FB_vars[,-22]
 dim(FB_final)
-
-
 
 #IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
 #Trying out missforest

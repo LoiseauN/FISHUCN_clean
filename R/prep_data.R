@@ -27,7 +27,7 @@ repro <- rfishbase::reproduction(version="19.04")%>%
   dplyr::rename(species="Species") %>%
   collect()
 
-repro$species <- gsub(" ","-",Climate_fishbase$species)
+repro$species <- gsub(" ","-",repro$species)
 
 repro <-  repro[,colnames(repro) %in% c("species", "RepGuild1","RepGuild2","ParentalCare","ReproMode","Fertilization")]
 
