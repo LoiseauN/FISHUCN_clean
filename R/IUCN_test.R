@@ -14,6 +14,7 @@
 
 IUCN_test = function(data_split,loops){
   
+  # data_split = 
   ranger_loop = mclapply(1:length(data_split),function(i){
     
     

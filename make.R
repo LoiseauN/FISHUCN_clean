@@ -13,9 +13,7 @@
 
 ## Parameters ----
 rm(list=ls())
-set.seed(42)
-
-
+set.seed(666)
 
 ## Installing/Loading packages ----
 
@@ -32,7 +30,7 @@ nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
 ip  <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
-devtools::install_github("zmjones/edarf", subdir = "pkg")
+#devtools::install_github("zmjones/edarf", subdir = "pkg")
 ## Loading all functions ----
 
 files.source <- list.files(here::here("R"), pattern = "\\.R$", 
@@ -178,7 +176,7 @@ FB_IUCN_temp = FB_IUCN_more %>% filter(!is.na(Genus))
 FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.6,test_missForest)
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
