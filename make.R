@@ -183,7 +183,7 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 #Applying missforest
 data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
 
-impute = missForest(FB_IUCN_final[,-c(9:10)],variablewise = T, verbose = T)
+impute = missForest(FB_IUCN_final[,!colnames(FB_IUCN_final)%in% c("Genus","Family","IUCN")],variablewise = T, verbose = T)
 
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
