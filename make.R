@@ -176,7 +176,7 @@ FB_IUCN_temp = FB_IUCN_more %>% filter(!is.na(Genus))
 FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.6,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
@@ -189,7 +189,7 @@ split = data_prep(data_noNA)
 
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(split,10)
-
+#Give the accuracy ! 
 #Running IUCN predictions
 run_IUCN = IUCN_predict(split,data_noNA,10)
 save(run_IUCN,file = "outputs/run_IUCN.Rdata")

@@ -72,10 +72,10 @@ family_genus = rfishbase:: load_taxa(version="19.04") %>%
 family_genus$species <- gsub(" ","-",family_genus$species)
 #family_genus <- family_genus %>%  column_to_rownames("species")
 
-speciestraits_select <- speciestraits[,!colnames(speciestraits)%in%c("Repro.Mode","Repro.Fertil", "Repro.ParentCare","Climate")]
+speciestraits <- speciestraits[,!colnames(speciestraits)%in%c("Repro.Mode","Repro.Fertil", "Repro.ParentCare","Climate")]
 
 
-FB_scrapped = speciestraits_select %>%
+FB_scrapped = speciestraits %>%
   rownames_to_column("species")%>%
   left_join(distribution,by="species")%>%
  left_join(family_genus,by="species")%>%
@@ -88,7 +88,7 @@ FB_scrapped$species <- gsub("-","_",FB_scrapped$species )
 
 
 
-#
+
 trait_sup <- data.frame(species = rownames(Fish_trait_Metawebproject),
                         Schooling= Fish_trait_Metawebproject$Schooling,
                         Aquarium= Fish_trait_Metawebproject$Aquarium,
@@ -96,8 +96,8 @@ trait_sup <- data.frame(species = rownames(Fish_trait_Metawebproject),
                         Length= Fish_trait_Metawebproject$Length,
                         PriceCateg= Fish_trait_Metawebproject$PriceCateg,
                         Importance= Fish_trait_Metawebproject$Importance,
-                        BodyShapeI= Fish_trait_Metawebproject$BodyShapeI)
-
+                        BodyShapeI= Fish_trait_Metawebproject$BodyShapeI,
+                        Habitat = Fish_trait_Metawebproject$DemersPelag)
 
 #FB_scrapped <- FB_scrapped[,!colnames(FB_scrapped) %in% c("Depth_max","DepthRangeDeep","DepthRangeComDeep")]
 
@@ -106,11 +106,11 @@ FB_scrapped = FB_scrapped %>%
 
 #Keeping variables we need for machine learning (remove with too much NA)
 FB_vars = FB_scrapped %>%
-  dplyr::select(c(species,Max_length,Env_2,Climate,Troph,ReproMode,Fertilization,RepGuild1,DistrArea,
-                  Genus,Family,PriceCateg,BodyShapeI,
+  dplyr::select(c(species,Length,Habitat, Climate,Troph,ReproMode,Fertilization,RepGuild1,DistrArea,
+                  Genus,Family,PriceCateg,BodyShapeI,Importance,
                   Aquarium,K)) %>%
-  mutate(Max_length = log10(Max_length+1),
-         Env_2 = as.factor(Env_2),
+  mutate(Length = log10(Length+1),
+         Habitat = as.factor(Habitat),
          Climate = as.factor(Climate),
          Troph = log10(as.numeric(Troph)+1),
          ReproMode = as.factor(ReproMode),
@@ -122,6 +122,7 @@ FB_vars = FB_scrapped %>%
          K = log10(as.numeric(K)+1),
          PriceCateg = as.factor(PriceCateg),
          Aquarium = as.factor(Aquarium),
+         Importance = as.factor(Importance),
          BodyShapeI = as.factor(BodyShapeI))%>%
   mutate(PriceCateg = na_if(PriceCateg,"unknown"))%>%
   filter_all(any_vars(!is.na(.)))
@@ -131,3 +132,7 @@ FB_vars = FB_scrapped %>%
 return(FB_vars)
 
 }
+
+#sapply(Fish_trait_Metawebproject, function(y) sum(length(which(is.na(y)))))
+#sapply(FB_vars, function(y) sum(length(which(is.na(y)))))
+
