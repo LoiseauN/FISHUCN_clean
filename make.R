@@ -133,8 +133,9 @@ test_missForest = missForest_test(FB_IUCN,FB_final)
 
 #These variables we can't fill out : (Depth_min)R2 was not good enough 
 #Depth max and trophic were not very good but not a great number of missing value
-FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min))
+#FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min))
 
+FB_IUCN_more = FB_IUCN
 #last check
 FB_IUCN_more = FB_IUCN_more[!rowSums(is.na(FB_IUCN_more)) == ncol(FB_IUCN_more), ] 
 
@@ -153,6 +154,7 @@ taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>%
   dplyr::rename(Family = "name",
                 Genus = "query")
 save(taxo,file = here::here("outputs", "taxo.RData"))
+
 taxo <- unique(taxo)
 FB_IUCN_taxo_nona <- FB_IUCN_taxo_na %>% left_join(taxo,by="Genus")
 rownames(FB_IUCN_taxo_nona) <- rownames(FB_IUCN_taxo_na)
@@ -161,7 +163,7 @@ FB_IUCN_taxo_nona = FB_IUCN_taxo_nona[!duplicated(FB_IUCN_taxo_nona), ]
 
 #Manually filling out the rest
 FB_IUCN_taxo_nona["Bembrops_greyae","Family"] = "Percophidae"
-#FB_IUCN_taxo_nona["Verilus_anomalus","Family"] = "Acropomatidae"
+FB_IUCN_taxo_nona["Verilus_anomalus","Family"] = "Acropomatidae"
 FB_IUCN_taxo_nona["Lissonanchus_lusherae","Family"] = "Gobiesocidae"
 FB_IUCN_taxo_nona["Morwong_fuscus","Family"] = "Cheilodactylidae"
 FB_IUCN_taxo_nona["Pseudogoniistius_nigripes","Family"] = "Cheilodactylidae"
@@ -177,17 +179,12 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
 #Applying missforest
 data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
-
-impute = missForest(FB_IUCN_final[,!colnames(FB_IUCN_final)%in% c("Genus","Family","IUCN")],variablewise = T, verbose = T)
-
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
 dim(FB_final) - dim(data_noNA)
 FB_nonselec <-FB_final[!rownames(FB_final) %in% rownames(data_noNA),]
 FB_nonselec <-FB_nonselec[is.na(FB_nonselec$IUCN),]
-
-
 
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_noNA)

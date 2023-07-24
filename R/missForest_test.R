@@ -60,7 +60,7 @@ missForest_test = function(data,fulldata){
     prodNA(0.2)
 
   data_NA <- as.data.frame((data_NA))
-  data_mf = missForest(data_NA,xtrue = T, verbose=T,variablewise=T) 
+  data_mf = missForest(data_NA, verbose=T,variablewise=T) 
   
   #Dataframe with all predictions
   preds = data_mf$ximp
