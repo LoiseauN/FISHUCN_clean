@@ -122,7 +122,7 @@ partial_plot <- var_partial(data =  data_noNA,
                                       "Position in the water column")) 
 
 
-importance_plot = var_imp(test_IUCN[[1]])      
+
 
 
 fig2 <- importance_plot + (partial_plot[[1]] /

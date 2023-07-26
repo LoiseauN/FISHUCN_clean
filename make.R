@@ -69,11 +69,8 @@ save(species_traits,file = here::here("outputs/species_traits.RData"))
 #Remove trophic_level from the webscrapping because only NA. Fill after in dataPrep
 species_traits = species_traits %>% dplyr::select(-Trophic_Level)
 
-
-
 #remove(freshwaterfish)
 species_traits <- species_traits[!species_traits$Env_1 %in% c("Freshwater_brackish","Freshwater"),]
-
 
 FishDistribArea_all <-  FishDistribArea_all[FishDistribArea_all$species %in% 
                                               str_replace(rownames(species_traits), "-", "_"),]
@@ -91,8 +88,6 @@ FB_vars = FB_scrapped %>%
   left_join(DepthRange,by="species") %>% 
   mutate(Depth_min = log10(Depth_min+1),
          Depth_max = log10(Depth_max+1))
-
-
 
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
@@ -113,27 +108,10 @@ FB_final[FB_final==""] <-NA
 FB_final <- FB_final[rowSums(is.na(FB_final)) != ncol(FB_final), ]
 
 save(FB_final,file = "outputs/FB_final.Rdata")
-
-###########
-#TEST
-#FB_final <- FB_final[,c("Max_length","Env_2","Troph","Genus",
-#                        "Family","BodyShapeI","Aquarium","K","Depth_min","Depth_max","IUCN")]
-###########
-#Convert IUCN data to T and NT 
-FB_IUCN = IUCN_split(FB_final)
-#FB_IUCN <- FB_IUCN[,-22]
-#FB_vars <- FB_vars[,-22]
 dim(FB_final)
 
-#IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
-#Trying out missforest
-test_missForest = missForest_test(FB_IUCN,FB_final)
 
-#These variables we can't fill out : (Depth_min)R2 was not good enough 
-#Depth max and trophic were not very good but not a great number of missing value
-#FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min))
-
-FB_IUCN_more = FB_IUCN
+FB_IUCN_more = FB_final
 #last check
 FB_IUCN_more = FB_IUCN_more[!rowSums(is.na(FB_IUCN_more)) == ncol(FB_IUCN_more), ] 
 
@@ -143,7 +121,6 @@ FB_IUCN_taxo_na = FB_IUCN_more %>% filter(is.na(Genus))
 
 #Add Genus and calculate the rest with taxize
 FB_IUCN_taxo_na = FB_IUCN_taxo_na %>% mutate(Genus = sub("\\_.*", "", rownames(FB_IUCN_taxo_na))) %>% dplyr::select(-Family)
-
 
 taxo =  classification(FB_IUCN_taxo_na$Genus, db = "ncbi") %>% 
   rbind() %>% 
@@ -168,28 +145,51 @@ FB_IUCN_taxo_nona["Pseudogoniistius_nigripes","Family"] = "Cheilodactylidae"
 FB_IUCN_taxo_nona["Eques_lanceolatus","Family"] = "Sciaenidae"
 FB_IUCN_taxo_nona["Pteropelor_noronhai","Family"] = "Scorpaenidae"
 
-
-
 #And now adding in to the final dataframe
 FB_IUCN_temp = FB_IUCN_more %>% filter(!is.na(Genus))
-
 FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 
+#still freshwater fish need to be clean
+marine_families <- marine_families[marine_families$Marin_fresh == "M",]
+FB_IUCN_final = FB_IUCN_final[FB_IUCN_final$Family %in% marine_families$Family,]
+
+sapply(FB_IUCN_final, function(y) sum(length(which(is.na(y)))))
+
+#Prepare for fill missforest
+FB_IUCN = IUCN_split(FB_IUCN_final)
+
+
+#IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
+#Trying out missforest
+test_missForest = missForest_test(FB_IUCN,FB_IUCN_final)
+
+#These variables we can't fill out : (Depth_min)R2 was not good enough 
+#Depth max and trophic were not very good but not a great number of missing value
+#FB_IUCN_more = FB_IUCN %>% dplyr::select(-c(Depth_min))
+
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.5,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.3,test_missForest)
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
-dim(FB_final) - dim(data_noNA)
-FB_nonselec <-FB_final[!rownames(FB_final) %in% rownames(data_noNA),]
+dim(FB_IUCN_final) - dim(data_noNA)
+FB_nonselec <-FB_IUCN_final[!rownames(FB_IUCN_final) %in% rownames(data_noNA),]
 FB_nonselec <-FB_nonselec[is.na(FB_nonselec$IUCN),]
 
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_noNA)
 
+#Clean name of the variables 
+
+
+
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(split,10)
 #Give the accuracy ! 
+
+# Plot importance plot
+importance_plot = var_imp(test_IUCN[[1]])  
+
 #Running IUCN predictions
 run_IUCN = IUCN_predict(split,data_noNA,10)
 save(run_IUCN,file = "outputs/run_IUCN.Rdata")
@@ -214,8 +214,11 @@ save(all_predict,file = "outputs/all_predict.Rdata")
 all_predict_sup <- IUCN_consensus(IUCN_preds_machine_final,IUCN_preds_deep_final)
 save(all_predict_sup,file = "outputs/all_predict_sup.Rdata")
 
-#------------------Figure------------------------
+create_data_zonation(data = FB_final, data_predict = all_predict)
 
+  
+
+  #------------------Figure------------------------
 #Figure 2 
 chid_chord(data_zonation, sup = FALSE)
 #For Supp

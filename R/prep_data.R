@@ -31,7 +31,6 @@ repro$species <- gsub(" ","-",repro$species)
 
 repro <-  repro[,colnames(repro) %in% c("species", "RepGuild1","RepGuild2","ParentalCare","ReproMode","Fertilization")]
 
-
 #Climate
 Climate_bis =  rfishbase::ecosystem(version="19.04") %>%
   dplyr::rename(species="Species") %>%
@@ -95,7 +94,6 @@ trait_sup <- data.frame(species = rownames(Fish_trait_Metawebproject),
                         LongevityWild= Fish_trait_Metawebproject$LongevityWild,
                         Length= Fish_trait_Metawebproject$Length,
                         PriceCateg= Fish_trait_Metawebproject$PriceCateg,
-                        Importance= Fish_trait_Metawebproject$Importance,
                         BodyShapeI= Fish_trait_Metawebproject$BodyShapeI,
                         Habitat = Fish_trait_Metawebproject$DemersPelag)
 
@@ -107,7 +105,7 @@ FB_scrapped = FB_scrapped %>%
 #Keeping variables we need for machine learning (remove with too much NA)
 FB_vars = FB_scrapped %>%
   dplyr::select(c(species,Length,Habitat, Climate,Troph,ReproMode,Fertilization,RepGuild1,DistrArea,
-                  Genus,Family,PriceCateg,BodyShapeI,Importance,
+                  Genus,Family,PriceCateg,BodyShapeI,#Importance,
                   Aquarium,K)) %>%
   mutate(Length = log10(Length+1),
          Habitat = as.factor(Habitat),
@@ -122,9 +120,11 @@ FB_vars = FB_scrapped %>%
          K = log10(as.numeric(K)+1),
          PriceCateg = as.factor(PriceCateg),
          Aquarium = as.factor(Aquarium),
-         Importance = as.factor(Importance),
+         #Importance = as.factor(Importance),
          BodyShapeI = as.factor(BodyShapeI))%>%
   mutate(PriceCateg = na_if(PriceCateg,"unknown"))%>%
+  mutate(Habitat = na_if(Habitat,"no_data"))
+  
   filter_all(any_vars(!is.na(.)))
 
 #get_status

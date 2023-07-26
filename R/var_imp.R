@@ -20,6 +20,21 @@ var_imp = function(rel_inf){
     
   }
   
+  
+  
+  rel_inf <- rel_inf %>% 
+    mutate(rowname = recode_factor(rowname, "Troph" = "Trophic",
+                                   "BodyShapeI" = 'Body Shape' ,
+                                   "Aquarium" = "Interest for aquarium",
+                                   "Depth_max" = "Depth max",
+                                   "Depth_min" = "Depth min",
+                                   "DistrArea" = "Range size",
+                                   "K" = "Growth rate",
+                                   "Habitat" = "Position in water column",
+                                   "PriceCateg" = "Price Category",
+                                   "ReproMode" = "Reproduction mode",
+                                   "RepGuild1" = "Reproductive guild"))
+  
  rel_inf %>%
     arrange(importance.mod.) %>%
     tail(20) %>%
@@ -27,9 +42,7 @@ var_imp = function(rel_inf){
     ggplot( aes(x=rowname, y=importance.mod.,fill=importance.mod.))+ 
        geom_bar(stat="identity", position="dodge")+ 
    harrypotter::scale_fill_hp(option = "Ravenclaw") + 
-   scale_x_discrete(labels=c("Reproduction mode","Interest for aquarium", "Fertility","Price category","Climate niche",
-                             "Body Shape","Genus","Family","Position in water column","Growth rate","Max length (log)",
-                             "Range size (log)")) +
+   scale_x_discrete() +
    coord_flip()+
       xlab("") +
       ylab("Relative importance (%)") +
