@@ -179,10 +179,6 @@ FB_nonselec <-FB_nonselec[is.na(FB_nonselec$IUCN),]
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_noNA)
 
-#Clean name of the variables 
-
-
-
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(split,10)
 #Give the accuracy ! 
@@ -216,9 +212,8 @@ save(all_predict_sup,file = "outputs/all_predict_sup.Rdata")
 
 create_data_zonation(data = FB_final, data_predict = all_predict)
 
-  
 
-  #------------------Figure------------------------
+#------------------Figure------------------------
 #Figure 2 
 chid_chord(data_zonation, sup = FALSE)
 #For Supp
