@@ -107,24 +107,23 @@ FB_vars = FB_scrapped %>%
   dplyr::select(c(species,Length,Habitat, Climate,Troph,ReproMode,Fertilization,RepGuild1,DistrArea,
                   Genus,Family,PriceCateg,BodyShapeI,#Importance,
                   Aquarium,K)) %>%
-  mutate(Length = log10(Length+1),
+  mutate(Length = Length,
          Habitat = as.factor(Habitat),
          Climate = as.factor(Climate),
-         Troph = log10(as.numeric(Troph)+1),
+         Troph = as.numeric(Troph),
          ReproMode = as.factor(ReproMode),
          RepGuild1 = as.factor(RepGuild1),
-         DistrArea = log10(DistrArea+1),
+         DistrArea = DistrArea,
          Fertilization = as.factor(Fertilization),
          Genus = as.factor(Genus),
          Family= as.factor(Family),
-         K = log10(as.numeric(K)+1),
+         K = as.numeric(K),
          PriceCateg = as.factor(PriceCateg),
          Aquarium = as.factor(Aquarium),
          #Importance = as.factor(Importance),
          BodyShapeI = as.factor(BodyShapeI))%>%
   mutate(PriceCateg = na_if(PriceCateg,"unknown"))%>%
-  mutate(Habitat = na_if(Habitat,"no_data"))
-  
+  mutate(Habitat = na_if(Habitat,"no_data"))%>%
   filter_all(any_vars(!is.na(.)))
 
 #get_status

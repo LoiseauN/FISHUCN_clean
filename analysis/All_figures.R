@@ -116,10 +116,8 @@ ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 10, un
 
 #'---------------------------------------------------------------------@variable_importance
 
-partial_plot <- var_partial(data =  data_noNA,
-                            var = c("DistrArea" , "Max_length","K","Env_2"),
-                            names = c("Range size (log)","Max Length (log)", "Growth rate",
-                                      "Position in the water column")) 
+partial_plot <- var_partial(data      =  data_noNA,
+                            model = test_IUCN[[1]]) 
 
 
 

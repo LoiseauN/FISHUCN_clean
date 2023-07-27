@@ -110,7 +110,15 @@ missForest_test = function(data,fulldata){
     
   }
   
-  tests_results_final = as.data.frame(do.call(rbind,test_results))
+  nb_missing <- data.frame(nb_na = sapply(data, function(y) sum(length(which(is.na(y)))))) 
+  
+  tests_results_final = data.frame(Rsquare = do.call(rbind,test_results))
+  
+  tests_results_final =  merge(tests_results_final, nb_missing, by="row.names", all.x = T)
+
+  rownames(tests_results_final) <- tests_results_final[,1]
+ 
+  tests_results_final <- tests_results_final[,-1]
   
   return(tests_results_final)
   

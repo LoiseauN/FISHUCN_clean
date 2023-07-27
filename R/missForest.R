@@ -60,7 +60,7 @@ missForest_applied = function(data_tofill,baseline,mf_test){
   #Keeping only traits where missForest performed above baseline
   mf_perf = mf_test %>%
     rownames_to_column("trait")%>%
-    filter(V1>baseline)
+    filter(Rsquare>baseline)
   
   data_notfill = data_final %>%
     dplyr::select(!one_of(mf_perf$trait))%>%
