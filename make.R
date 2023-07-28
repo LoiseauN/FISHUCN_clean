@@ -99,9 +99,8 @@ FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>%
 FB_final[FB_final==""] <-NA
 FB_final <- FB_final[rowSums(is.na(FB_final)) != ncol(FB_final), ]
 
-save(FB_final,file = "outputs/FB_final.Rdata")
-dim(FB_final)
 
+save(FB_final,file = "outputs/FB_final.Rdata")
 
 
 FB_IUCN_more = FB_final
@@ -118,7 +117,9 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 marine_families <- marine_families[marine_families$Marin_fresh == "M",]
 FB_IUCN_final = FB_IUCN_final[FB_IUCN_final$Family %in% marine_families$Family,]
 
-
+#Remove species with too much NA 
+FB_IUCN_final<- FB_IUCN_final[rowSums(is.na(FB_IUCN_final[,-17])) < 7, ]
+dim(FB_IUCN_final)
 #Prepare for fill missforest
 FB_IUCN = IUCN_split(FB_IUCN_final)
 
@@ -132,11 +133,11 @@ test_missForest = missForest_test(FB_IUCN,FB_IUCN_final)
 FB_IUCN_final = FB_IUCN_final %>% dplyr::select(-c(Depth_min))
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.3,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.4,test_missForest)
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
-dim(FB_IUCN_final) - dim(data_noNA)
+dim(FB_IUCN) - dim(data_noNA)
 FB_nonselec <-FB_IUCN_final[!rownames(FB_IUCN_final) %in% rownames(data_noNA),]
 FB_nonselec <-FB_nonselec[is.na(FB_nonselec$IUCN),]
 
