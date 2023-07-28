@@ -1,7 +1,7 @@
 #' Circular Chord Diagram
 
 
-chid_chord <- function(data_zonation,sup){ 
+chid_chord <- function(sup){ 
   
   load(here::here("outputs", "data_zonation.RData"))
   

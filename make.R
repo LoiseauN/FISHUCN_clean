@@ -26,6 +26,7 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
           "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter",
           "randomForest","caret","ROCR","RColorBrewer")
 
+
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
 ip  <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
@@ -173,12 +174,25 @@ save(all_predict,file = "outputs/all_predict.Rdata")
 all_predict_sup <- IUCN_consensus(IUCN_preds_machine_final,IUCN_preds_deep_final)
 save(all_predict_sup,file = "outputs/all_predict_sup.Rdata")
 
+
+
+#------------------Prepare outputs for the figure and zoantion------------------------
+
+#Data for zonation
 create_data_zonation(data = FB_final, data_predict = all_predict)
 
+#Data for phylo and chord
+dat_network <- create_dat_network(data = data_zonation)
 
+#Protection and conservation
+MPA_Protect <- protect_target(data = dat_network,
+               mpa = PctMPAI_IV, 
+               distrib = FishDistribArea_all) 
+  
+  
 #------------------Figure------------------------
 #Figure 2 
-chid_chord(data_zonation, sup = FALSE)
+chid_chord(sup = FALSE)
 #For Supp
 chid_chord(data_zonation, sup = TRUE)
 

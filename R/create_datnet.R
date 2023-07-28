@@ -19,17 +19,11 @@ dat_network<-as.data.frame(sapply(dat_network,
                                   mapvalues, from = c("NThr"), 
                                   to = c("Non Threatened")))
 
-not_in_model <- data.frame(species = rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]),
-                           IUCN_alone= rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))),
-                           predict=rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))))
+#not_in_model <- data.frame(species = rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]),
+#                           IUCN_alone= rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))),
+#                           predict=rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))))
 
-
-
-dat_network <- rbind(dat_network,not_in_model)
-
-
-
-
+#dat_network <- rbind(dat_network,not_in_model)
 
 
 dat_network$IUCN_final <- NA
@@ -48,11 +42,11 @@ dat_network<-as.data.frame(sapply(dat_network,
                                   mapvalues, from = c(NA), 
                                   to = c("No Status")))
 
-not_in_model <- data.frame(species = rownames(FB_final[!rownames(FB_final)%in% dat_network$species,]),
-                           IUCN_alone= rep(NA, length(rownames(FB_final[!rownames(FB_final)%in% dat_network$species,]))),
-                           predict=rep(NA, length(rownames(FB_final[!rownames(FB_final)%in% dat_network$species,]))))
+#not_in_model <- data.frame(species = rownames(FB_final[!rownames(FB_final)%in% dat_network$species,]),
+#                           IUCN_alone= rep(NA, length(rownames(FB_final[!rownames(FB_final)%in% dat_network$species,]))),
+#                          predict=rep(NA, length(rownames(FB_final[!rownames(FB_final)%in% dat_network$species,]))))
 
 
 
-dat_network <- rbind(dat_network,not_in_model)
+#dat_network <- rbind(dat_network,not_in_model)
 }
