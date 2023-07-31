@@ -114,23 +114,33 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 marine_families <- marine_families[marine_families$Marin_fresh == "M",]
 FB_IUCN_final = FB_IUCN_final[FB_IUCN_final$Family %in% marine_families$Family,]
 
-#Remove species with too much NA 
-FB_IUCN_final<- FB_IUCN_final[rowSums(is.na(FB_IUCN_final[,-17])) < 7, ]
+FB_IUCN_final <-  FB_IUCN_final[! colnames(FB_IUCN_final) %in% c('ReproMode','Fertilization','RepGuild1')]
+
+#Remove species with too much NA  (more than 40%)
+FB_IUCN_final<- FB_IUCN_final[rowSums(is.na(FB_IUCN_final[,-ncol(FB_IUCN_final)])) < 0.4*(ncol(FB_IUCN_final)-1), ]
 dim(FB_IUCN_final)
+
+###Checking species that are not in FB_IUCN_final
+dim(FB_IUCN_final) - dim(FB_IUCN_temp)
+FB_nonselec <-FB_IUCN_temp[!rownames(FB_IUCN_temp) %in% rownames(FB_IUCN_final),]
+
+
 #Prepare for fill missforest
 FB_IUCN = IUCN_split(FB_IUCN_final)
 
-
-#IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
-#Trying out missforest
-test_missForest = missForest_test(FB_IUCN,FB_IUCN_final)
 
 #These variables we can't fill out : (Depth_min)R2 was not good enough 
 #Depth max and trophic were not very good but not a great number of missing value
 FB_IUCN_final = FB_IUCN_final %>% dplyr::select(-c(Depth_min))
 
+#IF YOUR DATA HAS NA IN IT, RUN MISSFOREST, ELSE GO DIRECTLY TO DATA_PREP FUNCTION
+#Trying out missforest
+test_missForest = missForest_test(FB_IUCN,FB_IUCN_final)
+
+
+
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.4,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.2,test_missForest)
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA

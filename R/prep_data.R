@@ -126,6 +126,17 @@ FB_vars = FB_scrapped %>%
   mutate(Habitat = na_if(Habitat,"no_data"))%>%
   filter_all(any_vars(!is.na(.)))
 
+
+FB_vars$PriceCateg <- factor(FB_vars$PriceCateg, order = TRUE, levels =c( 'low', 'medium', 'high', 'very high'))
+FB_vars$Habitat <- factor(FB_vars$Habitat, order = TRUE, levels =c( 'benthopelagic', 
+                                                                    'bathypelagic', 
+                                                                    'pelagic-neriti', 
+                                                                    'pelagic-oceanic',
+                                                                    'pelagic',
+                                                                    'bathydemersal',
+                                                                    'demersal',
+                                                                    'reef-associated'))
+ 
 #get_status
 
 return(FB_vars)
