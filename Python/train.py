@@ -9,7 +9,7 @@ not_installed_pkgs = [pkg for pkg in pkgs if subprocess.call(["python3", "-m", "
 # Install packages and their dependencies
 for pkg in not_installed_pkgs:
      subprocess.check_call(["python3", "-m", "pip", "install", pkg])
-    
+  
 import pandas as pd
 import torch.nn as nn
 import numpy as np
