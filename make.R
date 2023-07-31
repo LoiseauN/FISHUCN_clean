@@ -80,10 +80,7 @@ save(FB_scrapped,file = here::here("outputs/FB_scrapped.RData"))
 #All traits as columns
 
 FB_vars = FB_scrapped %>%   
-  left_join(DepthRange,by="species") %>% 
-  mutate(Depth_min = log10(Depth_min+1),
-         Depth_max = log10(Depth_max+1),
-         )
+  left_join(DepthRange,by="species")
 
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
