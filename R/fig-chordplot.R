@@ -84,10 +84,10 @@ grid.col1a = c(A_Threatened = "#FC4E07", `A_Non Threatened` = "#00AFBB", `A_No S
 
 
 
-if(sup == TRUE) {png(here::here("figures", "figure_2_supp.png"), height = 6, width = 6, 
+if(sup == TRUE) {png(here::here("figures", "figure_3_supp.png"), height = 6, width = 6, 
                     units = "in", res = 300) }
 
-else {png(here::here("figures", "figure_2bis.png"), height = 6, width = 6, 
+else {png(here::here("figures", "figure_3.png"), height = 6, width = 6, 
                     units = "in", res = 300) }
 
 par(new = FALSE, fg = "black", col = "black")

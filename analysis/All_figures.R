@@ -12,7 +12,7 @@
 # amphibians_status <- rredlist::rl_comp_groups("amphibians", 
 #   key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
 
-
+figure1 <- function(data){ 
 all_status <- read.table(file = here::here("data","IUCN_risk.csv"), sep = ";", row.names = 1, header = T)
 
 
@@ -34,11 +34,11 @@ data_4_taxa <- data.frame(taxa   = c(rep("amphibians", nrow(all_status[all_statu
                                      rep("mammals", nrow(all_status[all_status$className == "Mammals",])),
                                      rep("reptiles", nrow(all_status[all_status$className == "Reptiles",])),
                                      rep("birds", nrow(all_status[all_status$className == "Birds",])),
-                                     rep("marine fishes", nrow(FB_final))),
+                                     rep("marine fishes", nrow(data))),
                           
                           status = as.factor(c(all_status$rlCodes,
-                                               as.character(FB_final$IUCN))),
-                          nb_sp = c(all_status$n,rep(1,nrow(FB_final))))
+                                               as.character(data$IUCN))),
+                          nb_sp = c(all_status$n,rep(1,nrow(data))))
 
 
 levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR/cd", "LR/nt", "nt","NT", "LC","NThr")] <- "Non Threatened"
@@ -110,35 +110,34 @@ fig1 <- fig1 + annotation_custom(grob_mammals,xmin = 2.7, xmax = 3.5, ymin = 96,
 fig1 <- fig1 + annotation_custom(grob_amphibians,xmin = 3.7, xmax = 4.5, ymin = 96, ymax = 103)
 
 fig1 <- fig1 + annotation_custom(grob_fishes,xmin = 4.7, xmax = 5.5, ymin = 96, ymax = 103)
-fig1
 
-ggsave(file = here::here("figures/Figure1.png"),fig1,width = 12, height = 10, units= "in",dpi= 300)
-
+ggsave(file = here::here("figures/Figure_1.png"),fig1,width = 12, height = 10, units= "in",dpi= 300)
+}
 #'---------------------------------------------------------------------@variable_importance
 
-partial_plot <- var_partial(data      =  data_noNA,
-                            model = test_IUCN[[1]]) 
+figure4 <- function(data =  data_noNA, model = test_IUCN[[1]]){ 
+partial_plot <- var_partial(data      =  data,
+                            model = model) 
 
+# Plot importance plot
+importance_plot = var_imp(model)  
 
-
-
-
-fig2 <- importance_plot + (partial_plot[[1]] /
+fig <- importance_plot + (partial_plot[[1]] /
                    partial_plot[[2]])+ 
                   (partial_plot[[3]] /
                    partial_plot[[4]])
 
 
-ggsave(file = here::here("figures/Figure2.png"),fig2,width = 12, height = 6, units= "in",dpi= 300)
-
+ggsave(file = here::here("figures/Figure_4.png"),fig,width = 12, height = 6, units= "in",dpi= 300)
+}
 
 
 #'---------------------------------------------------------------------@Percentagegainmodel
 #'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
-load(file = here::here("outputs", "dat_network.RData"))
+#load(file = here::here("outputs", "dat_network.RData"))
 
-gainNThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
-gainThr <- ((table(dat_network$IUCN_cat)[1]-table(dat_network$IUCN_final)[1])/table(dat_network$IUCN_cat)[1])*100
+#gainNThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
+#gainThr <- ((table(dat_network$IUCN_cat)[1]-table(dat_network$IUCN_final)[1])/table(dat_network$IUCN_cat)[1])*100
 
 
 

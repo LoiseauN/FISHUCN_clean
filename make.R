@@ -156,8 +156,7 @@ split = data_prep(data_noNA)
 test_IUCN = IUCN_test(split,10)
 #Give the accuracy ! 
 
-# Plot importance plot
-importance_plot = var_imp(test_IUCN[[1]])  
+
 
 #Running IUCN predictions
 run_IUCN = IUCN_predict(split,data_noNA,10)
@@ -200,12 +199,20 @@ MPA_Protect <- protect_target(data = dat_network,
   
   
 #------------------Figure------------------------
-#Figure 2 
+#Figure 1 : barplot distribution IUCN categories for different taxa
+figure1(data = FB_final)
+
+#Figure 2 : Workflow
+
+#Figure 3 : gain in categories
 chid_chord(sup = FALSE)
 #For Supp
-chid_chord(data_zonation, sup = TRUE)
+chid_chord(sup = TRUE)
 
-
+#Figure 4 
+figure4(data =  data_noNA, model = test_IUCN[[1]])
+  
+#Figure 5
 
 #to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
 figRank(data = all_geo_res, sup = FALSE)
