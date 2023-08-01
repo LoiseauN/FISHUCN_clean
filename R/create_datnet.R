@@ -7,6 +7,7 @@ dat_network <- data.frame(data_zonation[,c("species","IUCN_cat","predict_complem
 dat_network <- addLevel(dat_network, "Threatened")
 dat_network <- addLevel(dat_network, "Non Threatened")
 dat_network <- addLevel(dat_network, "No Status")
+dat_network <- addLevel(dat_network, "Unpredictable")
 
 
 for (i in 1:ncol(dat_network)){
@@ -21,11 +22,6 @@ dat_network<-as.data.frame(sapply(dat_network,
                                   mapvalues, from = c("NThr"), 
                                   to = c("Non Threatened")))
 
-#not_in_model <- data.frame(species = rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]),
-#                           IUCN_alone= rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))),
-#                           predict=rep(NA, length(rownames(FB_vars[!rownames(FB_vars)%in% dat_network$species,]))))
-
-#dat_network <- rbind(dat_network,not_in_model)
 
 
 dat_network$IUCN_final <- NA
@@ -40,15 +36,26 @@ for (i in 1:nrow (dat_network)){
   }
 }
 
-dat_network<-as.data.frame(sapply(dat_network,
-                                  mapvalues, from = c(NA), 
-                                  to = c("No Status")))
 
-#not_in_model <- data.frame(species = rownames(FB_final[!rownames(FB_final)%in% dat_network$species,]),
-#                           IUCN_alone= rep(NA, length(rownames(FB_final[!rownames(FB_final)%in% dat_network$species,]))),
-#                          predict=rep(NA, length(rownames(FB_final[!rownames(FB_final)%in% dat_network$species,]))))
+for (i in 1:nrow (dat_network)){
+  if(is.na(dat_network$IUCN_cat[i]) & is.na(dat_network$IUCN_final[i])) { dat_network$predict_complementary[i]= "No Status"}
+  
+  if(is.na(dat_network$IUCN_cat[i])){ dat_network$IUCN_cat[i]= "No Status"}
+  }
+  
+
+dat_network$IUCN_final[is.na(dat_network$IUCN_final)] <- "No Status"
 
 
+#Unpredictible is species with too much NA
+dat_network$predict_complementary_and_unpredictable <- dat_network$predict_complementary
+for (i in 1:nrow (dat_network)){
+  if(dat_network$species[i] %in% rownames(FB_nonselec)){ dat_network$predict_complementary_and_unpredictable[i] = "Unpredictable"
+  
+  }else{
+  }
 
-#dat_network <- rbind(dat_network,not_in_model)
+  }
+
+return(dat_network)
 }

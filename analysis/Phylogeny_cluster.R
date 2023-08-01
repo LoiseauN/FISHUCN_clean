@@ -12,10 +12,11 @@ set_fish <- ape::drop.tip(tree,tree$tip.label[!is.element(tree$tip.label,as.char
 
 
 dat_phylo <- data.frame(species = dat_network$species,
-                        predict_complementary = as.factor(dat_network$predict_complementary),
+                        predict_complementary = as.factor(dat_network$predict_complementary_and_unpredictable),
                         Threatened = rep(NA,nrow(dat_network)),
                         Non_Threatened = rep(NA,nrow(dat_network)),
-                        No_Status = rep(NA,nrow(dat_network))
+                        No_Status = rep(NA,nrow(dat_network)),
+                        Unpredictable = rep(NA,nrow(dat_network))
 )
 
 
@@ -30,23 +31,34 @@ for(i in 1:nrow(dat_phylo)){
   if(is.na(dat_phylo$predict_complementary[i])){
     dat_phylo$Non_Threatened[i] <- 0
     dat_phylo$Threatened[i] <- 0
-    dat_phylo$No_Status[i] <- 0}
+    dat_phylo$No_Status[i] <- 0
+    dat_phylo$Unpredictable[i] <- 0}
   
   
   else if(dat_phylo$predict_complementary[i] == "Non Threatened"){
     dat_phylo$Non_Threatened[i] <- 1
     dat_phylo$Threatened[i] <- 0
-    dat_phylo$No_Status[i] <- 0}
+    dat_phylo$No_Status[i] <- 0
+    dat_phylo$Unpredictable[i] <- 0}
   
   else if(dat_phylo$predict_complementary[i] == "Threatened"){
     dat_phylo$Non_Threatened[i] <- 0
     dat_phylo$Threatened[i] <- 1
-    dat_phylo$No_Status[i] <- 0}
+    dat_phylo$No_Status[i] <- 0
+    dat_phylo$Unpredictable[i] <- 0}
   
   else if(dat_phylo$predict_complementary[i] == "No Status") {
     dat_phylo$Non_Threatened[i] <- 0
     dat_phylo$Threatened[i] <- 0
     dat_phylo$No_Status[i] <- 1
+    dat_phylo$Unpredictable[i] <- 0
+  }
+  
+  else if(dat_phylo$predict_complementary[i] == "Unpredictable") {
+    dat_phylo$Non_Threatened[i] <- 0
+    dat_phylo$Threatened[i] <- 0
+    dat_phylo$No_Status[i] <- 0
+    dat_phylo$Unpredictable[i] <- 1
   }
   
 
