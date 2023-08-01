@@ -32,11 +32,13 @@ nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
 ip  <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
 #devtools::install_github("zmjones/edarf", subdir = "pkg")
+
 ## Loading all functions ----
 
 files.source <- list.files(here::here("R"), pattern = "\\.R$", 
                            full.names = TRUE)
 sapply(files.source,source,.GlobalEnv)
+
 
 ## Loading all data ----
 
@@ -46,6 +48,7 @@ files   <- list.files(here::here("data"), pattern = "\\.rds$",
 files     <- list.files(here::here("data"), pattern = "\\.RData$", 
                         full.names = TRUE)
 data_list <- lapply(files, load, .GlobalEnv)
+
 
 #------------------Running code------------------------
 #Get IUCN status
@@ -115,10 +118,10 @@ marine_families <- marine_families[marine_families$Marin_fresh == "M",]
 FB_IUCN_final = FB_IUCN_final[FB_IUCN_final$Family %in% marine_families$Family,]
 
 #Remove trait with too much NA  (more than X%)
-#FB_IUCN_final <-  FB_IUCN_final[! colnames(FB_IUCN_final) %in% c('ReproMode','Fertilization','RepGuild1')]
+FB_IUCN_final <-  FB_IUCN_final[! colnames(FB_IUCN_final) %in% c('ReproMode','Fertilization','RepGuild1')]
 
 #Remove species with too much NA  (more than 40%)
-FB_IUCN_final<- FB_IUCN_final[rowSums(is.na(FB_IUCN_final[,-ncol(FB_IUCN_final)])) < 0.4*(ncol(FB_IUCN_final)-1), ]
+FB_IUCN_final<- FB_IUCN_final[rowSums(is.na(FB_IUCN_final[,-ncol(FB_IUCN_final)])) < 0.6*(ncol(FB_IUCN_final)-1), ]
 dim(FB_IUCN_final)
 
 ###Checking species that are not in FB_IUCN_final
@@ -145,7 +148,6 @@ save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 ###Checking species that are not in data_noNA
 dim(FB_IUCN) - dim(data_noNA)
 FB_nonselec <-FB_IUCN[!rownames(FB_IUCN) %in% rownames(data_noNA),]
-
 
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_noNA)
@@ -202,6 +204,8 @@ MPA_Protect <- protect_target(data = dat_network,
 chid_chord(sup = FALSE)
 #For Supp
 chid_chord(data_zonation, sup = TRUE)
+
+
 
 #to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
 figRank(data = all_geo_res, sup = FALSE)
