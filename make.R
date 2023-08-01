@@ -138,8 +138,6 @@ FB_IUCN_final = FB_IUCN_final %>% dplyr::select(-c(Depth_min))
 #Trying out missforest
 test_missForest = missForest_test(FB_IUCN,FB_IUCN_final)
 
-
-
 #Applying missforest
 data_noNA = missForest_applied(FB_IUCN_final,0.2,test_missForest)
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
