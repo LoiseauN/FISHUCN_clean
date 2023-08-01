@@ -1,5 +1,7 @@
 create_dat_network <- function(data){ 
-
+  
+  load(file = here::here("outputs/data_zonation.RData"))
+  
 dat_network <- data.frame(data_zonation[,c("species","IUCN_cat","predict_complementary")])
 
 dat_network <- addLevel(dat_network, "Threatened")

@@ -80,7 +80,9 @@ save(FB_scrapped,file = here::here("outputs/FB_scrapped.RData"))
 #All traits as columns
 
 FB_vars = FB_scrapped %>%   
-  left_join(DepthRange,by="species")
+  left_join(DepthRange,by="species") %>% 
+  mutate(Depth_min = log10(Depth_min+1),
+         Depth_max = log10(Depth_max+1))
 
 IUCN_status$species <- gsub("-","_",IUCN_status$species)
 
@@ -101,8 +103,6 @@ save(FB_final,file = "outputs/FB_final.Rdata")
 
 
 FB_IUCN_more = FB_final
-
-
 #Filling out genus and family where there is NA
 FB_IUCN_taxo_nona <- fill_taxo(data = FB_IUCN_more)
 
@@ -114,7 +114,8 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 marine_families <- marine_families[marine_families$Marin_fresh == "M",]
 FB_IUCN_final = FB_IUCN_final[FB_IUCN_final$Family %in% marine_families$Family,]
 
-FB_IUCN_final <-  FB_IUCN_final[! colnames(FB_IUCN_final) %in% c('ReproMode','Fertilization','RepGuild1')]
+#Remove trait with too much NA  (more than X%)
+#FB_IUCN_final <-  FB_IUCN_final[! colnames(FB_IUCN_final) %in% c('ReproMode','Fertilization','RepGuild1')]
 
 #Remove species with too much NA  (more than 40%)
 FB_IUCN_final<- FB_IUCN_final[rowSums(is.na(FB_IUCN_final[,-ncol(FB_IUCN_final)])) < 0.4*(ncol(FB_IUCN_final)-1), ]
