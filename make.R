@@ -97,10 +97,9 @@ FB_final <- FB_vars %>% left_join(IUCN_status,by='species') %>%
   rownames(FB_final) <- FB_final[,1]
   FB_final <- FB_final[,-1]
   
-#Sorting out some species with only missing data
+#Sorting out some rows with only missing data
 FB_final[FB_final==""] <-NA
 FB_final <- FB_final[rowSums(is.na(FB_final)) != ncol(FB_final), ]
-
 
 save(FB_final,file = "outputs/FB_final.Rdata")
 
@@ -171,24 +170,20 @@ load(file = here::here("outputs/IUCN_preds_deep.RData"))
 IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,80)
 IUCN_preds_deep_final[IUCN_preds_deep_final=="NaN"] <- NA
 
-#THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY OF BOTH METHODS
+#THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY or CONSENSUS OF BOTH METHODS
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)
 save(all_predict,file = "outputs/all_predict.Rdata")
 
-
-#TO CORRECT THEN  FUNCTION THAT MAKES CONSENSUS OF BOTH METHODS FOR SUPPLEMENTARY
-all_predict_sup <- IUCN_consensus(IUCN_preds_machine_final,IUCN_preds_deep_final)
-save(all_predict_sup,file = "outputs/all_predict_sup.Rdata")
 
 
 
 #------------------Prepare outputs for the figure and zoantion------------------------
 
 #Data for zonation
-create_data_zonation(data = FB_final, data_predict = all_predict)
+create_data_zonation(data = FB_IUCN_all_marine, data_predict = all_predict)
 
 #Data for phylo and chord
-dat_network <- create_dat_network(data = data_zonation)
+dat_network <- create_dat_network()
 
 #Protection and conservation
 MPA_Protect <- protect_target(data = dat_network,
@@ -198,7 +193,7 @@ MPA_Protect <- protect_target(data = dat_network,
   
 #------------------Figure------------------------
 #Figure 1 : barplot distribution IUCN categories for different taxa
-figure1(data = FB_final)
+figure1(data = FB_IUCN_all_marine)
 
 #Figure 2 : Workflow
 

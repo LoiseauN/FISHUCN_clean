@@ -6,24 +6,24 @@ chid_chord <- function(sup){
   load(here::here("outputs", "data_zonation.RData"))
   
   # for consensensus 
-    if(sup == TRUE){dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
+    if(sup == TRUE){dat_chord <- data.frame(data_zonation[ , c("species", "IUCN_cat",
                                                               "predict_consensus")])  }
   # for complementarity 
-  else{dat_network <- data.frame(data_zonation[ , c("species", "IUCN_cat",
+  else{dat_chord <- data.frame(data_zonation[ , c("species", "IUCN_cat",
                                                     "predict_complementary")]) }
 
-  colnames(dat_network)[3] <- "predict"
+  colnames(dat_chord)[3] <- "predict"
 
 ## Rename levels ----
 
-for (i in 2:ncol(dat_network)) {
+for (i in 2:ncol(dat_chord)) {
   
-  dat_network[ , i] <- as.character(dat_network[ , i])
+  dat_chord[ , i] <- as.character(dat_chord[ , i])
   
-  dat_network[ , i] <- plyr::mapvalues(dat_network[ , i], 
+  dat_chord[ , i] <- plyr::mapvalues(dat_chord[ , i], 
                                        from = "NThr", 
                                        to   = "Non Threatened")
-  dat_network[ , i] <- plyr::mapvalues(dat_network[ , i], 
+  dat_chord[ , i] <- plyr::mapvalues(dat_chord[ , i], 
                                        from = "Thr", 
                                        to   = "Threatened")
 }
@@ -31,41 +31,41 @@ for (i in 2:ncol(dat_network)) {
 
 ## Create IUCN final column ----
 
-dat_network$"IUCN_final" <- NA
+dat_chord$"IUCN_final" <- NA
 
-for (i in 1:nrow(dat_network)) {
+for (i in 1:nrow(dat_chord)) {
   
-  if (is.na(dat_network$"IUCN_cat"[i])) {
+  if (is.na(dat_chord$"IUCN_cat"[i])) {
     
-    dat_network$"IUCN_final"[i] <- dat_network$"predict"[i]
+    dat_chord$"IUCN_final"[i] <- dat_chord$"predict"[i]
     
   } else {
     
-    dat_network$"IUCN_final"[i] <- dat_network$"IUCN_cat"[i]
+    dat_chord$"IUCN_final"[i] <- dat_chord$"IUCN_cat"[i]
   }
 }
 
 
 ## Replace missing IUCN status ----
 
-dat_network[is.na(dat_network$"IUCN_final"), "IUCN_final"] <- "No Status"
-dat_network[is.na(dat_network$"IUCN_cat"), "IUCN_cat"]     <- "No Status"
+dat_chord[is.na(dat_chord$"IUCN_final"), "IUCN_final"] <- "No Status"
+dat_chord[is.na(dat_chord$"IUCN_cat"), "IUCN_cat"]     <- "No Status"
 
 
 ## Create levels ----
 
 level_s <- c("Threatened", "No Status", "Non Threatened")
 
-dat_network$"IUCN_cat"   <- factor(dat_network$"IUCN_cat", 
+dat_chord$"IUCN_cat"   <- factor(dat_chord$"IUCN_cat", 
                                  levels = level_s)
 
-dat_network$"IUCN_final" <- factor(dat_network$"IUCN_final", 
+dat_chord$"IUCN_final" <- factor(dat_chord$"IUCN_final", 
                                  levels = level_s)
 
-#save(dat_network, file = here::here("outputs", "dat_network.RData"))
+#save(dat_chord, file = here::here("outputs", "dat_chord.RData"))
 
 ## Confusion matrix ----
-mat <- table(dat_network$"IUCN_cat", dat_network$"IUCN_final")
+mat <- table(dat_chord$"IUCN_cat", dat_chord$"IUCN_final")
 
 rownames(mat) <- paste0("A_", rownames(mat))
 colnames(mat) <- paste0("B_", colnames(mat))
@@ -109,7 +109,8 @@ text(x =  0.25, y = 1.15, labels = "AFTER", pos = 4, cex = 1, font = 1)
 par(new = TRUE, fg = "transparent", col = "transparent")
 
 circlize::chordDiagram(mat, grid.col = grid.col1a, 
-                       row.col = c("#E7B80080", "#00AFBB20", "#FC4E0780"),
+                      # row.col = c("#E7B80080", "#00AFBB20", "#FC4E0780"),
+                      row.col = c("#FC4E0780","#E7B80080", "#00AFBB20"),
                        big.gap = 20,
                        annotationTrack = c("grid"), 
                        order = ordre, directional = -1,

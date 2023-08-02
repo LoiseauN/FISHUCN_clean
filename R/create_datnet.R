@@ -1,4 +1,4 @@
-create_dat_network <- function(data){ 
+create_dat_network <- function(){ 
   
   load(file = here::here("outputs/data_zonation.RData"))
   

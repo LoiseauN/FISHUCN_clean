@@ -71,23 +71,28 @@ IUCN_complementarity = function(data_machine,data_deep){
   }
   
   # Take the 
-  all_predict$proba_select <- NA 
+  # all_predict$proba_select <- NA 
   
-  for (i in 1:nrow(all_predict)){
+  #for (i in 1:nrow(all_predict)){
     
-    if(is.na(all_predict$agree[i])) {all_predict$proba_select[i] <- NA}
+  # if(is.na(all_predict$agree[i])) {all_predict$proba_select[i] <- NA}
     
-    else  if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$proba_select[i] <- all_predict$percentage[i]}
+  # else  if(all_predict$agree[i] == "ONLY_MACHINE") {all_predict$proba_select[i] <- all_predict$percentage[i]}
     
-    else  if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$proba_select[i] <- all_predict$proba[i]}
+  # else  if(all_predict$agree[i] == "ONLY_DEEP"){all_predict$proba_select[i] <- all_predict$proba[i]}
     
     #IF AGREE WE PUT PROBA == 100
-    else if(all_predict$agree[i] == "AGREE"){all_predict$proba_select[i] <- 100}
+  # else if(all_predict$agree[i] == "AGREE"){all_predict$proba_select[i] <- 100}
     
-    else if(all_predict$agree[i] == "NOT AGREE"){all_predict$proba_select[i] <- NA}
+  # else if(all_predict$agree[i] == "NOT AGREE"){all_predict$proba_select[i] <- NA}
     
    
-  }
+  #}
+  
+  all_predict <- all_predict %>% 
+    mutate (agree = as.factor(agree),
+            predict_complementary= as.factor(predict_complementary),
+            predict_consensus= as.factor(predict_consensus))
   return(all_predict)
 }
 
@@ -105,23 +110,23 @@ IUCN_complementarity = function(data_machine,data_deep){
 #'
 #' @export
 
-IUCN_consensus = function(data_predicted,splits,baseline){
+#IUCN_consensus = function(data_predicted,splits,baseline){
   
   #Model predictions according to class
-  Predicted_percentage= data_predicted %>%
-    group_by(species)%>%
-    count(score.predictions)%>%
+# Predicted_percentage= data_predicted %>%
+#    group_by(species)%>%
+#    count(score.predictions)%>%
     #Adding percentage of perdiction in each class
-    mutate(percentage=(n*100)/(splits*10))%>%
-    rename(IUCN="score.predictions")
+#    mutate(percentage=(n*100)/(splits*10))%>%
+#    rename(IUCN="score.predictions")
   
   #Keeping only species where prediction is >80%
-  IUCN_final_preds = Predicted_percentage %>%
-    filter(percentage>=baseline)
+# IUCN_final_preds = Predicted_percentage %>%
+#   filter(percentage>=baseline)
   
-  save(IUCN_final_preds, file = here::here("outputs", "IUCN_final_preds.Rdata"))
+# save(IUCN_final_preds, file = here::here("outputs", "IUCN_final_preds.Rdata"))
   
-  return(IUCN_final_preds)
+# return(IUCN_final_preds)
   
-}
+#}
 
