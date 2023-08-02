@@ -116,17 +116,15 @@ FB_IUCN_final = rbind(FB_IUCN_temp,FB_IUCN_taxo_nona)
 #still freshwater fish need to be clean
 marine_families <- marine_families[marine_families$Marin_fresh == "M",]
 FB_IUCN_final = FB_IUCN_final[FB_IUCN_final$Family %in% marine_families$Family,]
-
-#Remove trait with too much NA  (more than X%)
-FB_IUCN_final <-  FB_IUCN_final[! colnames(FB_IUCN_final) %in% c('ReproMode','Fertilization','RepGuild1')]
+FB_IUCN_all_marine <- FB_IUCN_final
 
 #Remove species with too much NA  (more than 40%)
 FB_IUCN_final<- FB_IUCN_final[rowSums(is.na(FB_IUCN_final[,-ncol(FB_IUCN_final)])) < 0.6*(ncol(FB_IUCN_final)-1), ]
 dim(FB_IUCN_final)
 
 ###Checking species that are not in FB_IUCN_final
-dim(FB_IUCN_final) - dim(FB_IUCN_temp)
-FB_nonselec <-FB_IUCN_temp[!rownames(FB_IUCN_temp) %in% rownames(FB_IUCN_final),]
+dim(FB_IUCN_final)- dim(FB_IUCN_all_marine)
+FB_nonselec <-FB_IUCN_all_marine[!rownames(FB_IUCN_all_marine) %in% rownames(FB_IUCN_final),]
 
 
 #Prepare for fill missforest
