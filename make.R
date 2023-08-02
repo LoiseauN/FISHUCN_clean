@@ -126,6 +126,8 @@ dim(FB_IUCN_final)- dim(FB_IUCN_all_marine)
 FB_nonselec <-FB_IUCN_all_marine[!rownames(FB_IUCN_all_marine) %in% rownames(FB_IUCN_final),]
 
 
+
+
 #Prepare for fill missforest
 FB_IUCN = IUCN_split(FB_IUCN_final)
 
@@ -143,8 +145,8 @@ data_noNA = missForest_applied(FB_IUCN_final,0.2,test_missForest)
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA
-dim(FB_IUCN) - dim(data_noNA)
-FB_nonselec <-FB_IUCN[!rownames(FB_IUCN) %in% rownames(data_noNA),]
+dim(FB_IUCN_all_marine) - dim(data_noNA)
+FB_nonselec <-FB_IUCN_all_marine[!rownames(FB_IUCN_all_marine) %in% rownames(data_noNA),]
 
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_noNA)

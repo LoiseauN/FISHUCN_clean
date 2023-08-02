@@ -65,12 +65,13 @@ for(i in 1:nrow(dat_phylo)){
 }
 
 
+
 dat_phylo_test_d <- na.omit(dat_phylo)
 
-D.phylogeny <- function(ids,proc,permut) {
+D.phylogeny <- function(ids,proc,permut,status) {
   #proc <- 2
   #permut <- 10
-  #ids <- 1:2
+  #ids <- 1:2 (number of tree)
   #status="Threatened"
   
   
@@ -85,7 +86,10 @@ D.phylogeny <- function(ids,proc,permut) {
     
     #Compute D and statistic
     FR_PhyloD <- caper::comparative.data(set_tree, dat_phylo_test_d,"species",na.omit=FALSE)
-    FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=No_Status,permut=permut)
+    if(status == Threatened ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Threatened,permut=permut)}
+    if(status == Non_Threatened ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Non_Threatened,permut=permut)}
+    if(status == No_Status ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=No_Status,permut=permut)}
+    if(status == Unpredictable ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Unpredictable,permut=permut)}
     #FR_PhyloD <- sensiPhy::miss.phylo.d(set_tree,dat_phylo,binvar=Threatened)
 
     #The estimated D value
@@ -103,36 +107,39 @@ D.phylogeny <- function(ids,proc,permut) {
   
 }
 
-phylo_D_Thr <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000)
+phylo_D_Thr <- D.phylogeny(ids = 1:2,proc=5 ,permut=10, status = "Threatened")
 save(phylo_D_Thr,file=here::here("outputs","phylo_D_Thr.RData"))
 
-phylo_D_NonThr <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000)
+phylo_D_NonThr <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "Non_Threatened")
 save(phylo_D_NonThr,file=here::here("outputs","phylo_D_NonThr.RData"))
 
-phylo_D_nostatus <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000)
+phylo_D_nostatus <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "No_Status")
 save(phylo_D_nostatus,file=here::here("outputs","phylo_D_nostatus.RData"))
 
-
-
-
-#CHECK ORDER and same species
-#
-#for(i in 1:nrow(dat_phylo)){
-  
- # print(i)
-  
-#  if(is.na(dat_phylo$group[i])){next}  
-  
-#  if(dat_phylo$group[i] == "Non Threatened"){dat_phylo$Non_Threatened[i] <- 1  }
-  
-#  if(dat_phylo$group[i] == "Threatened"){dat_phylo$Threatened[i] <- 1}
-  
-#  if(dat_phylo$group[i] == "No Status") {dat_phylo$No_Status[i] <- 1}
-  
-#}
+phylo_D_unpredictable <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "Unpredictable")
+save(phylo_D_nostatus,file=here::here("outputs","phylo_D_Unpredictable.RData"))
 
 
 colnames(dat_phylo)[1:2] <- c("label","group")
+#
+for(i in 1:nrow(dat_phylo)){
+  
+ print(i)
+  
+  if(is.na(dat_phylo$group[i])){next}  
+  
+  if(dat_phylo$group[i] == "Non Threatened"){dat_phylo$Non_Threatened[i] <- 1  }
+  
+  if(dat_phylo$group[i] == "Threatened"){dat_phylo$Threatened[i] <- 1}
+
+  if(dat_phylo$group[i] == "No Status") {dat_phylo$No_Status[i] <- 1}
+  
+  if(dat_phylo$group[i] == "Unpredictable") {dat_phylo$Unpredictable[i] <- 1 }
+
+ 
+}
+
+
 #' ---------------------------------------------------------------------------- @Parameters
 
 n        <-  1                         # ID of first plot
@@ -150,7 +157,7 @@ new_phylo <- tidytree::as.treedata(new_phylo)
 
 ## Add Phylogenetic Tree ----
 
-tree_plot <- ggtree::ggtree(new_phylo, color = "grey", layout = "circular",
+tree_plot <- ggtree::ggtree(new_phylo, color = "gray25", layout = "circular",
                             ladderize = FALSE, right = TRUE, size = 0.4) +
   
   theme(plot.margin = unit(rep(-2,  4), "cm")) +
@@ -162,7 +169,7 @@ tree_plot <- ggtree::ggtree(new_phylo, color = "grey", layout = "circular",
 
 ## Add point per Status  ----
 #pal <- hp(n = 5, house = "Ravenclaw",direction = -1)
-pal <- c("#FC4E07", "#E7B800","#00AFBB")
+pal <- c("#FC4E07", "#E7B800","#00AFBB","grey")
 
 tree_dt <- as.data.frame(tree_plot$data)
 tree_dt <- tree_dt[tree_dt$"isTip" == TRUE, ]
@@ -195,6 +202,17 @@ tree_plot <- tree_plot +
 cols <- ifelse(tree_dt$"No_Status" == 0, NA, pal[3])
 
 tree_dt$"x" <- max(tree_dt$"x") + 18
+
+tree_plot <- tree_plot +
+  
+  geom_point(aes(x = x, y = y, color = No_Status), tree_dt, fill = cols, 
+             color = "transparent", shape = 21, size = 1)
+
+## Add Unpredictible Points ----
+
+cols <- ifelse(tree_dt$"Unpredictable" == 0, NA, pal[4])
+
+tree_dt$"x" <- max(tree_dt$"x") + 21
 
 tree_plot <- tree_plot +
   
@@ -366,7 +384,7 @@ plots[[n]] <- tree_legend
 ## Export Figure ----
 
 ggsave(
-  filename  = "~/Documents/Postdoc MARBEC/FISHUCN/last/FISHUCN_clean/figures/phyl_tree.png",
+  filename  = here::here("figures","phyl_tree.png"),
   plot      = plots[[1]],#grobs,
   width     = 12,
   height    = 12,

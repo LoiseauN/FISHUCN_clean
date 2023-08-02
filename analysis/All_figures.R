@@ -122,10 +122,9 @@ partial_plot <- var_partial(data      =  data,
 # Plot importance plot
 importance_plot = var_imp(model)  
 
-fig <- importance_plot + (partial_plot[[1]] /
-                   partial_plot[[2]])+ 
-                  (partial_plot[[3]] /
-                   partial_plot[[4]])
+fig <- importance_plot + 
+  (partial_plot[[1]] /partial_plot[[3]])+ 
+  (partial_plot[[2]]/partial_plot[[4]])
 
 
 ggsave(file = here::here("figures/Figure_4.png"),fig,width = 12, height = 6, units= "in",dpi= 300)
