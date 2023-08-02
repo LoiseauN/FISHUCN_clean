@@ -86,10 +86,10 @@ D.phylogeny <- function(ids,proc,permut,status) {
     
     #Compute D and statistic
     FR_PhyloD <- caper::comparative.data(set_tree, dat_phylo_test_d,"species",na.omit=FALSE)
-    if(status == Threatened ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Threatened,permut=permut)}
-    if(status == Non_Threatened ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Non_Threatened,permut=permut)}
-    if(status == No_Status ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=No_Status,permut=permut)}
-    if(status == Unpredictable ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Unpredictable,permut=permut)}
+    if(status == "Threatened" ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Threatened,permut=permut)}
+    if(status == "Non_Threatened" ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Non_Threatened,permut=permut)}
+    if(status == "No_Status" ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=No_Status,permut=permut)}
+    if(status == "Unpredictable" ) {FR_PhyloD <- caper::phylo.d(FR_PhyloD, binvar=Unpredictable,permut=permut)}
     #FR_PhyloD <- sensiPhy::miss.phylo.d(set_tree,dat_phylo,binvar=Threatened)
 
     #The estimated D value
@@ -107,7 +107,7 @@ D.phylogeny <- function(ids,proc,permut,status) {
   
 }
 
-phylo_D_Thr <- D.phylogeny(ids = 1:2,proc=5 ,permut=10, status = "Threatened")
+phylo_D_Thr <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "Threatened")
 save(phylo_D_Thr,file=here::here("outputs","phylo_D_Thr.RData"))
 
 phylo_D_NonThr <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "Non_Threatened")
@@ -122,22 +122,22 @@ save(phylo_D_nostatus,file=here::here("outputs","phylo_D_Unpredictable.RData"))
 
 colnames(dat_phylo)[1:2] <- c("label","group")
 #
-for(i in 1:nrow(dat_phylo)){
+#for(i in 1:nrow(dat_phylo)){
   
- print(i)
+# print(i)
   
-  if(is.na(dat_phylo$group[i])){next}  
+# if(is.na(dat_phylo$group[i])){next}  
   
-  if(dat_phylo$group[i] == "Non Threatened"){dat_phylo$Non_Threatened[i] <- 1  }
+# if(dat_phylo$group[i] == "Non Threatened"){dat_phylo$Non_Threatened[i] <- 1  }
   
-  if(dat_phylo$group[i] == "Threatened"){dat_phylo$Threatened[i] <- 1}
+# if(dat_phylo$group[i] == "Threatened"){dat_phylo$Threatened[i] <- 1}
 
-  if(dat_phylo$group[i] == "No Status") {dat_phylo$No_Status[i] <- 1}
+# if(dat_phylo$group[i] == "No Status") {dat_phylo$No_Status[i] <- 1}
   
-  if(dat_phylo$group[i] == "Unpredictable") {dat_phylo$Unpredictable[i] <- 1 }
+# if(dat_phylo$group[i] == "Unpredictable") {dat_phylo$Unpredictable[i] <- 1 }
 
  
-}
+#}
 
 
 #' ---------------------------------------------------------------------------- @Parameters
