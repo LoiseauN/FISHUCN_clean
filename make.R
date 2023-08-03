@@ -192,7 +192,8 @@ MPA_Protect <- protect_target(data = dat_network,
                mpa = PctMPAI_IV, 
                distrib = FishDistribArea_all) 
   
-  
+#have some number 
+number <- have_number(data = dat_network,  prediction = all_predict)
 #------------------Figure------------------------
 #Figure 1 : barplot distribution IUCN categories for different taxa
 figure1(data = FB_IUCN_all_marine)

@@ -223,8 +223,13 @@ tree_plot <- tree_plot +
 
 ## Add Central Histogram ----
 species_d <- data.frame(estimated_d   = c( do.call(rbind,phylo_D_NonThr)$estimated_D,
-                                           do.call(rbind,phylo_D_Thr)$estimated_D, do.call(rbind,phylo_D_nostatus)$estimated_D),
-                        Status = c(rep("Non Threatened", 100), rep("Threatened", 100),rep("No Status", 100)))
+                                           do.call(rbind,phylo_D_Thr)$estimated_D,
+                                           do.call(rbind,phylo_D_nostatus)$estimated_D,
+                                            do.call(rbind,phylo_D_unpredictable)$estimated_D),
+                        Status = c(rep("Non Threatened", 100),
+                                   rep("Threatened", 100),
+                                   rep("No Status", 100),
+                                   rep("Unpredictable", 100)))
 
 
 
@@ -237,7 +242,7 @@ hist_plot <- ggplot(species_d, aes(x = estimated_d,
   
   #scale_color_manual(values = c("#E7B800","#00AFBB", "#FC4E07")) +
   
-  scale_fill_manual(values = paste0(c("#E7B800","#00AFBB","#FC4E07") 
+  scale_fill_manual(values = paste0(c("#E7B800","#00AFBB","#FC4E07","grey") 
   )) +#alpha=0.5
   
   theme_light() +
