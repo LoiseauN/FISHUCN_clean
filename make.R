@@ -117,6 +117,10 @@ marine_families <- marine_families[marine_families$Marin_fresh == "M",]
 FB_IUCN_final = FB_IUCN_final[FB_IUCN_final$Family %in% marine_families$Family,]
 FB_IUCN_all_marine <- FB_IUCN_final
 
+#Remove 3 trait of repro not informative enougt
+
+FB_IUCN_final <- FB_IUCN_final[,!colnames(FB_IUCN_final) %in% c("ReproMode","Fertilization","RepGuild1")]
+
 #Remove species with too much NA  (more than 40%)
 FB_IUCN_final<- FB_IUCN_final[rowSums(is.na(FB_IUCN_final[,-ncol(FB_IUCN_final)])) < 0.6*(ncol(FB_IUCN_final)-1), ]
 dim(FB_IUCN_final)
@@ -126,11 +130,8 @@ dim(FB_IUCN_final)- dim(FB_IUCN_all_marine)
 FB_nonselec <-FB_IUCN_all_marine[!rownames(FB_IUCN_all_marine) %in% rownames(FB_IUCN_final),]
 
 
-
-
 #Prepare for fill missforest
 FB_IUCN = IUCN_split(FB_IUCN_final)
-
 
 #These variables we can't fill out : (Depth_min)R2 was not good enough 
 #Depth max and trophic were not very good but not a great number of missing value
