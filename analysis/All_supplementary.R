@@ -71,7 +71,7 @@ res$predict_complementary_and_unpredictable <- as.factor(res$predict_complementa
 res$Family <- as.factor(res$Family )
 res <- as.data.frame.matrix(t(table(res$predict_complementary_and_unpredictable,res$Family)))
 res$Family <- rownames(res)
-res$richness <- res[,1] + res[,2] + res[,3]
+res$richness <- res[,1] + res[,2] + res[,3]+ res[,4]
 
 
 res <- reshape2::melt(res, id.vars=c("Family","richness"))
@@ -79,6 +79,8 @@ res <-  res[order(res$richness,decreasing = T),]
 res <- res[res$richness>0,]
 
 res$status <- factor(res$variable, levels = c("Threatened", "Non Threatened", "No Status", "Unpredictable"))
+
+res$proportion <- (res$value/res$richness)*100
 
 all <- ggplot(res,aes(x = reorder(Family, richness), y= value, fill = status)) +
   geom_bar(stat = "identity",position ="stack")+ 
@@ -101,7 +103,16 @@ zoom <- ggplot(res,aes(x = reorder(Family, richness), y= value, fill = status)) 
   theme(legend.position = "none")
 
 
-fig_S3 <- all+annotation_custom(ggplotGrob(zoom), xmin = 0, xmax = 200,ymin = 100, ymax = 450)
+fig_S3 <- all+annotation_custom(ggplotGrob(zoom), xmin = 0, xmax = 250,ymin = 50, ymax = 500)
 
 ggsave(here::here("figures","fig_S3.png"), plot = fig_S3,
        width = 12, height = 12, dpi = 300, units = "in", device='png')
+
+
+#a <- res[res$status == "Unpredictable",]
+#a <- arrange(a, desc(proportion))
+#Opistognathidae       40 Unpredictable    13 Unpredictable  32.5000000
+#
+
+#a <- res[res$Family == "Cirrhitidae",]
+
