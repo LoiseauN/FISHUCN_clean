@@ -50,7 +50,7 @@ dat_network$IUCN_final[is.na(dat_network$IUCN_final)] <- "No Status"
 #Unpredictible is species with too much NA
 dat_network$predict_complementary_and_unpredictable <- dat_network$predict_complementary
 for (i in 1:nrow (dat_network)){
-  if(dat_network$species[i] %in% rownames(FB_nonselec)){ dat_network$predict_complementary_and_unpredictable[i] = "Unpredictable"
+  if(dat_network$species[i] %in% rownames(FB_nonselec_NS)){ dat_network$predict_complementary_and_unpredictable[i] = "Unpredictable"
   
   }else{
   }

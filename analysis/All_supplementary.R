@@ -59,10 +59,10 @@ if(var[x] %in% c("DeltaRank_SameWeight")) {
 
 
 #'---------------------------------------------------------------------@Checkperfamily
-load(file = here::here("outputs", "FB_final.RData"))
+#load(file = here::here("outputs", "FB_IUCN.RData"))
 load(file = here::here("outputs", "dat_network.RData"))
 
-res <- merge(dat_network, FB_final[,c("Genus","Family")], by.x="species", by.y="row.names")
+res <- merge(dat_network, FB_IUCN_all_marine[,c("Genus","Family")], by.x="species", by.y="row.names", all.x =T)
 
 
 res <- res[!is.na(res$predict_complementary_and_unpredictable) | res$IUCN_final == "No Status", ]

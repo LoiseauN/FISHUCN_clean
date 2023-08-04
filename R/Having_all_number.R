@@ -5,6 +5,13 @@ have_number <- function(data = dat_network,  prediction = all_predict){
   all_predict
 #Describe original data
 start <- data.frame(table(dat_network$IUCN_cat))
+#Remove the unpredictable
+start[start$Var1 == "No Status",2] <- start[start$Var1 == "No Status",2] -
+                                      (nrow(FB_nonselec)-sum(table(FB_nonselec$IUCN)))
+start[start$Var1 == "Non Threatened",2] <- start[start$Var1 == "Non Threatened",2] - 
+                                            table(FB_nonselec$IUCN)["NThr"]
+start[start$Var1 == "Threatened",2] <- start[start$Var1 == "Threatened",2] -
+                                        table(FB_nonselec$IUCN)["Thr"]
 
 #Species removed because too much NA
 toomuchNA <- data.frame(table(dat_network$predict_complementary_and_unpredictable))
