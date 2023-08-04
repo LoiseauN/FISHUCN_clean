@@ -131,13 +131,6 @@ ggsave(file = here::here("figures/Figure_4.png"),fig,width = 12, height = 6, uni
 }
 
 
-#'---------------------------------------------------------------------@Percentagegainmodel
-#'( ( valeur d'arrivée - valeur de départ ) / valeur de départ ) x 100
-#load(file = here::here("outputs", "dat_network.RData"))
-
-#gainNThr <- ((table(dat_network$IUCN_cat)[3]-table(dat_network$IUCN_final)[3])/table(dat_network$IUCN_cat)[3])*100
-#gainThr <- ((table(dat_network$IUCN_cat)[1]-table(dat_network$IUCN_final)[1])/table(dat_network$IUCN_cat)[1])*100
-
 
 
 
