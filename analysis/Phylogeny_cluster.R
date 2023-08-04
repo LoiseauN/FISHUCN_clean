@@ -364,28 +364,6 @@ plots[[n]] <- tree_legend
 
 #n <- n + 1
 
-
-
-## Arrange Sub-plots ----
-
-#mat <- matrix(
-#  data   = c(rep(1,30),3,2,2,2,3),#,3,2,2,2,3),
-#  ncol   = 5,
-#  nrow   = 7,
-#  byrow  = TRUE
-#)
-
-
-
-
-
-
-#grobs <- gridExtra::arrangeGrob(
-#  plots[[1]], plots[[2]],
-#  layout_matrix = mat
-#)
-
-#plot(grobs)
 ## Export Figure ----
 
 ggsave(

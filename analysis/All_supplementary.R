@@ -65,11 +65,11 @@ load(file = here::here("outputs", "dat_network.RData"))
 res <- merge(dat_network, FB_final[,c("Genus","Family")], by.x="species", by.y="row.names")
 
 
-res <- res[!is.na(res$predict_complementary) | res$IUCN_final == "No Status", ]
+res <- res[!is.na(res$predict_complementary_and_unpredictable) | res$IUCN_final == "No Status", ]
 
-res$IUCN_final <- as.factor(res$IUCN_final )
+res$predict_complementary_and_unpredictable <- as.factor(res$predict_complementary_and_unpredictable )
 res$Family <- as.factor(res$Family )
-res <- as.data.frame.matrix(t(table(res$IUCN_final,res$Family)))
+res <- as.data.frame.matrix(t(table(res$predict_complementary_and_unpredictable,res$Family)))
 res$Family <- rownames(res)
 res$richness <- res[,1] + res[,2] + res[,3]
 
@@ -78,12 +78,12 @@ res <- reshape2::melt(res, id.vars=c("Family","richness"))
 res <-  res[order(res$richness,decreasing = T),]
 res <- res[res$richness>0,]
 
-res$status <- factor(res$variable, levels = c("Threatened", "Non Threatened", "No Status"))
+res$status <- factor(res$variable, levels = c("Threatened", "Non Threatened", "No Status", "Unpredictable"))
 
 all <- ggplot(res,aes(x = reorder(Family, richness), y= value, fill = status)) +
   geom_bar(stat = "identity",position ="stack")+ 
   coord_flip()+
-  scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800"), name = "IUCN status", 
+  scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800", "grey"), name = "IUCN status", 
                     guide = guide_legend(reverse = FALSE))+
   theme_bw() +
   xlab("Family")+ylab("Number of species")+
@@ -95,7 +95,7 @@ zoom <- ggplot(res,aes(x = reorder(Family, richness), y= value, fill = status)) 
   geom_bar(stat = "identity",position ="stack")+ 
   coord_flip()+
   scale_x_discrete(limits = rev(c(unique(res$Family[c(1:90)])))) +
-  scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800"))+
+  scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800", "grey"))+
   theme_bw() +
   xlab(" ")+ylab(" ")+
   theme(legend.position = "none")
