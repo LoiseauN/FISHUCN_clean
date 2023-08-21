@@ -81,31 +81,5 @@ table(MPA_FINAL$category)
 # --- Stat tests end -----------------------------------------------------------
 
 
-# --- Figure -------------------------------------------------------------------
-
-
-
-violin_targets <- cowplot::ggdraw() + cowplot::draw_image(here::here("violin_targets_ggsave.png"))
-violin_cover <- cowplot::ggdraw() + cowplot::draw_image(here::here("violin_cover_ggsave.png"))
-target_fig <- cowplot::ggdraw() + cowplot::draw_image(here::here("targets.png"))
-cover_fig <- cowplot::ggdraw() + cowplot::draw_image(here::here("perc cover.png"))
-
-
-png("fig_all.png", 
-    width = 24, 
-    height = 15.75, 
-    units = "in", 
-    res = 600,
-    pointsize = 18)
-
-fig1 <- gridExtra::grid.arrange(
-  violin_targets, violin_cover, target_fig, cover_fig,
-  nrow=2)
-
-dev.off()
-
-# --- Figure end ---------------------------------------------------------------
-
-
 
 
