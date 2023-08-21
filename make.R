@@ -191,7 +191,7 @@ save(dat_network,file = "outputs/dat_network.Rdata")
 MPA_Protect <- protect_target(data = dat_network,
                mpa = PctMPAI_IV, 
                distrib = FishDistribArea_all) 
-  
+
 #have some number 
 number <- have_number(data = dat_network,  prediction = all_predict)
 #------------------Figure------------------------
@@ -209,6 +209,9 @@ chid_chord(sup = TRUE)
 figure4(data =  data_noNA, model = test_IUCN[[1]])
   
 #Figure 5
+
+#Figure 6
+figure6(data = MPA_Protect)
 
 #to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
 figRank(data = all_geo_res, sup = FALSE)

@@ -131,8 +131,49 @@ ggsave(file = here::here("figures/Figure_4.png"),fig,width = 12, height = 6, uni
 }
 
 
+#'---------------------------------------------------------------------@protection
+figure6 <- function(data){ 
 
+BEFORE <- cbind.data.frame(perc_cover=data$perc_cover, Target_achievement_I_IV=data$Target_achievement_I_IV,IUCN=data$IUCN_cat,What="BEFORE")
+AFTER <- cbind.data.frame(perc_cover=data$perc_cover, Target_achievement_I_IV=data$Target_achievement_I_IV,IUCN=data$IUCN_final,What="AFTER")
+MPA_FINAL <- rbind(BEFORE,AFTER)
 
+MPA_FINAL$What <- factor(MPA_FINAL$What, levels = c("AFTER","BEFORE"))
+MPA_FINAL$IUCN <- factor(MPA_FINAL$IUCN, levels = c("Threatened","Non Threatened","No Status"))
+MPA_FINAL$category <- as.factor(paste(MPA_FINAL$IUCN, MPA_FINAL$What, sep="_"))
+MPA_FINAL$category <- factor(MPA_FINAL$category,levels=c("No Status_BEFORE","No Status_AFTER","Non Threatened_BEFORE","Non Threatened_AFTER","Threatened_BEFORE","Threatened_AFTER")) 
+
+#Target_achievement_I_IV
+a <- ggplot(MPA_FINAL, aes(IUCN, Target_achievement_I_IV, fill = category)) +
+  facefuns::geom_split_violin(trim = FALSE,show.legend=FALSE)+
+  theme_bw()+
+  coord_cartesian(ylim = c(0.1, 500))+
+  scale_y_continuous(
+    trans  = "log10",
+    breaks = c(0.1,1, 10, 100)) +
+  scale_fill_manual(values = c("#fee6b7", "#e7b800","#c1e4e8", "#00AFBB",  "#FEDBCD" , "#FC4E07" ))+
+  theme(legend.position = "none") +
+  geom_boxplot(width = 0.25, notch = FALSE, outlier.shape = NA, coef=0, lwd=0.7)+
+  ylab("Target achievement (%)")
+
+#perc_cover
+b <- ggplot(MPA_FINAL, aes(IUCN, perc_cover, fill = category)) +
+  facefuns::geom_split_violin(trim = FALSE,show.legend=FALSE)+
+  theme_bw()+
+  coord_cartesian(ylim = c(0.1, 100))+
+  scale_y_continuous(
+    trans  = "log10",
+    breaks = c(0.1,1, 10,100)) +
+  scale_fill_manual(values = c("#fee6b7", "#e7b800","#c1e4e8", "#00AFBB",  "#FEDBCD" , "#FC4E07" ))+
+  theme(legend.position = "none") +
+  geom_boxplot(width = 0.25, notch = FALSE, outlier.shape = NA, coef=0, lwd=0.7)+
+  ylab("Cover (%)")
+
+fig <- gridExtra::grid.arrange(a,b,ncol=2)
+
+ggsave(file = here::here("figures/Figure_6.png"),fig,width = 12, height = 6, units= "in",dpi= 300)
+
+}
 
 
 
