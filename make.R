@@ -127,8 +127,12 @@ dim(FB_IUCN_final)
 
 ###Checking species that are not in FB_IUCN_final
 dim(FB_IUCN_final)- dim(FB_IUCN_all_marine)
-FB_nonselec <-FB_IUCN_all_marine[!rownames(FB_IUCN_all_marine) %in% rownames(FB_IUCN_final),]
+FB_nonselec <- FB_IUCN_all_marine[!rownames(FB_IUCN_all_marine) %in% rownames(FB_IUCN_final),]
+FB_IUCN_final[!rownames(FB_IUCN_final) %in% rownames(FB_IUCN_all_marine),]
+
+
 FB_nonselec_NS <- FB_nonselec[is.na(FB_nonselec$IUCN),]
+FB_IUCN_final[rownames(FB_IUCN_final) %in% rownames(FB_nonselec_NS),]
 
 
 #Prepare for fill missforest
@@ -185,6 +189,8 @@ create_data_zonation(data = FB_IUCN_all_marine, data_predict = all_predict)
 
 #Data for phylo and chord
 dat_network <- create_dat_network()
+
+dat_network[dat_network$species %in% rownames(FB_nonselec_NS),]
 save(dat_network,file = "outputs/dat_network.Rdata")
 
 #Protection and conservation
