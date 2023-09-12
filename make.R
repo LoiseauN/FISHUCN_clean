@@ -24,7 +24,8 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
            "tidyverse", "viridis", "XML", "circlize","edarf","rgdal",
           "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter",
-          "randomForest","caret","ROCR","RColorBrewer","tidyr",)
+          "randomForest","caret","ROCR","RColorBrewer","tidyr",
+          "RColorBrewer")
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
@@ -223,9 +224,6 @@ figure4(data =  data_noNA, model = test_IUCN[[1]])
 figure6(data = MPA_Protect)
 
 #to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
-#to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
-
-
 figRank(data = all_geo_res, sup = FALSE)
 #For Supp
 figRank(data = all_geo_res, sup = TRUE)
