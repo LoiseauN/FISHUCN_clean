@@ -1,12 +1,3 @@
-rm(list = ls())
-# load libraries
-library(tidyr)
-library(dplyr)
-
-library(raster)
-library(rgdal)
-
-library(ggplot2)
 
 
 # set wd for Z outputs

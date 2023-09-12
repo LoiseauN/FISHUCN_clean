@@ -24,8 +24,7 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
            "tidyverse", "viridis", "XML", "circlize","edarf","rgdal",
           "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter",
-          "randomForest","caret","ROCR","RColorBrewer")
-
+          "randomForest","caret","ROCR","RColorBrewer","tidyr",)
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
@@ -200,6 +199,10 @@ MPA_Protect <- protect_target(data = dat_network,
 
 #have some number 
 number <- have_number(data = dat_network,  prediction = all_predict)
+
+#process output of zonation
+Zrank_main <- process_out_zonation(nb_scenario = 2)
+head(Zrank_main)
 #------------------Figure------------------------
 #Figure 1 : barplot distribution IUCN categories for different taxa
 figure1(data = FB_IUCN_all_marine)
@@ -220,6 +223,9 @@ figure4(data =  data_noNA, model = test_IUCN[[1]])
 figure6(data = MPA_Protect)
 
 #to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
+#to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
+
+
 figRank(data = all_geo_res, sup = FALSE)
 #For Supp
 figRank(data = all_geo_res, sup = TRUE)

@@ -8,11 +8,13 @@
 #' @date 
 
 #Read in all TIFF files of richness per status
+preparallRes <- function(zonation_output = Zrank_main) { 
+
 files <- list.files(here::here("outputs", "tif_outputs"), pattern = "\\.tif$",
                     full.names = TRUE)
 
 #Load zonation outputs
-load(here::here("outputs", "Zrank_main.RData"))
+#load(here::here("outputs", "Zrank_main.RData"))
 
 #Combine all TIFF files into a single raster stack
 ras  <- raster::stack(files)
@@ -56,10 +58,12 @@ all_geo_res <- merge(dat,Zrank_main, by ="ID",all.x = T)
 #cells were ranked higher after the prediction and negative when ther were 
 #ranked lower (more intuitive than before - after)
 
-all_geo_res$DeltaRank_Proba <- all_geo_res$PredictProba_IUCN_weigth-all_geo_res$IUCN_weigth
+#all_geo_res$DeltaRank_Proba <- all_geo_res$PredictProba_IUCN_weigth-all_geo_res$IUCN_weigth
 all_geo_res$DeltaRank_SameWeight <- all_geo_res$Predict_IUCN_same_weigth-all_geo_res$IUCN_weigth
 
 #all_geo_res[is.na(all_geo_res)] <- 0
 
 #Save the final dataset
 save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
+
+}
