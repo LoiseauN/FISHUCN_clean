@@ -14,7 +14,6 @@ files <- list.files(here::here("outputs", "tif_outputs"), pattern = "\\.tif$",
                     full.names = TRUE)
 
 #Load zonation outputs
-#load(here::here("outputs", "Zrank_main.RData"))
 
 #Combine all TIFF files into a single raster stack
 ras  <- raster::stack(files)
@@ -50,7 +49,7 @@ colnames(dat)<- c("long","lat","ID",
                   "richness")
 
 #Merge data with zonation outputs : Zrank_main
-all_geo_res <- merge(dat,Zrank_main, by ="ID",all.x = T)
+all_geo_res <- merge(dat,zonation_output, by ="ID",all.x = T)
 
 #Compute difference in zonation rank
 #compute delta rank 
@@ -64,6 +63,6 @@ all_geo_res$DeltaRank_SameWeight <- all_geo_res$Predict_IUCN_same_weigth-all_geo
 #all_geo_res[is.na(all_geo_res)] <- 0
 
 #Save the final dataset
-save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
-
+#save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
+return(all_geo_res)
 }

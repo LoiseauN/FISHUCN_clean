@@ -204,6 +204,11 @@ number <- have_number(data = dat_network,  prediction = all_predict)
 #process output of zonation
 Zrank_main <- process_out_zonation(nb_scenario = 2)
 head(Zrank_main)
+
+#merge all res
+all_geo_res <- preparallRes(Zrank_main)
+save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
+
 #------------------Figure------------------------
 #Figure 1 : barplot distribution IUCN categories for different taxa
 figure1(data = FB_IUCN_all_marine)
