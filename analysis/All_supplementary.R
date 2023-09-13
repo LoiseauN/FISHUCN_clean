@@ -24,9 +24,6 @@ mollBorder <- st_read(here::here("data","mollBorder","mollBorder.shp"))
 mask.full=raster::raster(here::here("data","mask.full.tif"))
 
 #My data
-
-
-
 var = c("DeltaRank_SameWeight")
 
 mask = mask.full

@@ -14,7 +14,7 @@ mol   <- paste0("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 ", "+units=m +no
 world <- sf::st_transform(world, crs=mol)
 
 # import layers border
-mollBorder <- st_read(here::here("data","mollBorder","mollBorder.shp"))
+mollBorder <- sf::st_read(here::here("data","mollBorder","mollBorder.shp"))
 
 # mask
 mask.full=raster::raster(here::here("data","mask.full.tif"))
@@ -29,7 +29,7 @@ var = c("richness_finalNT",
         "richness_initNS",
         "richness_initTH",
         "DeltaRank_SameWeight",
-        "DeltaRank_Proba")
+        "richness_unpredictable")
 
 
 all_map <- lapply(1:length(var),function(x){
@@ -257,4 +257,49 @@ if (var[x] =="DeltaRank_Proba")  { ggsave(file = here::here("figures/Figure6Supp
 
  }
   
+#'--------------------------------------------------------@RichnessUnpredictable
+  if  (var[x] =="richness_Unpreditable")  {  
+    map <- ggplot(world) +
+      geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
+      scale_colour_gradientn(name  = "Richness unpredictable",
+                             colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
+      
+      scale_fill_gradientn(name  = "Richness unpredictable",
+                           colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
+      
+      # scale_fill_hp(option = "Ravenclaw", 
+      #              limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
+      #                        max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS))))+
+      # scale_color_hp(option = "Ravenclaw", 
+      #              limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
+      #                          max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS))))+
+      geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
+      geom_graticules(mol) +
+      geom_mapframe(mol, colour = "white", size = 2.0) +
+      #geom_mapframe(mol, colour = "black", size = 0.4) +
+      
+      ylab(" ") +
+      xlab(" ") +
+      
+      #ggthemes::theme_map(base_family = "serif") +
+      theme_bw()+
+      theme(legend.position = "bottom",#c(0.85, 0.1),
+            legend.direction = "horizontal",
+            legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
+            legend.text     = element_text(face = "plain", size = 16),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            #legend.key.height= unit(1.5, 'cm'),
+            legend.key.width= unit(4, 'cm'),
+            axis.text=element_text(size=18),
+            axis.title=element_text(size=20),
+            legend.box="horizontal") +
+      guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
+             size = guide_legend(title.position="top", title.hjust = 0.5))
+    
+    if (var[x] =="richness_unpredictable")   { ggsave(file = here::here("figures/IUCN_unpredictable.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+    
+    #rm(map)
+  }
   })

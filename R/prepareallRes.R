@@ -46,6 +46,7 @@ colnames(dat)<- c("long","lat","ID",
                   "richness_initNT",
                   "richness_initNS",
                   "richness_initTH",
+                  "richness_unpredictable",
                   "richness")
 
 #Merge data with zonation outputs : Zrank_main

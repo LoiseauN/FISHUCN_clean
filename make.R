@@ -55,6 +55,9 @@ data_list <- lapply(files, load, .GlobalEnv)
 IUCN_status <- get_iucn_status(FishDistribArea_all) # remove 2 species that are extinct
 save(IUCN_status,file = "outputs/IUCN_status.RData")
 
+IUCN_status_detailled <- get_iucn_status_detailled(FishDistribArea_all)
+save(IUCN_status_detailled,file = "outputs/IUCN_status_detailled.RData")
+
 #Scrap Data from Fishbase
 species_traits = FB_scrap()
 
@@ -128,7 +131,9 @@ dim(FB_IUCN_final)
 ###Checking species that are not in FB_IUCN_final
 dim(FB_IUCN_final)- dim(FB_IUCN_all_marine)
 FB_nonselec <- FB_IUCN_all_marine[!rownames(FB_IUCN_all_marine) %in% rownames(FB_IUCN_final),]
-FB_IUCN_final[!rownames(FB_IUCN_final) %in% rownames(FB_IUCN_all_marine),]
+save(FB_nonselec, file = here::here("outputs/FB_nonselec.Rdata"))
+
+#FB_IUCN_final[!rownames(FB_IUCN_final) %in% rownames(FB_IUCN_all_marine),]
 
 
 FB_nonselec_NS <- FB_nonselec[is.na(FB_nonselec$IUCN),]
@@ -201,6 +206,9 @@ MPA_Protect <- protect_target(data = dat_network,
 #have some number 
 number <- have_number(data = dat_network,  prediction = all_predict)
 
+IUCN_status_detailled  <- IUCN_status_detailled[IUCN_status_detailled$species %in% dat_network$species,]
+table(IUCN_status_detailled$IUCN_status)
+
 #process output of zonation
 Zrank_main <- process_out_zonation(nb_scenario = 2)
 head(Zrank_main)
@@ -210,7 +218,7 @@ all_geo_res <- preparallRes(Zrank_main)
 save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
 
 #------------------Figure------------------------
-#Figure 1 : barplot distribution IUCN categories for different taxa
+#Figure 1 : barplot distribution IUCN cadtegories for different taxa
 figure1(data = FB_IUCN_all_marine)
 
 #Figure 2 : Workflow
