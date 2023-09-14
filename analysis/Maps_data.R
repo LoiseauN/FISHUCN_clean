@@ -1,7 +1,6 @@
 remotes::install_github("ropensci/rnaturalearthhires")
 #install.packages(c("rnaturalearth", "rnaturalearthdata"))
-library("rnaturalearth")
-library("rnaturalearthdata")
+
 
 #'-------------------------------------------
 source(here::here("R","map_function.R"))
@@ -12,6 +11,10 @@ world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
 # projection
 mol   <- paste0("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 ", "+units=m +no_defs")
 world <- sf::st_transform(world, crs=mol)
+
+## Mollweide projection - Pacific-centered ----
+#mol <- "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+#world <-  robinmap(center = 160, crs = mol)
 
 # import layers border
 mollBorder <- sf::st_read(here::here("data","mollBorder","mollBorder.shp"))
@@ -78,10 +81,14 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
   map <- ggplot(world) +
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
     scale_colour_gradientn(name  = "Richness TH",
-      colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
+      colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
+             limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
+                      max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)))) +                                       
     
     scale_fill_gradientn(name  = "Richness TH",
-      colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
+      colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
+             limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
+                      max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)))) +
 
     #scale_fill_hp(option = "Ravenclaw", 
            #       limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
@@ -92,7 +99,7 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
     geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
     geom_graticules(mol) +
     geom_mapframe(mol, colour = "white", size = 2.0) +
-    #geom_mapframe(mol, colour = "black", size = 0.4) +
+    geom_mapframe(mol, colour = "black", size = 0.4) +
     
     ylab(" ") +
     xlab(" ") +
@@ -125,10 +132,14 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
   map <- ggplot(world)+
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
   scale_colour_gradientn(name  = "Richness NT", 
-    colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
+                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
+                         limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
+                                    max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT))))+                                       
   scale_fill_gradientn(name  = "Richness NT", 
-    colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
-   geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
+                        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)],
+                       limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
+                                 max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)))) +
+  geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
 
@@ -163,10 +174,14 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
    map <- ggplot(world) +
      geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
      scale_colour_gradientn(name  = "Richness NS",
-       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
+       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
+                     limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
+                               max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS))))+                                       
      
      scale_fill_gradientn(name  = "Richness NS",
-       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
+       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
+                     limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
+                               max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)))) +
      
     # scale_fill_hp(option = "Ravenclaw", 
      #              limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
@@ -213,12 +228,12 @@ map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
 
   scale_colour_gradientn(na.value = "#66CDAA66", name  = "Rank after - rank before",
-                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+#,
+                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
                            #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
                            #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                              
   
   scale_fill_gradientn(na.value = "#66CDAA66",name  = "Rank after - rank before",
-                       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+#,
+                       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
                        #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
                        #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
  
@@ -248,24 +263,24 @@ map <- ggplot(world) +
         axis.text=element_text(size=18),
         axis.title=element_text(size=20),
         legend.box="horizontal") +
-  guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
+        guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
          size = guide_legend(title.position="top", title.hjust = 0.5))
 
 if (var[x] =="DeltaRank_SameWeight")   { ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 
 if (var[x] =="DeltaRank_Proba")  { ggsave(file = here::here("figures/Figure6Supplentary.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
-
- }
+}
+ 
   
 #'--------------------------------------------------------@RichnessUnpredictable
   if  (var[x] =="richness_Unpreditable")  {  
     map <- ggplot(world) +
       geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
       scale_colour_gradientn(name  = "Richness unpredictable",
-                             colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+                                       
+                             colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])+                                       
       
       scale_fill_gradientn(name  = "Richness unpredictable",
-                           colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)) +
+                           colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)]) +
       
       # scale_fill_hp(option = "Ravenclaw", 
       #              limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 

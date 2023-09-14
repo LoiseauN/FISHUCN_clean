@@ -21,9 +21,9 @@ st_mapframe <- function(meridians = seq(-180, 180, 40),
     crs <- get_proj4(options()$"proj")
   }
   
-  if (!is.character(crs) || length(crs) != 1) {
-    stop("Argument 'crs' must be a character of length 1")
-  }
+  #if (!is.character(crs) || length(crs) != 1) {
+  #  stop("Argument 'crs' must be a character of length 1")
+  #}
   
   
   ## Store user options ----
