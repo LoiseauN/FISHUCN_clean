@@ -1,6 +1,3 @@
-remotes::install_github("ropensci/rnaturalearthhires")
-#install.packages(c("rnaturalearth", "rnaturalearthdata"))
-
 
 #'-------------------------------------------
 source(here::here("R","map_function.R"))
@@ -25,7 +22,15 @@ mask.full=raster::raster(here::here("data","mask.full.tif"))
 #My data
 #all_geo_res[is.na(all_geo_res)] <- 0
 
-var = c("richness_finalNT",
+all_geo_res$deltaTH <- all_geo_res$richness_finalTH - all_geo_res$richness_initTH
+all_geo_res$deltaNT <- all_geo_res$richness_finalNT - all_geo_res$richness_initNT
+all_geo_res$deltaNS <- all_geo_res$richness_finalNS - all_geo_res$richness_initNS
+
+
+var = c( "deltaTH",
+        "deltaNT",
+        "deltaNS",
+        "richness_finalNT",
         "richness_finalNS",
         "richness_finalTH",
         "richness_initNT",
@@ -99,7 +104,7 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
     geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
     geom_graticules(mol) +
     geom_mapframe(mol, colour = "white", size = 2.0) +
-    geom_mapframe(mol, colour = "black", size = 0.4) +
+    #geom_mapframe(mol, colour = "black", size = 0.4) +
     
     ylab(" ") +
     xlab(" ") +
@@ -108,8 +113,8 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
     theme_bw()+
     theme(legend.position = "bottom",#c(0.85, 0.1),
           legend.direction = "horizontal",
-          legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
-          legend.text     = element_text(face = "plain", size = 16),
+          legend.title    =  element_text(face = "plain", size = 32,vjust = 1,hjust = 0.5),
+          legend.text     = element_text(face = "plain", size = 32),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.border = element_blank(),
@@ -149,8 +154,8 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
   theme_bw()+
     theme(legend.position = "bottom",#c(0.85, 0.1),
           legend.direction = "horizontal",
-          legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
-          legend.text     = element_text(face = "plain", size = 16),
+          legend.title    =  element_text(face = "plain", size = 32,vjust = 1,hjust = 0.5),
+          legend.text     = element_text(face = "plain", size = 32),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.border = element_blank(),
@@ -201,8 +206,8 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
      theme_bw()+
      theme(legend.position = "bottom",#c(0.85, 0.1),
            legend.direction = "horizontal",
-           legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
-           legend.text     = element_text(face = "plain", size = 16),
+           legend.title    =  element_text(face = "plain", size = 32,vjust = 1,hjust = 0.5),
+           legend.text     = element_text(face = "plain", size = 32),
            panel.grid.major = element_blank(),
            panel.grid.minor = element_blank(),
            panel.border = element_blank(),
@@ -219,6 +224,71 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
    if (var[x] =="richness_finalNS")  { ggsave(file = here::here("figures/IUCN_FinalNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 #rm(map)
 }
+  
+  
+  
+  
+  #'--------------------------------------------------------@DeltaRICHNESS
+  if  (var[x] =="deltaTH" || var[x] == "deltaNT" || var[x] == "deltaNS")  {  
+    
+    # adjustcolor( "chartreuse4", alpha.f = 0.7)
+    map <- ggplot(world) +
+      geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
+      
+      scale_colour_gradientn(name  = "Richness after - Richness before",
+                             colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
+    #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
+    #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                              
+    
+    scale_fill_gradientn(,name  = "Richness after - Richness before",
+                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
+    #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
+    #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
+    
+    #scale_fill_gradient2(midpoint= 0, low="#2166AC", mid="white",
+    #                   high="#B2182B", space ="Lab",na.value = "#7CCD7C80")+
+    #scale_color_gradient2(midpoint= 0, low="#2166AC", mid="white",#00AFBB
+    #                   high="#B2182B", space ="Lab",na.value = "#7CCD7C80")+
+    geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
+      geom_graticules(mol) +
+      geom_mapframe(mol, colour = "white", size = 2.0) +
+      #geom_mapframe(mol, colour = "black", size = 0.4) +
+      
+      ylab(" ") +
+      xlab(" ") +
+      
+      #ggthemes::theme_map(base_family = "serif") +
+      theme_bw()+
+      theme(legend.position = "bottom",#c(0.85, 0.1),
+            legend.direction = "horizontal",
+            legend.title    =  element_text(face = "plain", size = 32,vjust = 1,hjust = 0.5),
+            legend.text     = element_text(face = "plain", size = 32),
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.border = element_blank(),
+            #legend.key.height= unit(1.5, 'cm'),
+            legend.key.width= unit(4, 'cm'),
+            axis.text=element_text(size=18),
+            axis.title=element_text(size=20),
+            legend.box="horizontal") +
+      guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
+             size = guide_legend(title.position="top", title.hjust = 0.5))
+    
+    if (var[x] =="deltaTH")   { ggsave(file = here::here("figures/deltaTH.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+    
+    if (var[x] =="deltaNT")  { ggsave(file = here::here("figures/deltaNT.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+    
+    if (var[x] =="deltaNS")  { ggsave(file = here::here("figures/deltaNS.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
 #'--------------------------------------------------------@DeltaRankzonation
  if  (var[x] =="DeltaRank_SameWeight" || var[x] == "DeltaRank_Proba")  {  
@@ -253,8 +323,8 @@ map <- ggplot(world) +
   theme_bw()+
   theme(legend.position = "bottom",#c(0.85, 0.1),
         legend.direction = "horizontal",
-        legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
-        legend.text     = element_text(face = "plain", size = 16),
+        legend.title    =  element_text(face = "plain", size = 32,vjust = 1,hjust = 0.5),
+        legend.text     = element_text(face = "plain", size = 32),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
@@ -273,7 +343,7 @@ if (var[x] =="DeltaRank_Proba")  { ggsave(file = here::here("figures/Figure6Supp
  
   
 #'--------------------------------------------------------@RichnessUnpredictable
-  if  (var[x] =="richness_Unpreditable")  {  
+  if  (var[x] =="richness_unpreditable")  {  
     map <- ggplot(world) +
       geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
       scale_colour_gradientn(name  = "Richness unpredictable",
@@ -300,8 +370,8 @@ if (var[x] =="DeltaRank_Proba")  { ggsave(file = here::here("figures/Figure6Supp
       theme_bw()+
       theme(legend.position = "bottom",#c(0.85, 0.1),
             legend.direction = "horizontal",
-            legend.title    =  element_text(face = "plain", size = 16,vjust = 1,hjust = 0.5),
-            legend.text     = element_text(face = "plain", size = 16),
+            legend.title    =  element_text(face = "plain", size = 32,vjust = 1,hjust = 0.5),
+            legend.text     = element_text(face = "plain", size = 32),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             panel.border = element_blank(),
