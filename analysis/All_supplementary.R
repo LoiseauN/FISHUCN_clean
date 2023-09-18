@@ -72,14 +72,17 @@ res$richness <- res[,1] + res[,2] + res[,3]+ res[,4]
 
 
 res <- reshape2::melt(res, id.vars=c("Family","richness"))
-res <-  res[order(res$richness,decreasing = T),]
+#res <-  res[order(res$richness,decreasing = T),]
 res <- res[res$richness>0,]
+res$variable <- factor(res$variable, levels = c(
+  "Unpredictable", "No Status", "Non Threatened", "Threatened"), ordered = TRUE) 
+res <- res[order(res$variable,res$value,decreasing = T ),]
 
 res$status <- factor(res$variable, levels = c("Threatened", "Non Threatened", "No Status", "Unpredictable"))
 
 res$proportion <- (res$value/res$richness)*100
 
-all <- ggplot(res,aes(x = reorder(Family, richness), y= value, fill = status)) +
+all <- ggplot(res,aes(x = reorder(Family, value), y= value, fill = status)) +
   geom_bar(stat = "identity",position ="stack")+ 
   coord_flip()+
   scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800", "grey"), name = "IUCN status", 
@@ -90,7 +93,7 @@ all <- ggplot(res,aes(x = reorder(Family, richness), y= value, fill = status)) +
    panel.background = element_blank(),axis.text.y = element_text(size = 5))
 
   
-zoom <- ggplot(res,aes(x = reorder(Family, richness), y= value, fill = status)) +
+zoom <- ggplot(res,aes(x = reorder(Family, value), y= value, fill = status)) +
   geom_bar(stat = "identity",position ="stack")+ 
   coord_flip()+
   scale_x_discrete(limits = rev(c(unique(res$Family[c(1:90)])))) +

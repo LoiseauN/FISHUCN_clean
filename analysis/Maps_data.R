@@ -30,18 +30,19 @@ all_geo_res$deltaNS <- all_geo_res$richness_finalNS - all_geo_res$richness_initN
 var = c( "deltaTH",
         "deltaNT",
         "deltaNS",
-        "richness_finalNT",
-        "richness_finalNS",
-        "richness_finalTH",
-        "richness_initNT",
-        "richness_initNS",
-        "richness_initTH",
+        #"richness_finalNT",
+        # "richness_finalNS",
+        #"richness_finalTH",
+        #"richness_initNT",
+        #"richness_initNS",
+        #"richness_initTH",
         "DeltaRank_SameWeight",
         "richness_unpredictable")
 
 
 all_map <- lapply(1:length(var),function(x){
-
+print(paste0(x,", ", round(x/length(var),1)*100, "%"))
+  
   if(! var[x] %in% c("DeltaRank_SameWeight","DeltaRank_Proba")){ 
   
     mask = mask.full
@@ -230,25 +231,26 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
   
   #'--------------------------------------------------------@DeltaRICHNESS
   if  (var[x] =="deltaTH" || var[x] == "deltaNT" || var[x] == "deltaNS")  {  
-    
-    # adjustcolor( "chartreuse4", alpha.f = 0.7)
-    map <- ggplot(world) +
+if (var[x] =="deltaTH")   { title = "TH after- TH before"}
+if (var[x] =="deltaNT")  {title = "NT after- NT before"}
+if (var[x] =="deltaNS")  { title = "NS after- NS before"}
+   
+     map <- ggplot(world) +
       geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
       
-      scale_colour_gradientn(name  = "Richness after - Richness before",
-                             colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
-    #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
-    #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                              
     
-    scale_fill_gradientn(,name  = "Richness after - Richness before",
-                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
-    #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
-    #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
+      scale_colour_gradientn(name  = title,
+                             colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])+
     
-    #scale_fill_gradient2(midpoint= 0, low="#2166AC", mid="white",
-    #                   high="#B2182B", space ="Lab",na.value = "#7CCD7C80")+
-    #scale_color_gradient2(midpoint= 0, low="#2166AC", mid="white",#00AFBB
-    #                   high="#B2182B", space ="Lab",na.value = "#7CCD7C80")+
+      scale_fill_gradientn(name  = title,
+                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])+
+
+       
+            
+      #scale_fill_gradient2(midpoint= 0, low="#2166AC", mid="white",
+      #          high="#D96953", space ="Lab")+
+  #scale_color_gradient2(midpoint= 0, low="#2166AC", mid="white",#00AFBB
+  #               high="#D96953", space ="Lab")+
     geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
       geom_graticules(mol) +
       geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -343,7 +345,7 @@ if (var[x] =="DeltaRank_Proba")  { ggsave(file = here::here("figures/Figure6Supp
  
   
 #'--------------------------------------------------------@RichnessUnpredictable
-  if  (var[x] =="richness_unpreditable")  {  
+  if  (var[x] =="richness_unpredictable")  {  
     map <- ggplot(world) +
       geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
       scale_colour_gradientn(name  = "Richness unpredictable",
