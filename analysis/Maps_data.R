@@ -231,26 +231,31 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
   
   #'--------------------------------------------------------@DeltaRICHNESS
   if  (var[x] =="deltaTH" || var[x] == "deltaNT" || var[x] == "deltaNS")  {  
-if (var[x] =="deltaTH")   { title = "TH after- TH before"}
-if (var[x] =="deltaNT")  {title = "NT after- NT before"}
-if (var[x] =="deltaNS")  { title = "NS after- NS before"}
+  
+    if (var[x] =="deltaTH")   { title = "TH after- TH before"}
+  if (var[x] =="deltaNT")  {title = "NT after- NT before"}
+  if (var[x] =="deltaNS")  { title = "NS after- NS before"}
    
+    if  (var[x] =="deltaTH" || var[x] == "deltaNT"  ) {colormap = c("white",colorRampPalette(brewer.pal(n = 8, name = "Oranges"))(100))}
+    if  (var[x] =="deltaNS") { colormap = c("white",rev(colorRampPalette(brewer.pal(n = 8, name = "Blues"))(100)))}
+    
      map <- ggplot(world) +
       geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
       
     
-      scale_colour_gradientn(name  = title,
-                             colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])+
+      #scale_colour_gradientn(name  = title,
+      #                       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])+
     
-      scale_fill_gradientn(name  = title,
-                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])+
+     # scale_fill_gradientn(name  = title,
+      #                   colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])+
 
+      scale_colour_gradientn(name  = title,
+                              colours = colormap)+
        
-            
-      #scale_fill_gradient2(midpoint= 0, low="#2166AC", mid="white",
-      #          high="#D96953", space ="Lab")+
-  #scale_color_gradient2(midpoint= 0, low="#2166AC", mid="white",#00AFBB
-  #               high="#D96953", space ="Lab")+
+      scale_fill_gradientn(name  = title,
+                           colours = colormap)+
+     
+  
     geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
       geom_graticules(mol) +
       geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -299,20 +304,21 @@ if (var[x] =="deltaNS")  { title = "NS after- NS before"}
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
 
-  scale_colour_gradientn(na.value = "#66CDAA66", name  = "Rank after - rank before",
-                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
+  #scale_colour_gradientn(na.value = "#66CDAA66", name  = "Rank after - rank before",
+   #                      colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
                            #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
                            #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                              
   
-  scale_fill_gradientn(na.value = "#66CDAA66",name  = "Rank after - rank before",
-                       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
+  #scale_fill_gradientn(na.value = "#66CDAA66",name  = "Rank after - rank before",
+   #                    colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
                        #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
                        #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
  
-  #scale_fill_gradient2(midpoint= 0, low="#2166AC", mid="white",
-     #                   high="#B2182B", space ="Lab",na.value = "#7CCD7C80")+
-  #scale_color_gradient2(midpoint= 0, low="#2166AC", mid="white",#00AFBB
-    #                   high="#B2182B", space ="Lab",na.value = "#7CCD7C80")+
+  scale_fill_gradient2(midpoint= 0, low="#084594", mid="white",
+                        high="#8C2D04", space ="Lab",na.value = "#7CCD7C80")+
+  scale_color_gradient2(midpoint= 0, low="#084594", mid="white",#00AFBB
+                       high="#8C2D04", space ="Lab",na.value = "#7CCD7C80")+
+  
   geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
