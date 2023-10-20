@@ -219,6 +219,7 @@ save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
 
 #------------------Figure------------------------
 #Figure 1 : barplot distribution IUCN cadtegories for different taxa
+load(file =  here::here("outputs/FB_IUCN_all_marine.Rdata"))
 figure1(data = FB_IUCN_all_marine)
 
 #Figure 2 : Workflow

@@ -16,6 +16,7 @@ figure1 <- function(data){
 all_status <- read.table(file = here::here("data","IUCN_risk.csv"), sep = ";", row.names = 1, header = T)
 
 
+
 ## Download Phylopic silhouettes (with License 1.0 and No Copyright) ----
 mammals_pic    <- get_phylopic_image("8cad2b22-30d3-4cbd-86a3-a6d2d004b201", size = "512")
 
@@ -75,8 +76,8 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
   geom_bar(position="stack", stat="identity",color="grey20") +
   scale_fill_manual(values = c("#FC4E07","#00AFBB", "#E7B800"), name = "IUCN status", 
                     guide = guide_legend(reverse = FALSE))+
-  theme_bw() +
-  xlab("Taxa")+ylab("Percentage")+
+   theme_bw() +
+  xlab("")+ylab("Percentage")+
   rphylopic::add_phylopic(birds_pic,     x = 1, y = 50, ysize = 13, alpha = 1)+
   rphylopic::add_phylopic(reptile_pic,     x = 2, y = 50, ysize = 10, alpha = 1)+
   rphylopic::add_phylopic(mammals_pic,   x = 3, y = 50, ysize = 10, alpha = 1)+
