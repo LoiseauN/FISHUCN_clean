@@ -26,24 +26,41 @@ all_geo_res$deltaTH <- all_geo_res$richness_finalTH - all_geo_res$richness_initT
 all_geo_res$deltaNT <- all_geo_res$richness_finalNT - all_geo_res$richness_initNT
 all_geo_res$deltaNS <- all_geo_res$richness_finalNS - all_geo_res$richness_initNS
 
+all_geo_res <-  all_geo_res %>%
+  mutate(cate_DeltaRank_SameWeight = cut(DeltaRank_SameWeight, 100)) 
 
-var = c( "deltaTH",
-        "deltaNT",
-        "deltaNS",
+all_geo_res <- all_geo_res %>% 
+  mutate(
+    cate_DeltaRank_SameWeight = 
+      DeltaRank_SameWeight %>%
+      Hmisc::cut2(g=500) # Note, cut2 comes from the Hmisc package
+  )
+all_geo_res$cate_DeltaRank_SameWeight %>% 
+  summary()
+
+
+#all_geo_res$cate_DeltaRank_SameWeight <- cut(all_geo_res$DeltaRank_SameWeight, breaks = 100)
+
+
+
+var = c(# "deltaTH",
+  #"deltaNT",
+  #"deltaNS",
         #"richness_finalNT",
         # "richness_finalNS",
         #"richness_finalTH",
         #"richness_initNT",
         #"richness_initNS",
         #"richness_initTH",
-        "DeltaRank_SameWeight",
-        "richness_unpredictable")
+  "DeltaRank_SameWeight")
+#  "cate_DeltaRank_SameWeight")
+#,        "richness_unpredictable")
 
 
 all_map <- lapply(1:length(var),function(x){
 print(paste0(x,", ", round(x/length(var),1)*100, "%"))
   
-  if(! var[x] %in% c("DeltaRank_SameWeight","DeltaRank_Proba")){ 
+  if(! var[x] %in% c("DeltaRank_SameWeight","DeltaRank_Proba","cate_DeltaRank_SameWeight")){ 
   
     mask = mask.full
     df <- all_geo_res[,var[x]]
@@ -78,7 +95,7 @@ print(paste0(x,", ", round(x/length(var),1)*100, "%"))
   mask.full.polygon <-  fortify(mask.full.polygon, na.omit = F)
   mask.full.polygon <- sf::st_transform(mask.full.polygon, crs=mol, na.omit = F)
    
-  if(var[x] %in% c("DeltaRank_SameWeight","DeltaRank_Proba")) {
+  if(var[x] %in% c("DeltaRank_SameWeight","DeltaRank_Proba","cate_DeltaRank_SameWeight")) {
     mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
   
 #'--------------------------------------------------------@Threatened
@@ -298,26 +315,36 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
   
   
 #'--------------------------------------------------------@DeltaRankzonation
- if  (var[x] =="DeltaRank_SameWeight" || var[x] == "DeltaRank_Proba")  {  
+ if  (var[x] =="DeltaRank_SameWeight" || var[x] == "DeltaRank_Proba"|| var[x] == "cate_DeltaRank_SameWeight")  {  
 
 # adjustcolor( "chartreuse4", alpha.f = 0.7)
+   colormap = c(rev(colorRampPalette(brewer.pal(n = 8, name = "Blues"))(334)),'white',colorRampPalette(brewer.pal(n = 8, name = "Oranges"))(164))
+
+   
 map <- ggplot(world) +
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
 
-  #scale_colour_gradientn(na.value = "#66CDAA66", name  = "Rank after - rank before",
-   #                      colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
-                           #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
-                           #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                              
   
-  #scale_fill_gradientn(na.value = "#66CDAA66",name  = "Rank after - rank before",
-   #                    colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)])#,
-                       #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
-                       #                                     max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
+  scale_colour_gradientn(na.value = "#66CDAA66",name  = "Rank after - rank before",
+                         colours = colormap)+
+  
+  scale_fill_gradientn(na.value = "#66CDAA66",name  = "Rank after - rank before",
+                       colours = colormap)+
+
+#scale_colour_gradientn(na.value = "#66CDAA66", name  = "Rank after - rank before",
+#                        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+ #,
+#limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
+#max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +                              
+  
+#  scale_fill_gradientn(na.value = "#66CDAA66",name  = "Rank after - rank before",
+#                       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100))+ #,
+  #limits = c(min(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T), 
+  #                                    max(c(all_geo_res$DeltaRank_SameWeight,all_geo_res$DeltaRank_Proba),na.rm = T))) +
  
-  scale_fill_gradient2(midpoint= 0, low="#084594", mid="white",
-                        high="#8C2D04", space ="Lab",na.value = "#7CCD7C80")+
-  scale_color_gradient2(midpoint= 0, low="#084594", mid="white",#00AFBB
-                       high="#8C2D04", space ="Lab",na.value = "#7CCD7C80")+
+#scale_fill_gradient2(midpoint= 0, low="#084594", mid="white", name  = "Delta in priority",
+#                     high="#8C2D04", space ="Lab",na.value = "#7CCD7C80")+
+  #scale_color_gradient2(midpoint= 0, low="#084594", mid="white",name  = "Delta in priority",#00AFBB
+#                   high="#8C2D04", space ="Lab",na.value = "#7CCD7C80")+
   
   geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
   geom_graticules(mol) +
@@ -341,10 +368,13 @@ map <- ggplot(world) +
         axis.text=element_text(size=18),
         axis.title=element_text(size=20),
         legend.box="horizontal") +
-        guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
+  guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
          size = guide_legend(title.position="top", title.hjust = 0.5))
 
 if (var[x] =="DeltaRank_SameWeight")   { ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+
+if (var[x] =="cate_DeltaRank_SameWeight")   { ggsave(file = here::here("figures/cate_Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+
 
 if (var[x] =="DeltaRank_Proba")  { ggsave(file = here::here("figures/Figure6Supplentary.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 }
