@@ -177,4 +177,71 @@ ggsave(file = here::here("figures/Figure_6.png"),fig,width = 12, height = 6, uni
 }
 
 
+################### significance tests
+
+BEFORE <- cbind.data.frame(perc_cover=MPA_Protect$perc_cover, Target_achievement_I_IV=MPA_Protect$Target_achievement_I_IV,IUCN=MPA_Protect$IUCN_cat,What="BEFORE")
+AFTER <- cbind.data.frame(perc_cover=MPA_Protect$perc_cover, Target_achievement_I_IV=MPA_Protect$Target_achievement_I_IV,IUCN=MPA_Protect$IUCN_final,What="AFTER")
+MPA_FINAL <- rbind(BEFORE,AFTER)
+
+MPA_FINAL$What <- factor(MPA_FINAL$What, levels = c("AFTER","BEFORE"))
+MPA_FINAL$IUCN <- factor(MPA_FINAL$IUCN, levels = c("Threatened","Non Threatened","No Status"))
+MPA_FINAL$category <- as.factor(paste(MPA_FINAL$IUCN, MPA_FINAL$What, sep="_"))
+MPA_FINAL$category <- factor(MPA_FINAL$category,levels=c("No Status_BEFORE","No Status_AFTER","Non Threatened_BEFORE","Non Threatened_AFTER","Threatened_BEFORE","Threatened_AFTER")) 
+
+
+
+# significance tests: target achievement
+options(digits = 3, scipen = 5)
+
+## TARGET ACHIEVEMENT
+
+# Before - after -> paired data
+NS <- wilcox.test(MPA_FINAL$Target_achievement_I_IV[MPA_FINAL$category == "No Status_BEFORE"],
+                  MPA_FINAL$Target_achievement_I_IV[MPA_FINAL$category == "No Status_AFTER"])
+
+Threat <- wilcox.test(MPA_FINAL$Target_achievement_I_IV[MPA_FINAL$category == "Threatened_BEFORE"],
+                      MPA_FINAL$Target_achievement_I_IV[MPA_FINAL$category == "Threatened_AFTER"])
+
+NT <- wilcox.test(MPA_FINAL$Target_achievement_I_IV[MPA_FINAL$category == "Non Threatened_BEFORE"],
+                  MPA_FINAL$Target_achievement_I_IV[MPA_FINAL$category == "Non Threatened_AFTER"])
+
+# Intra group:
+m_before <- kruskal.test(BEFORE$Target_achievement_I_IV ~ BEFORE$IUCN)
+dt_before <- FSA::dunnTest(BEFORE$Target_achievement_I_IV~BEFORE$IUCN)
+dt_before$res
+
+
+m_after <- kruskal.test(AFTER$Target_achievement_I_IV ~ AFTER$IUCN)
+dt_after <- FSA::dunnTest(AFTER$Target_achievement_I_IV~AFTER$IUCN)
+dt_after$res
+
+## PERCENT COVER
+
+# Before - after -> paired data
+NS <- wilcox.test(MPA_FINAL$perc_cover[MPA_FINAL$category == "No Status_BEFORE"],
+                  MPA_FINAL$perc_cover[MPA_FINAL$category == "No Status_AFTER"])
+Threat <- wilcox.test(MPA_FINAL$perc_cover[MPA_FINAL$category == "Threatened_BEFORE"],
+                      MPA_FINAL$perc_cover[MPA_FINAL$category == "Threatened_AFTER"])
+NT <- wilcox.test(MPA_FINAL$perc_cover[MPA_FINAL$category == "Non Threatened_BEFORE"],
+                  MPA_FINAL$perc_cover[MPA_FINAL$category == "Non Threatened_AFTER"])
+
+# Intra group:
+m_before <- kruskal.test(BEFORE$perc_cover ~ BEFORE$IUCN)
+dt_before <- FSA::dunnTest(BEFORE$perc_cover~BEFORE$IUCN)
+dt_before$res
+
+
+m_after <- kruskal.test(AFTER$perc_cover ~ AFTER$IUCN)
+dt_after <- FSA::dunnTest(AFTER$perc_cover~AFTER$IUCN)
+dt_after$res
+
+#All
+m_All <- kruskal.test(MPA_FINAL$perc_cover ~ MPA_FINAL$IUCN)
+dt_All <- FSA::dunnTest(MPA_FINAL$perc_cover~MPA_FINAL$IUCN)
+dt_All$res
+
+# sample sizes
+table(MPA_FINAL$category)
+
+
 
