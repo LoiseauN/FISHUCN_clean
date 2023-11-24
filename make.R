@@ -202,6 +202,7 @@ save(dat_network,file = "outputs/dat_network.Rdata")
 MPA_Protect <- protect_target(data = dat_network,
                mpa = PctMPAI_IV, 
                distrib = FishDistribArea_all) 
+save(MPA_Protect,file = "outputs/MPA_Protect.Rdata")
 
 #have some number 
 number <- have_number(data = dat_network,  prediction = all_predict)
