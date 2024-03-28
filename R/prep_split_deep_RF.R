@@ -56,7 +56,9 @@ cross_val_split <- function(data_split,loops){
   train <- training(split)
   test <- testing(split)
   
-  res <- list(data_split[[i]],train,test)
+  res <- list(data_split = data_split[[i]],
+              train = train,
+              test = test)
   
   return(res)
   
