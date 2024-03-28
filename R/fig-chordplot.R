@@ -103,8 +103,8 @@ circlize::chordDiagram(mat, grid.col = grid.col1a,
 
 segments(x0 = 0, y0 = -1, y1 = 1, lty = 2, col = "#00000080")
 
-text(x = -0.25, y = 1.15, labels = "BEFORE", pos = 2, cex = 1, font = 1)
-text(x =  0.25, y = 1.15, labels = "AFTER", pos = 4, cex = 1, font = 1)
+text(x = -0.25, y = 1.15, labels = "BEFORE", pos = 2, cex = 2, font = 1)
+text(x =  0.25, y = 1.15, labels = "AFTER", pos = 4, cex = 2, font = 1)
 
 par(new = TRUE, fg = "transparent", col = "transparent")
 

@@ -141,8 +141,19 @@ MPA_FINAL <- rbind(BEFORE,AFTER)
 
 MPA_FINAL$What <- factor(MPA_FINAL$What, levels = c("AFTER","BEFORE"))
 MPA_FINAL$IUCN <- factor(MPA_FINAL$IUCN, levels = c("Threatened","Non Threatened","No Status"))
+levels(MPA_FINAL$IUCN) <- c(levels(MPA_FINAL$IUCN), c("NS","NT","TH"))
+MPA_FINAL$IUCN[MPA_FINAL$IUCN == 'Threatened'] <- 'TH'
+MPA_FINAL$IUCN[MPA_FINAL$IUCN == 'Non Threatened'] <- 'NT'
+MPA_FINAL$IUCN[MPA_FINAL$IUCN == 'No Status'] <- 'NS'
+
+MPA_FINAL$IUCN <- factor(MPA_FINAL$IUCN, levels = c("TH","NT","NS"))
+
+
+#MPA_FINAL$category <- as.factor(paste(MPA_FINAL$IUCN, MPA_FINAL$What, sep="_"))
+#MPA_FINAL$category <- factor(MPA_FINAL$category,levels=c("No Status_BEFORE","No Status_AFTER","Non Threatened_BEFORE","Non Threatened_AFTER","Threatened_BEFORE","Threatened_AFTER")) 
+
 MPA_FINAL$category <- as.factor(paste(MPA_FINAL$IUCN, MPA_FINAL$What, sep="_"))
-MPA_FINAL$category <- factor(MPA_FINAL$category,levels=c("No Status_BEFORE","No Status_AFTER","Non Threatened_BEFORE","Non Threatened_AFTER","Threatened_BEFORE","Threatened_AFTER")) 
+MPA_FINAL$category <- factor(MPA_FINAL$category,levels=c("NS_BEFORE","NS_AFTER","NT_BEFORE","NT_AFTER","TH_BEFORE","TH_AFTER")) 
 
 #Target_achievement_I_IV
 a <- ggplot(MPA_FINAL, aes(IUCN, Target_achievement_I_IV, fill = category)) +
@@ -155,7 +166,7 @@ a <- ggplot(MPA_FINAL, aes(IUCN, Target_achievement_I_IV, fill = category)) +
   scale_fill_manual(values = c("#fee6b7", "#e7b800","#c1e4e8", "#00AFBB",  "#FEDBCD" , "#FC4E07" ))+
   theme(legend.position = "none") +
   geom_boxplot(width = 0.25, notch = FALSE, outlier.shape = NA, coef=0, lwd=0.7)+
-  ylab("Target achievement (%)")
+  ylab("Target achievement (%)") + xlab(" ")
 
 #perc_cover
 b <- ggplot(MPA_FINAL, aes(IUCN, perc_cover, fill = category)) +
@@ -168,11 +179,11 @@ b <- ggplot(MPA_FINAL, aes(IUCN, perc_cover, fill = category)) +
   scale_fill_manual(values = c("#fee6b7", "#e7b800","#c1e4e8", "#00AFBB",  "#FEDBCD" , "#FC4E07" ))+
   theme(legend.position = "none") +
   geom_boxplot(width = 0.25, notch = FALSE, outlier.shape = NA, coef=0, lwd=0.7)+
-  ylab("Cover (%)")
+  ylab("Protection cover (%)") + xlab(" ")
 
-fig <- gridExtra::grid.arrange(a,b,ncol=2)
+fig <- gridExtra::grid.arrange(b,a,ncol=2)
 
-ggsave(file = here::here("figures/Figure_6.png"),fig,width = 12, height = 6, units= "in",dpi= 300)
+ggsave(file = here::here("figures/Figure_6.png"),fig,width = 8, height = 4, units= "in",dpi= 300)
 
 }
 

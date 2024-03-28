@@ -1,0 +1,8 @@
+load("/Users/nloiseau/Documents/PostdocMARBEC/FISHUCN/Final11042023/FISHUCN_clean/outputs/FISHUCN.RData")
+FISHUCN
+load("/Users/nloiseau/Documents/PostdocMARBEC/FISHUCN/Final11042023/FISHUCN_clean/outputs/IUCN_status_detailled.RData")
+IUCN_status_detailled.RData
+IUCN_status_detailled
+head(IUCN_status_detailled.RData)
+head(IUCN_status_detailled)
+dim(IUCN_status_detailled)

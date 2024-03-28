@@ -1,0 +1,5 @@
+load("/Users/nloiseau/Documents/PostdocMARBEC/FISHUCN/Final11042023/FISHUCN_clean/data/DepthRange.RData")
+load("/Users/nloiseau/Documents/PostdocMARBEC/FISHUCN/Final11042023/FISHUCN_clean/data/Fish_trait_Metawebproject.RData")
+Fish_trait_Metawebproject
+head(Fish_trait_Metawebproject.RData)
+head(Fish_trait_Metawebproject)
