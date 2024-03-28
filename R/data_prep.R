@@ -10,9 +10,9 @@
 #'
 #' @export
 #' 
-#' 
+#' @STOPTHISONEFORREVISION
 
-data_prep <- function(data){
+#' data_prep <- function(data){
   
   #Create threatened and non threatened species
   data_Thr = data %>%
@@ -41,4 +41,4 @@ data_prep <- function(data){
     
   })
   
-}
+  #' }

@@ -44,7 +44,6 @@ data_prep <- function(data){
 }
 
 
-split <- data_prep(data)
 
 cross_val_split <- function(data_split,loops){
 
@@ -70,5 +69,5 @@ cross_val_split <- function(data_split,loops){
  return(res_all)
 }
 
-a <- cross_val_split(split,10)
+
   
