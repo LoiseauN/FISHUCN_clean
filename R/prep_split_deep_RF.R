@@ -48,7 +48,9 @@ split <- data_prep(data)
 
 cross_val_split <- function(data_split,loops){
 
-    mclapply(1:loops,function(p){
+ res_all <-   lapply(1:length(data_split),function(i){
+   
+   res_one_split <- lapply(1:loops,function(l){
   
   #SHuffling data, then Splitting into training and test data
   split <- initial_split(data_split[[i]][sample(nrow(data_split[[i]])),], prop = 0.8)
@@ -60,9 +62,12 @@ cross_val_split <- function(data_split,loops){
               train = train,
               test = test)
   
-  return(res)
+   }  )
   
+      return(res_one_split)
     })
+ 
+ return(res_all)
 }
 
 a <- cross_val_split(split,10)
