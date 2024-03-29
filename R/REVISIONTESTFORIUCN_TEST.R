@@ -3,10 +3,16 @@ split = data_prep(data_noNA)
 
 
 
-split<- cross_val_split(split,10)
+split <- cross_val_split(split,10)
 
 
-data_split <- split
+data_splited_deep_RF <- split
+
+
+save(data_splited_deep_RF,file = here::here("outputs","data_splited_deep_RF.RData"))
+
+
+
 #' Test the model on complete data
 #'
 #' This functions tests the model on your data based on complete data using cross validation
@@ -26,13 +32,12 @@ IUCN_test = function(data_split,loops){
   # data_split = 
   ranger_loop = mclapply(1:length(data_split),function(i){
     
-    mclapply(1:loops,function(p){
+    mclapply(1:loops,function(l){
       
       #SHuffling data, then Splitting into training and test data
-      split <- initial_split(data_split[[i]][sample(nrow(data_split[[i]])),], prop = 0.8)
-      
-      train <- training(split)
-      test <- testing(split)
+     
+      train <- data_split[[i]][[l]]$train
+      test <- data_split[[i]][[l]]$test
       
       #Creating the model and predicting to test data
       mod = ranger(IUCN ~ ., data = train , probability = F,
@@ -40,13 +45,24 @@ IUCN_test = function(data_split,loops){
       
       score=predict(mod,data=test)
       
+      #Find species with FALSE POSITIVE AND FALSE NEGATIVE
+      mat_CM <- data.frame(species = rownames(test),
+                           reference= test$IUCN,
+                           prediction = score$predictions)
+      mat_CM$error_type <- NA
+      for (j in 1:nrow(mat_CM)) {
+        if(mat_CM$reference[j] == mat_CM$prediction[j] ) mat_CM$error_type[j] <- "TP"
+        if(mat_CM$reference[j] == "NThr" &  mat_CM$prediction[j] == "Thr") mat_CM$error_type[j] <- "FP"
+        if(mat_CM$reference[j] == "Thr" &  mat_CM$prediction[j] == "NThr") mat_CM$error_type[j] <- "FN"
+      }
+    
+      
       CM=confusionMatrix(score$predictions, test$IUCN)
       
-      model_output = list(data.frame(variable_importance <- rownames_to_column(as.data.frame(importance(mod)))),
-                          data.frame(Accuracy = CM$overall[1],
-                                     Kappa = CM$overall[2],
-                                     TSS = CM$byClass[1]+CM$byClass[2]-1),
-                          Balanced_Accuracy = CM$byClass[11])
+      model_output = list(variable_importance = rownames_to_column(as.data.frame(importance(mod))),
+                          confusion_matrix =  CM$table, 
+                          detailled_confusion_matrix = mat_CM,
+                          metric  = CM$byClass)
       
     })
     
