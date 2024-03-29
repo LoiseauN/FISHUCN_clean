@@ -13,6 +13,9 @@ save(data_splited_deep_RF,file = here::here("outputs","data_splited_deep_RF.RDat
 
 
 
+test_IUCN = IUCN_test(split,10)
+
+
 #' Test the model on complete data
 #'
 #' This functions tests the model on your data based on complete data using cross validation
@@ -63,57 +66,12 @@ IUCN_test = function(data_split,loops){
                           confusion_matrix =  CM$table, 
                           detailled_confusion_matrix = mat_CM,
                           metric  = CM$byClass)
+      return(model_output)
       
     })
     
   })
-  
-  #Getting variable importance from output list
-  rel_inf = ranger_loop %>%
-    #Transfomring list into large dataframe
-    flatten_df() %>%
-    #Recuperating column names
-    unnest(cols=c())%>%
-    #Keeping only variables and their importance
-    dplyr::select(rowname,importance.mod.)%>%
-    na.omit()%>%
-    #Getting mean variable importance over all iterations
-    group_by(rowname)%>%
-    dplyr::summarize(importance.mod.=mean(importance.mod.))
-  
-  
-  #Getting model performance from output list
-  preds = ranger_loop %>%
-    #Transfomring list into large dataframe
-    flatten_df() %>%
-    #Recuperating column names
-    unnest(cols=c())%>%
-    dplyr::rename(Balanced_Accuracy="Balanced Accuracy")%>%
-    #Keeping only variables and their importance
-    dplyr::select(Accuracy:TSS)%>%
-    na.omit()%>%
-    map_dbl(mean)%>%
-    as_tibble(rownames=NA)%>%
-    rownames_to_column("Metric")
-  
-  
-  #Getting balanced accuracy from output list
-  preds_class = ranger_loop %>%
-    #Transfomring list into large dataframe
-    flatten_df() %>%
-    #Recuperating column names
-    unnest(cols=c())%>%
-    dplyr::rename(Balanced_Accuracy="Balanced Accuracy")%>%
-    #Keeping only variables and their importance
-    dplyr::select(Balanced_Accuracy)%>%
-    na.omit()%>%
-    dplyr::summarize(Balanced_Accuracy=mean(Balanced_Accuracy))
-  
-  save(rel_inf, file = here::here("outputs", "rel_inf.RData"))
-  save(preds, file = here::here("outputs", "preds.RData"))
-  
-  output = list(rel_inf,preds,preds_class)
-  
+  return(ranger_loop)
 }
 
 
