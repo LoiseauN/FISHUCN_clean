@@ -163,6 +163,8 @@ split = data_prep(data_noNA)
 
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(split,10)
+save(test_IUCN,file = "outputs/test_IUCN.Rdata")
+
 #Give the accuracy ! 
 
 #Running IUCN predictions

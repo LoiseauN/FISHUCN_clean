@@ -32,7 +32,8 @@ test_IUCN = IUCN_test(split,10)
 
 IUCN_test = function(data_split,loops){
   
-  # data_split = 
+  
+  # data_split = data_splited_deep_RF
   ranger_loop = mclapply(1:length(data_split),function(i){
     
     mclapply(1:loops,function(l){
@@ -62,7 +63,7 @@ IUCN_test = function(data_split,loops){
       
       CM=confusionMatrix(score$predictions, test$IUCN)
       
-      model_output = list(variable_importance = rownames_to_column(as.data.frame(importance(mod))),
+      model_output = list(variable_importance = rownames_to_column(as.data.frame(mod$variable.importance)),
                           confusion_matrix =  CM$table, 
                           detailled_confusion_matrix = mat_CM,
                           metric  = CM$byClass)
