@@ -42,6 +42,7 @@ performance_RF <- IUCN_performance_RF(test_IUCN,10)
 
 
 # Violin plot basique
+performance_RF$error_type <- factor(performance_RF$error_type , level =c("TP","FP","FN"))
 
 dp <- ggplot(performance_RF, aes(x=error_type, y=percentage, fill=error_type)) + 
   geom_violin(trim=FALSE)+
@@ -49,4 +50,4 @@ dp <- ggplot(performance_RF, aes(x=error_type, y=percentage, fill=error_type)) +
   labs(title="Performance",x="Prediction", y = "Percentage")
   dp + theme_classic()
 
-dp + scale_fill_brewer(palette="RdBu") + theme_minimal()
+dp + scale_fill_hp_d(option = "Ravenclaw") + theme_minimal()

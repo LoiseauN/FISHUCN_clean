@@ -152,7 +152,8 @@ FB_IUCN_final = FB_IUCN_final %>% dplyr::select(-c(Depth_min))
 test_missForest = missForest_test(FB_IUCN,FB_IUCN_final)
 
 #Applying missforest
-data_noNA = missForest_applied(FB_IUCN_final,0.2,test_missForest)
+data_noNA = missForest_applied(FB_IUCN_final,0.2,test_missForest) #(0.2 to keep trophic with only 25 value to predict,
+# other are higher thant 0.6)
 save(data_noNA, file = here::here("outputs/data_noNA.Rdata"))
 
 ###Checking species that are not in data_noNA

@@ -13,7 +13,7 @@ save(data_splited_deep_RF,file = here::here("outputs","data_splited_deep_RF.RDat
 
 
 
-test_IUCN = IUCN_test(split,10)
+test_IUCN = IUCN_test(data_splited_deep_RF,10)
 
 
 #' Test the model on complete data
