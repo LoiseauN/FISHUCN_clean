@@ -167,6 +167,10 @@ split = data_prep(data_noNA)
 data_splited_deep_RF <- cross_val_split(split,10)
 save(data_splited_deep_RF,file = here::here("outputs","data_splited_deep_RF.RData"))
 
+# change the format for python
+data_splited_deep_RF_for_python <-  loop_prep_ANN(data_splited_deep_RF,10)
+save(data_splited_deep_RF_for_python,file = here::here("outputs","data_splited_deep_RF_for_python.RData"))
+
 
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(data_splited_deep_RF,10)
