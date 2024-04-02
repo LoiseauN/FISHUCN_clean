@@ -200,8 +200,6 @@ all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_fin
 save(all_predict,file = "outputs/all_predict.Rdata")
 
 
-
-
 #------------------Prepare outputs for the figure and zoantion------------------------
 
 #Data for zonation
@@ -209,7 +207,6 @@ create_data_zonation(data = FB_IUCN_all_marine, data_predict = all_predict)
 
 #Data for phylo and chord
 dat_network <- create_dat_network()
-
 dat_network[dat_network$species %in% rownames(FB_nonselec_NS),]
 save(dat_network,file = "outputs/dat_network.Rdata")
 
