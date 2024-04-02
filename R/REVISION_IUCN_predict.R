@@ -1,12 +1,3 @@
-run_IUCN_revision = IUCN_predict(data_splited_deep_RF,data_noNA,10)
-
-IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),80)
-IUCN_preds_machine_final_revision = IUCN_machine(run_IUCN_revision,length(split),80)
-
-
-#data_split = data_splited_deep_RF
-#data = data_noNA
-#loops= 10
 #' Predict IUCN status running 200 models
 #'
 #' This functions predicts the IUCN status of new species based on 200 models

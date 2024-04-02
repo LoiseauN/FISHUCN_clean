@@ -162,18 +162,30 @@ dim(FB_IUCN_all_marine) - dim(data_noNA)
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_noNA)
 
+#Splitting data with NA filled out by missForest or with original data with no NA
+#OLD split = data_prep(data_noNA)
+data_splited_deep_RF <- cross_val_split(split,10)
+save(data_splited_deep_RF,file = here::here("outputs","data_splited_deep_RF.RData"))
+
+
 #Trying out IUCN predictions
-test_IUCN = IUCN_test(split,10)
+test_IUCN = IUCN_test(data_splited_deep_RF,10)
+#OLD test_IUCN = IUCN_test(split,10)
 save(test_IUCN,file = "outputs/test_IUCN.Rdata")
 
 #Give the accuracy ! 
 
 #Running IUCN predictions
-run_IUCN = IUCN_predict(split,data_noNA,10)
+run_IUCN = IUCN_predict(data_splited_deep_RF,data_noNA,10)
+
+
+
+#OLD run_IUCN = IUCN_predict(split,data_noNA,10)
 save(run_IUCN,file = "outputs/run_IUCN.Rdata")
 
 #Call outputs and keep prediction with 80% of model agree
-IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),80)
+#OLD IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),80)
+IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(data_splited_deep_RF),80)
 
 # Running IUCN predictions using deep learning
 IUCN_deep_predict()

@@ -1,21 +1,3 @@
-#Splitting data with NA filled out by missForest or with original data with no NA
-split = data_prep(data_noNA)
-
-
-
-split <- cross_val_split(split,10)
-
-
-data_splited_deep_RF <- split
-
-
-save(data_splited_deep_RF,file = here::here("outputs","data_splited_deep_RF.RData"))
-
-
-
-test_IUCN = IUCN_test(data_splited_deep_RF,10)
-
-
 #' Test the model on complete data
 #'
 #' This functions tests the model on your data based on complete data using cross validation
