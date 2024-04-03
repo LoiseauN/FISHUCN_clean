@@ -38,16 +38,69 @@ IUCN_performance_RF = function(data,loops){
 
 }
 
-performance_RF <- IUCN_performance_RF(test_IUCN,10)
 
 
 # Violin plot basique
-performance_RF$error_type <- factor(performance_RF$error_type , level =c("TP","FP","FN"))
+plot_performance_RF <- function(data){
+  data$error_type <- factor(data$error_type , level =c("TP","FP","FN"))
 
-dp <- ggplot(performance_RF, aes(x=error_type, y=percentage, fill=error_type)) + 
+dp <- ggplot(data, aes(x=error_type, y=percentage, fill=error_type)) + 
   geom_violin(trim=FALSE)+
   geom_boxplot(width=0.1, fill="white")+
   labs(title="Performance",x="Prediction", y = "Percentage")
   dp + theme_classic()
 
 dp + scale_fill_hp_d(option = "Ravenclaw") + theme_minimal()
+}
+
+
+
+
+
+
+
+
+##Metric
+
+
+
+
+
+IUCN_metric_performance_RF = function(data,loops){ 
+  
+  #data = test_IUCN
+  
+  do.call(rbind,mclapply(1:length(data),function(i){
+    
+    table_metric <-do.call(rbind, mclapply(1:loops,function(l){
+      
+      #Randomizing each sub dataframe 
+      metric_table <- data.frame(metric = names(data[[i]][[l]]$metric),
+                                  value = data[[i]][[l]]$metric) %>%
+        janitor::clean_names()
+      
+      metric_table$modelID <- paste0(i,"_",l)
+      
+      return(metric_table)
+      
+    }))
+    return(table_metric)
+    
+  }))
+  
+}
+
+
+plot_metric_RF = function(data){
+# Violin plot basique
+dp <- ggplot(data, aes(x=metric, y=value, fill=metric)) + 
+  geom_violin(trim=FALSE)+
+  geom_boxplot(width=0.1, fill="white")+
+  labs(title="Metric Random Forest",x="Metric", y = "Value")+
+  scale_fill_hp_d(option = "Ravenclaw") + theme_minimal()
+dp
+}
+
+
+
+

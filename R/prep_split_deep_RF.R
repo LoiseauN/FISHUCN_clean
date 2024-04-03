@@ -24,10 +24,11 @@ data_prep <- function(data){
     na.omit()
   
   #Variable with optimal number of folds for downsampling
-  x = floor(length(data_NThr$IUCN)/length(data_Thr$IUCN))
+  #x = floor(length(data_NThr$IUCN)/length(data_Thr$IUCN))
+  x = round(length(data_NThr$IUCN)/length(data_Thr$IUCN))
   
   #Randomly shuffle the data
-  data_NThr_shuffled <-data_NThr[sample(nrow(data_NThr)),]
+  data_NThr_shuffled <- data_NThr[sample(nrow(data_NThr)),]
   
   #Create x equally size folds of non classified species
   folds <- cut(seq(1,nrow(data_NThr_shuffled)),breaks=x,labels=FALSE)
