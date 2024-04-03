@@ -11,7 +11,7 @@
 #' @export
 
 
-IUCN_predict = function(data_split,data,loops){
+IUCN_importance_pd = function(data_split,data,loops){
   #
   #data_split = data_splited_deep_RF
   #data = data_noNA
@@ -35,9 +35,9 @@ IUCN_predict = function(data_split,data,loops){
   
   #Creating x models based on the number of splits of downsampled data
   
-  ranger_loop = mclapply(1:length(data_split),function(i){
+  ranger_loop = mclapply(1:length(data_split),function(i){ #
     
-    mclapply(1:loops,function(l){
+    mclapply(1:loops,function(l){ #
       
       #Randomizing each sub dataframe 
       train <- data_split[[i]][[l]]$train
@@ -46,30 +46,85 @@ IUCN_predict = function(data_split,data,loops){
       mod = ranger::ranger(IUCN ~ ., data = train, probability = F,
                            importance ="permutation",num.trees = 1000,mtry = 3)
       
-      importance = mod$variable.importance
-      
-      score=predict(mod,data=data_topredict)
+      importance <- data.frame(var = names(mod$variable.importance),
+                          importance = mod$variable.importance)
+      #Prediction
+      #score=predict(mod,data=data_topredict)
       
       #Getting the score predictions
-      model_preds = list(data.frame(rank = paste(i,".",l),
-                                    score$predictions))
+      #model_preds = list(data.frame(rank = paste(i,".",l),
+      #                              score$predictions))
+      
+      #reorder the most important
+      importance <- importance%>% arrange(desc(importance))
+      importance$rank = paste(i,".",l)
+      
+      # only the first fourth drivers
+      all_partial <- do.call(rbind,lapply(1:nrow(importance), function(x){
+       
+        pd = edarf::partial_dependence(mod, importance[x,1], 
+                                       data = train, interaction =F) 
+        colnames(pd)[1] <- "value_var"
+        
+        pd$var = importance[x,1]
+        
+        pd$rank = paste(i,".",l)
+        
+        return(pd)
+        
+        }))
+        
+        res <- list(#predict =model_preds,
+                    importance = importance,
+                    partial = all_partial)
+        
+        return(res)
       
     })
     
   })
   
   #Getting the predictions of each loop in dataframe format
-  preds = do.call(rbind,do.call(rbind,do.call(rbind,ranger_loop)))
+  #preds = do.call(rbind,do.call(rbind,do.call(rbind,ranger_loop)))
   
-  #Binding predictions with species information
-  data_predicted = cbind(preds,data_species)
+    #Binding predictions with species information
+  #data_predicted = cbind(preds,data_species)
   
+  all_res_partial <- do.call(rbind,mclapply(1:length(data_split),function(i){ #
+    
+   do.call(rbind, mclapply(1:loops,function(l){
+      mat <- ranger_loop[[i]][[l]]$partial
+    }))
+  }))
+  
+  all_res_importance <- do.call(rbind,mclapply(1:length(data_split),function(i){ #
+    
+    do.call(rbind, mclapply(1:loops,function(l){
+      mat <- ranger_loop[[i]][[l]]$importance
+    }))
+  }))
+
+  all_res <- list(partial = all_res_partial,
+                  importance = all_res_importance)
+  
+  return(all_res)
   
 }
 
 
-
-
+for plot
+var_for_partial <- var_for_partial %>% 
+  mutate(var = recode_factor(var, "Troph" = "Trophic",
+                             "BodyShapeI" = 'Body Shape' ,
+                             "Aquarium" = "Interest for aquarium",
+                             "Depth_max" = "Depth max",
+                             "Depth_min" = "Depth min",
+                             "DistrArea" = "Range size",
+                             "K" = "Growth rate",
+                             "Habitat" = "Position in water column",
+                             "PriceCateg" = "Price Category",
+                             "ReproMode" = "Reproduction mode",
+                             "RepGuild1" = "Reproductive guild"))
 
 
 #' Generate partial plot
