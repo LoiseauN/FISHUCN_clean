@@ -35,13 +35,9 @@ IUCN_predict = function(data_split,data,loops){
   
   #Creating x models based on the number of splits of downsampled data
 
-  
- 
    ranger_loop = mclapply(1:length(data_split),function(i){
     
     mclapply(1:loops,function(l){
-      
-   
       
       #Randomizing each sub dataframe 
       train <- data_split[[i]][[l]]$train

@@ -184,7 +184,6 @@ plot_performance_RF(performance_RF)
 metric_performance <- IUCN_metric_performance_RF(test_IUCN,10)
 plot_metric_RF(metric_performance)
 
-
 #Running IUCN predictions
 run_IUCN = IUCN_predict(data_splited_deep_RF,data_noNA,10)
 
