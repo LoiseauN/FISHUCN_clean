@@ -175,7 +175,7 @@ save(data_splited_deep_RF_for_python,file = here::here("outputs","data_splited_d
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(data_splited_deep_RF,10)
 #OLD test_IUCN = IUCN_test(split,10)
-save(test_IUCN,file = "outputs/test_IUCN.Rdata")
+save(test_IUCN,file = here::here("outputs","test_IUCN.Rdata"))
 
 #Give the accuracy ! 
 performance_RF <- IUCN_performance_RF(test_IUCN,10)
@@ -183,6 +183,10 @@ plot_performance_RF(performance_RF)
 
 metric_performance <- IUCN_metric_performance_RF(test_IUCN,10)
 plot_metric_RF(metric_performance)
+
+#Partial and importance variables
+output_importance_pd <- IUCN_importance_pd(data_splited_deep_RF,data_noNA,10)
+save(output_importance_pd,file = here::here("outputs","output_importance_pd.Rdata"))
 
 #Running IUCN predictions
 run_IUCN = IUCN_predict(data_splited_deep_RF,data_noNA,10)

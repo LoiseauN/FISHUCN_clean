@@ -11,6 +11,8 @@
 #' @export
 
 
+output_importance_pd <- IUCN_importance_pd(data_splited_deep_RF,data_noNA,10)
+
 IUCN_importance_pd = function(data_split,data,loops){
   #
   #data_split = data_splited_deep_RF
@@ -111,8 +113,8 @@ IUCN_importance_pd = function(data_split,data,loops){
   
 }
 
-
-for plot
+#################################
+#for plot
 var_for_partial <- var_for_partial %>% 
   mutate(var = recode_factor(var, "Troph" = "Trophic",
                              "BodyShapeI" = 'Body Shape' ,
