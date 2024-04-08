@@ -10,15 +10,15 @@
 #' 
 #' 
 
-var_imp = function(rel_inf){
+#var_imp = function(rel_inf){
   
   #Plot of variable importance
-  tot <- sum(rel_inf[,2])
+#  tot <- sum(rel_inf[,2])
   
-  for (i in 1:nrow(rel_inf)){
-    rel_inf[i,2] <- (rel_inf[i,2]/tot)*100
+#  for (i in 1:nrow(rel_inf)){
+#    rel_inf[i,2] <- (rel_inf[i,2]/tot)*100
     
-  }
+#  }
   
   
   

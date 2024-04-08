@@ -116,12 +116,27 @@ ggsave(file = here::here("figures/Figure_1.png"),fig1,width = 12, height = 10, u
 }
 #'---------------------------------------------------------------------@variable_importance
 
-figure4 <- function(data =  data_noNA, model = test_IUCN[[1]]){ 
-partial_plot <- var_partial(data      =  data,
-                            model = model) 
+#figure4 <- function(data =  data_noNA, model = test_IUCN[[1]]){ 
+#partial_plot <- var_partial(data      =  data,
+#                            model = model) 
 
 # Plot importance plot
-importance_plot = var_imp(model)  
+#importance_plot = var_imp(model)  
+
+#fig <- importance_plot + 
+#  (partial_plot[[1]] /partial_plot[[3]])+ 
+#  (partial_plot[[2]]/partial_plot[[4]])
+
+
+#ggsave(file = here::here("figures/Figure_4.png"),fig,width = 12, height = 6, units= "in",dpi= 300)
+#}
+
+
+figure4 <- function(data = output_importance_pd){ 
+partial_plot <- var_partial(data) 
+
+# Plot importance plot
+importance_plot = var_imp(data)  
 
 fig <- importance_plot + 
   (partial_plot[[1]] /partial_plot[[3]])+ 
@@ -130,7 +145,6 @@ fig <- importance_plot +
 
 ggsave(file = here::here("figures/Figure_4.png"),fig,width = 12, height = 6, units= "in",dpi= 300)
 }
-
 
 #'---------------------------------------------------------------------@protection
 figure6 <- function(data){ 

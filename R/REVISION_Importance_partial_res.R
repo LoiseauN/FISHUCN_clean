@@ -9,10 +9,6 @@
 #' @return A data frame with the predicted status for each species for each loop
 #'
 #' @export
-
-
-output_importance_pd <- IUCN_importance_pd(data_splited_deep_RF,data_noNA,10)
-
 IUCN_importance_pd = function(data_split,data,loops){
   #
   #data_split = data_splited_deep_RF
@@ -113,124 +109,86 @@ IUCN_importance_pd = function(data_split,data,loops){
   
 }
 
-#################################
-#for plot
-var_for_partial <- var_for_partial %>% 
-  mutate(var = recode_factor(var, "Troph" = "Trophic",
-                             "BodyShapeI" = 'Body Shape' ,
-                             "Aquarium" = "Interest for aquarium",
-                             "Depth_max" = "Depth max",
-                             "Depth_min" = "Depth min",
-                             "DistrArea" = "Range size",
-                             "K" = "Growth rate",
-                             "Habitat" = "Position in water column",
-                             "PriceCateg" = "Price Category",
-                             "ReproMode" = "Reproduction mode",
-                             "RepGuild1" = "Reproductive guild"))
-
-
 #' Generate partial plot
-#'
-
-#' @param data_split 
+#' @param output_importance_pd
 #' 
 #' @return A plot in pdf format with the partial plot 
 #'
 #' @export
 #' 
 #' 
-var_partial = function(data_split,loop){
-  # data =  data_noNA
-  # model = test_IUCN[[1]]
+var_partial = function(data){
+  data = data[[1]]
   
-  # data_split = data_splited_deep_RF
-  ranger_loop = mclapply(1:length(data_split),function(i){
-    
-    mclapply(1:loops,function(l){
+  pal <- c("#B35800","#A8BCC1","#42A5D9","#3573A4")
+  data <- data %>% 
+    mutate(var = recode_factor(var, "Troph" = "Trophic",
+                                   "BodyShapeI" = 'Body Shape' ,
+                                   "Aquarium" = "Interest for aquarium",
+                                   "Depth_max" = "Depth max",
+                                   "DistrArea" = "Range size",
+                                   "K" = "Growth rate",
+                                   "Habitat" = "Position in water column",
+                                   "PriceCateg" = "Price Category",
+                                   "ReproMode" = "Reproduction mode",
+                                   "RepGuild1" = "Reproductive guild"))%>% 
+  dplyr::filter(var %in% c("Range size","Length","Growth rate","Depth max"))
+  
+  data$value_var <- as.numeric(data$value_var)
+  
+  all_partial <- lapply(1:length(unique(data$var)), function(x){
+  #variable <- c("Range size","Length","Growth rate","Depth max")
+  select <- data[data$var == unique(data$var)[x],]
+  part_plot <- ggplot(select,aes(x=select$value_var,y=Thr, group = rank)) + #00AFBB"
+    geom_line(aes(group = rank),color=pal[x],alpha=0.05) + 
+    geom_smooth(aes(group = 1),color=pal[x],fill=pal[x]) +
+    ylim(0.2,0.8) +
+    ylab("Probability")+
+    xlab(unique(data$var)[x]) +
+    theme(legend.position="none",
+          panel.grid.minor = element_blank(),
+          axis.title=element_text(size=15),
+          axis.text = element_text(size = 15)) +
+    theme_bw()
       
+  return(part_plot)
+})
+  
+}
       
-      
-      pal <- c("#B35800","#A8BCC1","#42A5D9","#3573A4")
-      
-      data = na.omit(data)
-      #Creating the model and predicting to new data
-      mod = ranger::ranger(IUCN ~ ., data = data, probability = F,
-                           importance ="permutation",num.trees = 1000,mtry = 3)
-      
-      var <- data.frame(mod$variable.importance)
-      var <- model[order(model$importance.mod.,decreasing = TRUE),]
-      
-      name_var <- var %>% 
-        mutate(rowname = recode_factor(rowname, "Troph" = "Trophic",
-                                       "BodyShapeI" = 'Body Shape' ,
-                                       "Aquarium" = "Interest for aquarium",
-                                       "Depth_max" = "Depth max",
-                                       "Depth_min" = "Depth min",
-                                       "DistrArea" = "Range size",
-                                       "K" = "Growth rate",
-                                       "Habitat" = "Position in water column",
-                                       "PriceCateg" = "Price Category",
-                                       "ReproMode" = "Reproduction mode",
-                                       "RepGuild1" = "Reproductive guild"))
-      
-      name_var <- c(name_var$rowname[c(1:4)])
-      
-      var <- data.frame(var[c(1:4),1])
-      
-      all_partial <- lapply(1:nrow(var), function(x){
-        pd = edarf::partial_dependence(mod, var[x,1], 
-                                       data = data, interaction =F)
-        
-        part_plot <- ggplot(pd,aes(x=pd[,var[x,]],y=Thr)) + #00AFBB"
-          geom_smooth(color=pal[x],fill=pal[x]) +
-          ylim(0,0.5)+
-          theme_bw()+
-          ylab("Probability")+
-          xlab(name_var[x])+
-          theme(legend.position="none",
-                panel.grid.minor = element_blank(),
-                axis.title=element_text(size=15),
-                axis.text = element_text(size = 15))
-        # }
-        return(part_plot)
-        
-      })
-      
-      
-    }
-    
-   
     
 ###################VARIABLE IMPORTANCE    
+#' Generate plot of variable importance
+#'
+#' Based on the test of your model, this function generates a plot of variable importance based on permutation
+#'
+#' @param output_importance_pd Data frame with variable importance 
+#' 
+#' @return A plot in pdf format with the variable importance plot 
+#'
+#' @export
+#' 
+#' 
     
-    
-    
-    #' Generate plot of variable importance
-    #'
-    #' Based on the test of your model, this function generates a plot of variable importance based on permutation
-    #'
-    #' @param rel_inf Data frame with variable importance 
-    #' 
-    #' @return A plot in pdf format with the variable importance plot 
-    #'
-    #' @export
-    #' 
-    #' 
-    
-    var_imp = function(rel_inf){
+var_imp = function(data){
+      data = data[[2]]
       
-      #Plot of variable importance
-      tot <- sum(rel_inf[,2])
-      
-      for (i in 1:nrow(rel_inf)){
-        rel_inf[i,2] <- (rel_inf[i,2]/tot)*100
+      rel_inf <- do.call(rbind,lapply(1:length(unique(data$rank)), function(i){
         
-      }
-      
-      
-      
+        dat <- data[data$rank == unique(data$rank)[i],]
+        tot <- sum(dat$importance)
+        
+        dat$importance_rel <- NA
+        for (j in 1:nrow(dat)){
+          dat$importance_rel[j] <- (dat$importance[j]/tot)*100
+        }
+        return(dat)
+      }))
+     
+       #Plot of variable importance
+    
       rel_inf <- rel_inf %>% 
-        mutate(rowname = recode_factor(rowname, "Troph" = "Trophic",
+        mutate(var = recode_factor(var, "Troph" = "Trophic",
                                        "BodyShapeI" = 'Body Shape' ,
                                        "Aquarium" = "Interest for aquarium",
                                        "Depth_max" = "Depth max",
@@ -242,13 +200,13 @@ var_partial = function(data_split,loop){
                                        "ReproMode" = "Reproduction mode",
                                        "RepGuild1" = "Reproductive guild"))
       
-      rel_inf %>%
-        arrange(importance.mod.) %>%
-        tail(20) %>%
-        mutate(rowname=factor(rowname, rowname)) %>%
-        ggplot( aes(x=rowname, y=importance.mod.,fill=importance.mod.))+ 
-        geom_bar(stat="identity", position="dodge")+ 
-        harrypotter::scale_fill_hp(option = "Ravenclaw") + 
+      
+      plot_importance <- rel_inf %>%
+        mutate(var=fct_reorder(var, importance_rel,
+                              na.rm=TRUE))%>%
+        ggplot( aes(x=var, y=importance_rel,fill=var))+ 
+        geom_boxplot()+ 
+        harrypotter::scale_fill_hp_d(option = "Ravenclaw") + 
         scale_x_discrete() +
         coord_flip()+
         xlab("") +
@@ -263,11 +221,6 @@ var_partial = function(data_split,loop){
           axis.title=element_text(size=15),
           axis.text=element_text(size=15)
         ) 
-      
-      
-      
-      # ggsave(file = here::here("figures", "Figure2.pdf"), 
-      #       width = 11.7, height = 8.3)
-      
+      return(plot_importance)
     }
     

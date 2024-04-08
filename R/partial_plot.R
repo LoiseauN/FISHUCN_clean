@@ -10,7 +10,7 @@
 #' @export
 #' 
 #' 
-var_partial = function(data,model){
+#var_partial = function(data,model){
   # data =  data_noNA
   # model = test_IUCN[[1]]
   
