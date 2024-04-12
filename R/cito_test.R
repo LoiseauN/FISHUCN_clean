@@ -18,26 +18,31 @@ library(cito)
 #' @export
 
 # create learning rate scheduler object
-scheduler <- config_lr_scheduler(type = "step",
-                                 step_size = 30,
-                                 gamma = 0.15,
-                                 verbose = TRUE)
+
+
+
+# Build and train  Network
 
 IUCN_deep_test = function(data_split,loops){
   
   
   # data_split = data_splited_deep_RF
-  ranger_loop = mclapply(1:length(data_split),function(i){
+  ranger_loop = lapply(1:length(data_split),function(i){
     
-    mclapply(1:loops,function(l){
-      
+    
+    lapply(1:loops,function(l){
+      print(paste0("i =", i,"_","l =",l))
       #SHuffling data, then Splitting into training and test data
       
       train <- data_split[[i]][[l]]$train
       test <- data_split[[i]][[l]]$test
       
       #Creating the model and predicting to test data
-      mod <- dnn(IUCN~., data = train, loss= "softmax",batchsize = 30,lr_scheduler = scheduler)
+      #mod <- dnn(IUCN~., data = train, loss= "softmax",lr = 0.05,
+       #          epochs = 150L, verbose = T, plot = T) #lr_scheduler = scheduler,plot = T)
+      mod <- dnn(IUCN~., data = train, loss= "softmax",lr_scheduler = scheduler,plot = F,
+                 optimizer = opt) 
+      #mod <- dnn(IUCN~., data = train, loss= "softmax", lr_scheduler = scheduler,plot = F)
       
 
       score <- predict(mod, newdata = test, type = "class")
@@ -55,9 +60,9 @@ IUCN_deep_test = function(data_split,loops){
       }
       
       
-    CM=confusionMatrix(data = score$predictions, reference = test$IUCN)
+      CM=confusionMatrix(data = score, reference = test$IUCN)
       
-      model_output = list(variable_importance = rownames_to_column(as.data.frame(mod$variable.importance)),
+      model_output = list(#variable_importance = rownames_to_column(as.data.frame(mod$variable.importance)),
                           confusion_matrix =  CM$table, 
                           detailled_confusion_matrix = mat_CM,
                           metric  = CM$byClass)
@@ -65,42 +70,34 @@ IUCN_deep_test = function(data_split,loops){
       
     })
     
-  },mc.cores = 4)
+  })
   return(ranger_loop)
 }
 
+opt <- config_optimizer(type = "adagrad",
+                        lr_decay = 1e-04,
+                        weight_decay = 0.1,
+                        verbose = TRUE)
 
-pred_deep_cito <- IUCN_deep_test(data_splited_deep_RF,loop = 10)
-
-save(here::here("ouputs","pred_deep_cito.RData"))
-
-
-# create learning rate scheduler object
 scheduler <- config_lr_scheduler(type = "step",
                                  step_size = 30,
                                  gamma = 0.15,
                                  verbose = TRUE)
 
-# Build and train  Network
-nn.fit <- dnn(IUCN~., data = data_splited_deep_RF[[2]][[1]]$train, loss= "binomial",batchsize = 30,lr_scheduler = scheduler)
-#summary(nn.fit)
+#scheduler <- config_lr_scheduler(type = "step",
+#                                 step_size = 100,
+#                                 gamma = 0.75,
+#                                 verbose = TRUE)
 
-res_predict <- predict(nn.fit, newdata = data_splited_deep_RF[[2]][[1]]$test, type = "class")
+pred_deep_cito <- IUCN_deep_test(data_splited_deep_RF,loop = 5)
 
-example <- caret::confusionMatrix(data=res_predict, reference = data_splited_deep_RF[[1]][[1]]$test$IUCN)
-example
-analyze_training(nn.fit)
+save(pred_deep_cito,file = here::here("outputs/pred_deep_cito.RData"))
 
+#Give the accuracy ! 
+performance_RF <- IUCN_performance_RF(pred_deep_cito,5)
+plot_performance_RF(performance_RF)
 
-PDP(nn.fit)
-
-data <- datasets::iris
-nn.fit.val <- dnn(Sepal.Length~., data = data, epochs = 32,
-              loss= "mse", validation = 0.2)
+metric_performance <- IUCN_metric_performance_RF(pred_deep_cito,2)
+plot_metric_RF(metric_performance)
 
 
-plot(data$Sepal.Length,predict(nn.fit.val))
-
-str(nn.fit.val)
-
-example <- confusionMatrix(data=predicted_value, reference = expected_value)
