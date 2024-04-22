@@ -73,31 +73,27 @@ IUCN_deep_test = function(data_split,loops){
   })
   return(ranger_loop)
 }
-
-opt <- config_optimizer(type = "adagrad",
-                        lr_decay = 1e-04,
-                        weight_decay = 0.1,
-                        verbose = TRUE)
-
-scheduler <- config_lr_scheduler(type = "step",
-                                 step_size = 30,
-                                 gamma = 0.15,
-                                 verbose = TRUE)
-
+#################
+#FONCTIONNE PAS TROP MAL
+#opt <- config_optimizer(type = "adagrad",
+#                        lr_decay = 1e-04,
+#                        weight_decay = 0.1,
+#                        verbose = TRUE)
+#
 #scheduler <- config_lr_scheduler(type = "step",
-#                                 step_size = 100,
-#                                 gamma = 0.75,
+#                                 step_size = 30,
+#                                 gamma = 0.15,
 #                                 verbose = TRUE)
 
-pred_deep_cito <- IUCN_deep_test(data_splited_deep_RF,loop = 5)
+pred_deep_cito <- IUCN_deep_test(data_splited_deep_RF,loop = 10)
 
 save(pred_deep_cito,file = here::here("outputs/pred_deep_cito.RData"))
 
 #Give the accuracy ! 
-performance_RF <- IUCN_performance_RF(pred_deep_cito,5)
+performance_RF <- IUCN_performance_RF(pred_deep_cito,10)
 plot_performance_RF(performance_RF)
 
-metric_performance <- IUCN_metric_performance_RF(pred_deep_cito,2)
+metric_performance <- IUCN_metric_performance_RF(pred_deep_cito,10)
 plot_metric_RF(metric_performance)
 
 
