@@ -181,18 +181,31 @@ plot_metric_RF(metric_performance)
 output_importance_pd <- IUCN_importance_pd(data_splited_deep_RF,data_noNA,10)
 save(output_importance_pd,file = here::here("outputs","output_importance_pd.Rdata"))
 
-#Running IUCN predictions
+#Running IUCN predictions RF
 run_IUCN = IUCN_predict(data_splited_deep_RF,data_noNA,10)
 
+
 #OLD run_IUCN = IUCN_predict(split,data_noNA,10)
-save(run_IUCN,file = "outputs/run_IUCN.Rdata")
+save(run_IUCN,file = here::here("outputs/run_IUCN.Rdata"))
 
 #Call outputs and keep prediction with 80% of model agree
 #OLD IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(split),80)
 IUCN_preds_machine_final = IUCN_machine(run_IUCN,length(data_splited_deep_RF),80)
 
 # Running IUCN predictions using deep learning
-IUCN_deep_predict()
+
+opt <- config_optimizer(type = "adagrad",
+                        lr_decay = 1e-04,
+                        weight_decay = 0.1,
+                        verbose = TRUE)
+#
+scheduler <- config_lr_scheduler(type = "step",
+                                 step_size = 30,
+                                 gamma = 0.15,
+                                 verbose = TRUE)
+
+deep_IUCN <- IUCN_predict_deep(data_splited_deep_RF,data_noNA,10)
+save(deep_IUCN,file = here::here("outputs/deep_IUCN.Rdata"))
 
 #Call outputs and keep prediction with 80% of model agree
 load(file = here::here("outputs/IUCN_preds_deep.RData"))
