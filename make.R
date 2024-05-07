@@ -25,7 +25,7 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "tidyverse", "viridis", "XML", "circlize","edarf","rgdal",
           "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter",
           "randomForest","caret","ROCR","RColorBrewer","tidyr",
-          "RColorBrewer","rnaturalearth","rnaturalearthdata")
+          "RColorBrewer","rnaturalearth","rnaturalearthdata","torch","cito")
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]
 nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
@@ -134,11 +134,8 @@ FB_nonselec <- FB_IUCN_all_marine[!rownames(FB_IUCN_all_marine) %in% rownames(FB
 save(FB_nonselec, file = here::here("outputs/FB_nonselec.Rdata"))
 
 #FB_IUCN_final[!rownames(FB_IUCN_final) %in% rownames(FB_IUCN_all_marine),]
-
-
 FB_nonselec_NS <- FB_nonselec[is.na(FB_nonselec$IUCN),]
 FB_IUCN_final[rownames(FB_IUCN_final) %in% rownames(FB_nonselec_NS),]
-
 
 #Prepare for fill missforest
 FB_IUCN = IUCN_split(FB_IUCN_final)
@@ -168,8 +165,8 @@ data_splited_deep_RF <- cross_val_split(split,10)
 save(data_splited_deep_RF,file = here::here("outputs","data_splited_deep_RF.RData"))
 
 # change the format for python
-data_splited_deep_RF_for_python <-  loop_prep_ANN(data_splited_deep_RF,10)
-save(data_splited_deep_RF_for_python,file = here::here("outputs","data_splited_deep_RF_for_python.RData"))
+pred_deep_cito <- IUCN_deep_cito(data_splited_deep_RF,loop = 10)
+save(pred_deep_cito,file = here::here("outputs/pred_deep_cito.RData"))
 
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(data_splited_deep_RF,10)

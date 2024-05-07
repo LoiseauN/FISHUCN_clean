@@ -1,4 +1,4 @@
-  #' Predict IUCN status running 200 models
+#' Predict IUCN status running 200 models
 #'
 #' This functions predicts the IUCN status of new species based on 200 models
 #'
@@ -11,7 +11,11 @@
 #' @export
 
 
-#IUCN_predict = function(data_split,data,loops){
+IUCN_predict = function(data_split,data,loops){
+  #
+  #data_split = data_splited_deep_RF
+  #data = data_noNA
+  #loops= 10
   
   if (any(is.na(data[,!colnames(data)=="IUCN"]))) {
     stop("Your traits still contain NAs. Please remove them to continue")
@@ -33,10 +37,10 @@
   
   ranger_loop = mclapply(1:length(data_split),function(i){
     
-    mclapply(1:loops,function(p){
+    mclapply(1:loops,function(l){
       
       #Randomizing each sub dataframe 
-      train <- data_split[[i]][sample(nrow(data_split[[i]])),]
+      train <- data_split[[i]][[l]]$train
       
       #Creating the model and predicting to new data
       mod = ranger::ranger(IUCN ~ ., data = train, probability = F,
@@ -45,8 +49,8 @@
       score=predict(mod,data=data_topredict)
       
       #Getting the score predictions
-      model_preds = list(data.frame(rank = paste(i,".",p),
-                                     score$predictions))
+      model_preds = list(data.frame(rank = paste(i,".",l),
+                                    score$predictions))
       
     })
     

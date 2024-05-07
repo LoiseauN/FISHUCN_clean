@@ -1,7 +1,4 @@
-install.packages("cito")
-library("torch")
-install_torch()
-library(cito)
+
 
 
 #' Test the model on complete data
@@ -23,7 +20,7 @@ library(cito)
 
 # Build and train  Network
 
-IUCN_deep_test = function(data_split,loops){
+IUCN_deep_cito = function(data_split,loops){
   
   
   # data_split = data_splited_deep_RF
@@ -75,17 +72,17 @@ IUCN_deep_test = function(data_split,loops){
 }
 #################
 #FONCTIONNE PAS TROP MAL
-#opt <- config_optimizer(type = "adagrad",
-#                        lr_decay = 1e-04,
-#                        weight_decay = 0.1,
-#                        verbose = TRUE)
+opt <- config_optimizer(type = "adagrad",
+                        lr_decay = 1e-04,
+                        weight_decay = 0.1,
+                        verbose = TRUE)
 #
-#scheduler <- config_lr_scheduler(type = "step",
-#                                 step_size = 30,
-#                                 gamma = 0.15,
-#                                 verbose = TRUE)
+scheduler <- config_lr_scheduler(type = "step",
+                                 step_size = 30,
+                                 gamma = 0.15,
+                                 verbose = TRUE)
 
-pred_deep_cito <- IUCN_deep_test(data_splited_deep_RF,loop = 10)
+pred_deep_cito <- IUCN_deep_cito(data_splited_deep_RF,loop = 10)
 
 save(pred_deep_cito,file = here::here("outputs/pred_deep_cito.RData"))
 
