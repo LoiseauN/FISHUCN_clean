@@ -159,19 +159,16 @@ dim(FB_IUCN_all_marine) - dim(data_noNA)
 #Splitting data with NA filled out by missForest or with original data with no NA
 split = data_prep(data_noNA)
 
-#Splitting data with NA filled out by missForest or with original data with no NA
-#OLD split = data_prep(data_noNA)
-data_splited_deep_RF <- cross_val_split(split,10)
-save(data_splited_deep_RF,file = here::here("outputs","data_splited_deep_RF.RData"))
 
-# change the format for python
-pred_deep_cito <- IUCN_deep_cito(data_splited_deep_RF,loop = 10)
-save(pred_deep_cito,file = here::here("outputs/pred_deep_cito.RData"))
-
+#TEST FOR IUCN PREDICTION AND CROSS VAL FOR DEEP AND RF
 #Trying out IUCN predictions
 test_IUCN = IUCN_test(data_splited_deep_RF,10)
 #OLD test_IUCN = IUCN_test(split,10)
 save(test_IUCN,file = here::here("outputs","test_IUCN.Rdata"))
+
+#Deep
+pred_deep_cito <- IUCN_deep_cito(data_splited_deep_RF,loop = 10)
+save(pred_deep_cito,file = here::here("outputs/pred_deep_cito.RData"))
 
 #Give the accuracy ! 
 performance_RF <- IUCN_performance_RF(test_IUCN,10)
