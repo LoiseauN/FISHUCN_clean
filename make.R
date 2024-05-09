@@ -166,9 +166,6 @@ test_IUCN = IUCN_test(data_splited_deep_RF,10)
 #OLD test_IUCN = IUCN_test(split,10)
 save(test_IUCN,file = here::here("outputs","test_IUCN.Rdata"))
 
-#Deep
-pred_deep_cito <- IUCN_deep_cito(data_splited_deep_RF,loop = 10)
-save(pred_deep_cito,file = here::here("outputs/pred_deep_cito.RData"))
 
 #Give the accuracy ! 
 performance_RF <- IUCN_performance_RF(test_IUCN,10)
@@ -204,13 +201,19 @@ scheduler <- config_lr_scheduler(type = "step",
                                  gamma = 0.15,
                                  verbose = TRUE)
 
-deep_IUCN <- IUCN_predict_deep(data_splited_deep_RF,data_noNA,10)
-save(deep_IUCN,file = here::here("outputs/deep_IUCN.Rdata"))
+
+#Deep test
+pred_deep_cito_test <- IUCN_deep_cito(data_splited_deep_RF,loop = 10)
+save(pred_deep_cito_test,file = here::here("outputs/pred_deep_cito_test.RData"))
+
+#Deep prediction
+IUCN_preds_deep <- IUCN_predict_deep(data_splited_deep_RF,data_noNA,10)
+save(IUCN_preds_deep,file = here::here("outputs/IUCN_preds_deep.RData"))
 
 #Call outputs and keep prediction with 80% of model agree
 load(file = here::here("outputs/IUCN_preds_deep.RData"))
-IUCN_preds_deep_final = IUCN_deep(IUCN_preds_deep,80)
-IUCN_preds_deep_final[IUCN_preds_deep_final=="NaN"] <- NA
+IUCN_preds_deep_final <- IUCN_deep(data_predicted = IUCN_preds_deep,
+                                   splits = length(data_splited_deep_RF),baseline = 80)
 
 #THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY or CONSENSUS OF BOTH METHODS
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)

@@ -35,11 +35,10 @@ IUCN_predict_deep = function(data_split,data,loops){
   
   #Creating x models based on the number of splits of downsampled data
   
-  ranger_loop = mclapply(1:length(data_split),function(i){
+  ranger_loop = lapply(1:length(data_split),function(i){
     
-    mclapply(1:loops,function(l){
+    lapply(1:loops,function(l){
      
-       print(paste(i,".",l))
       #Randomizing each sub dataframe 
       train <- data_split[[i]][[l]]$train
       
@@ -63,7 +62,7 @@ IUCN_predict_deep = function(data_split,data,loops){
   
   #Binding predictions with species information
   data_predicted = cbind(preds,data_species)
-  
+  return(data_predicted)
   
 }
 

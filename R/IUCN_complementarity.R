@@ -17,7 +17,7 @@ IUCN_complementarity = function(data_machine,data_deep){
   
   #Merge Data
   all_predict <- merge(data_deep,data_machine,by="species",all=T)
-  colnames(all_predict) <- c("species", "IUCN_deep","proba", "IUCN_machine","n","percentage")
+  colnames(all_predict) <- c("species", "IUCN_deep","n_deep","proba", "IUCN_machine","n_machine","percentage")
   
   #Highlight consensus or not between deeplearing and machine learning
   all_predict$agree <- NA
