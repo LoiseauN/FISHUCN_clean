@@ -32,7 +32,7 @@ nip <- lapply(nip, utils::install.packages, dependencies = TRUE)
 ip  <- unlist(lapply(pkgs, require, character.only = TRUE, quietly = TRUE))
 
 #devtools::install_github("zmjones/edarf", subdir = "pkg")
-
+#devtools::install_github("iholzleitner/facefuns")
 ## Loading all functions ----
 
 files.source <- list.files(here::here("R"), pattern = "\\.R$", 
@@ -263,7 +263,7 @@ chid_chord(sup = FALSE)
 chid_chord(sup = TRUE)
 
 #Figure 4 
-figure4(data =  data_noNA, model = test_IUCN[[1]])
+figure4(data =  data_noNA, model = test_IUCN[[1]]$variable_importance)
   
 #Figure 5
 
