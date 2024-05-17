@@ -13,7 +13,7 @@
 
 #Last file to send in zonation
 create_data_zonation <- function(data, data_predict){ 
-  #data = FB_final
+  #data = FB_IUCN_all_marine
   #data_predict = all_predict
 
   data_zonation <- data.frame(species = rownames(data),
@@ -28,8 +28,8 @@ data_zonation$proba_select <- as.numeric(data_zonation$percentage)/100
 rescale_threat <-  subset(data_zonation, data_zonation$predict_complementary =="Thr" & is.na(data_zonation$IUCN_cat))
 rescale_non_threat <-  subset(data_zonation, data_zonation$predict_complementary =="NThr" & is.na(data_zonation$IUCN_cat))
 
-rescale_threat$proba_rescale <-  rescalex(a=2,b=5,data=rescale_threat$proba_select)
-rescale_non_threat$proba_rescale <-  rescalex(a=1,b=2,data=1-rescale_non_threat$proba_select)
+rescale_threat$proba_rescale <-  rescale(a=2,b=5,x=rescale_threat$proba_select)
+rescale_non_threat$proba_rescale <-  rescale(a=1,b=2,x=1-rescale_non_threat$proba_select)
   
   rescale_data <- data.frame(species = c(rescale_threat$species ,
                                          rescale_non_threat$species),
@@ -129,6 +129,7 @@ return(data_final_zonation)
 return(data_final_zonation_THR_ONLY)
 
 }
+
 
 
 

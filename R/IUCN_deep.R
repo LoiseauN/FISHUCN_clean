@@ -1,16 +1,3 @@
-#' IUCN deep predict
-#' 
-#' This function run the python script to train the models and predict IUCN classifications
-#'
-#' @return no return data
-#' @export
-
-IUCN_deep_predict = function(){
-  python_file_train = here::here("Python/train.py")
-  system(paste0("python3 ", python_file_train))
-  
-}
-
 #' Deep learning prediction
 #'
 #' This functions calculates the consensus of the 200 models based on a specified baseline
@@ -23,16 +10,23 @@ IUCN_deep_predict = function(){
 #'
 #' @export
 
-IUCN_deep = function(data_predicted,baseline){
+IUCN_deep = function(data_predicted,splits,baseline){
   #data_predicted <- IUCN_preds_deep
+  #splits<- length(data_splited_deep_RF)
   #baseline <- 80
   
-  #Keeping only species where prediction is >80%
-  IUCN_deep_preds = data_predicted %>%
-    filter(percentage>=baseline)
- 
-  save(IUCN_deep_preds, file = here::here("outputs", "IUCN_deep_preds.Rdata"))
-  return(IUCN_deep_preds)
+  #Model predictions according to class
+  Predicted_percentage= data_predicted %>%
+    group_by(species)%>%
+    dplyr::count(score)%>%
+    #Adding percentage of perdiction in each class
+    dplyr::mutate(percentage=(n*100)/(splits*10))%>%
+    dplyr::rename(IUCN="score")
   
+   #Keeping only species where prediction is >80%
+  IUCN_deep_preds = Predicted_percentage %>%
+    filter(percentage>=baseline)
+  
+  return(IUCN_deep_preds)
   
 }
