@@ -117,6 +117,9 @@ IUCN_importance_pd = function(data_split,data,loops){
 #' @export
 #' 
 #' 
+#' 
+
+
 var_partial = function(data){
   data = data[[1]]
   
@@ -169,7 +172,7 @@ var_partial = function(data){
 #' @export
 #' 
 #' 
-    
+     
 var_imp = function(data){
       data = data[[2]]
       

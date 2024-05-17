@@ -263,7 +263,7 @@ chid_chord(sup = FALSE)
 chid_chord(sup = TRUE)
 
 #Figure 4 
-figure4(data =  data_noNA, model = test_IUCN[[1]]$variable_importance)
+figure4(data =  output_importance_pd)
   
 #Figure 5
 
