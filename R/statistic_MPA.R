@@ -1,7 +1,7 @@
 
 library(ggplot2)
 library(magrittr)
-load(here::here("MPA_Protect.RData"))
+
 
 # --- Stat tests: --------------------------------------------------------------
 # 1. Test if there is a difference between before and after within each category
@@ -13,8 +13,8 @@ load(here::here("MPA_Protect.RData"))
 # 2. Test if there is a difference between categories TH/NS/NT within each 
 # before/after group. I used a Kruskal Wallis test because there are more than 2 
 # groups.
-
-
+MPA_stat <- function(){ 
+load(here::here("MPA_Protect.RData"))
 BEFORE <- cbind.data.frame(perc_cover=MPA_Protect$perc_cover, Target_achievement_I_IV=MPA_Protect$Target_achievement_I_IV,IUCN=MPA_Protect$IUCN_cat,What="BEFORE")
 AFTER <- cbind.data.frame(perc_cover=MPA_Protect$perc_cover, Target_achievement_I_IV=MPA_Protect$Target_achievement_I_IV,IUCN=MPA_Protect$IUCN_final,What="AFTER")
 MPA_FINAL <- rbind(BEFORE,AFTER)
@@ -79,7 +79,7 @@ dt_after$res
 table(MPA_FINAL$category)
 
 # --- Stat tests end -----------------------------------------------------------
-
+}
 
 
 

@@ -3,24 +3,21 @@
 #' 
 #' 
 ## Extract IUCN status ----
-# mammals_status    <- rredlist::rl_comp_groups("mammals", 
-#   key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
 
-# birds_status      <- rredlist::rl_comp_groups("birds", 
-#   key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
-
-# amphibians_status <- rredlist::rl_comp_groups("amphibians", 
-#   key ="73d6c97e1bc80791af1167c8bbd7416ac3043d28b4633c51765eff87a9cb2da3")
 
 figure1 <- function(data){ 
 all_status <- read.table(file = here::here("data","IUCN_risk.csv"), sep = ";", row.names = 1, header = T)
+all_status <- all_status[rownames(all_status) %in% c("AMPHIBIA","AVES","MAMMALIA","REPTILIA"),]
+rownames(all_status) <- tolower(rownames(all_status)) 
+all_status <- as.matrix(all_status)
+all_status <- as.data.frame(segregation::matrix_to_long(all_status, group = "rlCodes", unit = "className"))
 
 
 
 ## Download Phylopic silhouettes (with License 1.0 and No Copyright) ----
 mammals_pic    <- get_phylopic_image("8cad2b22-30d3-4cbd-86a3-a6d2d004b201", size = "512")
 
-birds_pic      <- get_phylopic_image("34d9872c-b7d0-416f-8ac6-1f9f952982c8", size = "512")
+aves_pic      <- get_phylopic_image("34d9872c-b7d0-416f-8ac6-1f9f952982c8", size = "512")
 
 fish_pic       <- get_phylopic_image("86c40d81-2613-4bb4-ad57-fb460be56ae5", size = "512")
 
@@ -31,10 +28,10 @@ reptile_pic <- get_phylopic_image("f2a5ae73-c899-4e47-b0ad-b6eac3a99350", size =
 
 
 #'------------------------------------------------------------------------------@Comparisonothertaxa
-data_4_taxa <- data.frame(taxa   = c(rep("amphibians", nrow(all_status[all_status$className == "Amphibians",])),
-                                     rep("mammals", nrow(all_status[all_status$className == "Mammals",])),
-                                     rep("reptiles", nrow(all_status[all_status$className == "Reptiles",])),
-                                     rep("birds", nrow(all_status[all_status$className == "Birds",])),
+data_4_taxa <- data.frame(taxa   = c(rep("amphibia", nrow(all_status[all_status$className == "amphibia",])),
+                                     rep("mammalia", nrow(all_status[all_status$className == "mammalia",])),
+                                     rep("reptilia", nrow(all_status[all_status$className == "reptilia",])),
+                                     rep("aves", nrow(all_status[all_status$className == "aves",])),
                                      rep("marine fishes", nrow(data))),
                           
                           status = as.factor(c(all_status$rlCodes,
@@ -42,13 +39,13 @@ data_4_taxa <- data.frame(taxa   = c(rep("amphibians", nrow(all_status[all_statu
                           nb_sp = c(all_status$n,rep(1,nrow(data))))
 
 
-levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR/cd", "LR/nt", "nt","NT", "LC","NThr")] <- "Non Threatened"
+levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR.cd","NT.or.LR.nt","LC.or.LR.lc","NThr")] <- "Non Threatened"
 
-levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("DD",  "NA")] <- "No Status"
+levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("DD","NA")] <- "No Status"
 
 data_4_taxa[is.na(data_4_taxa$status),]$status <- "No Status"
 
-levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR", "EN", "EW","VU","Thr")] <- "Threatened"
+levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR.PE.","CR.PEW.","CR","EN","VU", "Thr")] <- "Threatened"
 
 data_4_taxa <- subset(data_4_taxa,data_4_taxa$status != "EX")
 
@@ -59,7 +56,7 @@ colnames(data_4_taxa) <- c("taxa", "status", "nb_sp")
 
 data_4_taxa <- data_4_taxa[order(data_4_taxa$taxa),]
 data_4_taxa$total_taxa <- c(rep(sum(data_4_taxa[data_4_taxa$taxa == "amphibians",]$n),3),
-                            rep(sum(data_4_taxa[data_4_taxa$taxa == "birds",]$n),3),
+                            rep(sum(data_4_taxa[data_4_taxa$taxa == "aves",]$n),3),
                             rep(sum(data_4_taxa[data_4_taxa$taxa == "mammals",]$n),3),
                             rep(sum(data_4_taxa[data_4_taxa$taxa == "marine fishes",]$n),3),
                             rep(sum(data_4_taxa[data_4_taxa$taxa == "reptiles",]$n),3))
@@ -69,7 +66,7 @@ data_4_taxa$Freq  <- (data_4_taxa$nb_sp/data_4_taxa$total_taxa)*100
 
 data_4_taxa$status <- factor(data_4_taxa$status, levels = c("Threatened", "Non Threatened", "No Status"))
 
-data_4_taxa$taxa <- factor(data_4_taxa$taxa, levels = c("birds", "reptiles", "mammals","amphibians", "marine fishes"))
+data_4_taxa$taxa <- factor(data_4_taxa$taxa, levels = c("aves", "reptiles", "mammals","amphibians", "marine fishes"))
 
 
 fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) + 
@@ -78,7 +75,7 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
                     guide = guide_legend(reverse = FALSE))+
    theme_bw() +
   xlab("")+ylab("Percentage")+
-  rphylopic::add_phylopic(birds_pic,     x = 1, y = 50, ysize = 13, alpha = 1)+
+  rphylopic::add_phylopic(aves_pic,     x = 1, y = 50, ysize = 13, alpha = 1)+
   rphylopic::add_phylopic(reptile_pic,     x = 2, y = 50, ysize = 10, alpha = 1)+
   rphylopic::add_phylopic(mammals_pic,   x = 3, y = 50, ysize = 10, alpha = 1)+
   rphylopic::add_phylopic(amphibians_pic,x = 4, y = 50, ysize = 8, alpha = 1)+
@@ -90,7 +87,7 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
          legend.text=element_text(size=18))
 
 
-grob_birds <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "birds",]$n)), x=0.1,  y=0.95, hjust=0,
+grob_aves <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "aves",]$n)), x=0.1,  y=0.95, hjust=0,
                                 gp=gpar(fontsize=12,fontface="bold")))
 grob_reptiles <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "reptiles",]$n)), x=0.1,  y=0.95, hjust=0,
                                    gp=gpar(fontsize=12,fontface="bold")))
@@ -102,7 +99,7 @@ grob_fishes <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa
                                  gp=gpar(fontsize=12,fontface="bold")))
 
 # Ajouter au graphique
-fig1 <- fig1 + annotation_custom(grob_birds,xmin = 0.7, xmax = 1.5, ymin = 96, ymax = 103)
+fig1 <- fig1 + annotation_custom(grob_aves,xmin = 0.7, xmax = 1.5, ymin = 96, ymax = 103)
 
 fig1 <- fig1 + annotation_custom(grob_reptiles,xmin = 1.7, xmax = 2.5, ymin = 96, ymax = 103)
 

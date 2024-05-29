@@ -15,30 +15,30 @@
 #' data_prep <- function(data){
   
   #Create threatened and non threatened species
-  data_Thr = data %>%
-    dplyr::filter(IUCN=="Thr")%>%
-    na.omit()
+#'  data_Thr = data %>%
+#    dplyr::filter(IUCN=="Thr")%>%
+#    na.omit()
   
-  data_NThr = data %>%
-    dplyr::filter(IUCN=="NThr")%>%
-    na.omit()
+#  data_NThr = data %>%
+#  dplyr::filter(IUCN=="NThr")%>%
+#   na.omit()
   
   #Variable with optimal number of folds for downsampling
-  x = floor(length(data_NThr$IUCN)/length(data_Thr$IUCN))
+#  x = floor(length(data_NThr$IUCN)/length(data_Thr$IUCN))
   
   #Randomly shuffle the data
-  data_NThr_shuffled <-data_NThr[sample(nrow(data_NThr)),]
+#  data_NThr_shuffled <-data_NThr[sample(nrow(data_NThr)),]
   
   #Create x equally size folds of non classified species
-  folds <- cut(seq(1,nrow(data_NThr_shuffled)),breaks=x,labels=FALSE)
+#  folds <- cut(seq(1,nrow(data_NThr_shuffled)),breaks=x,labels=FALSE)
   
-  data_NThr_split = split(data_NThr_shuffled,folds)
+# data_NThr_split = split(data_NThr_shuffled,folds)
   
   #Looping through splitted NC list and append classified species to each list species to each list
-  data_split = mclapply(1:length(data_NThr_split),function(i){
+# data_split = mclapply(1:length(data_NThr_split),function(i){
     
-    data_NThr_split[[i]] = rbind(data_NThr_split[[i]],data_Thr)
+#   data_NThr_split[[i]] = rbind(data_NThr_split[[i]],data_Thr)
     
-  })
+# })
   
   #' }

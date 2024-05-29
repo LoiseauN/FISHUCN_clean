@@ -75,7 +75,7 @@ data_zonation$weight_zonation_Predict_sameWeigthIUCN <- NA
     if(is.na(data_zonation$predict_complementary[i])){
       
       data_zonation$weight_zonation_IUCN_alone[i] <- 2
-      data_zonation$weight_zonation_IUCN_and_Predict[i] <- 2 # ou 1.5 
+      data_zonation$weight_zonation_IUCN_and_Predict[i] <- 2 
       data_zonation$weight_zonation_Predict_sameWeigthIUCN[i] <-  2
     }
     
@@ -124,9 +124,9 @@ data_zonation$weight_zonation_Predict_sameWeigthIUCN <- NA
  #data_final_zonation_THR_ONLY <-list(IUCNonly_THR_ONLY,IUCNandpredict_THR_ONLY)
  #save(data_final_zonation_THR_ONLY,file= here::here("outputs","data_final_zonation_THR_ONLY.RData"))
 
-return(data_zonation)
-return(data_final_zonation)
-return(data_final_zonation_THR_ONLY)
+#return(data_zonation)
+#return(data_final_zonation)
+#return(data_final_zonation_THR_ONLY)
 
 }
 
