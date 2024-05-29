@@ -38,12 +38,19 @@ data_4_taxa <- data.frame(taxa   = c(rep("amphibia", nrow(all_status[all_status$
                                                as.character(data$IUCN))),
                           nb_sp = c(all_status$n,rep(1,nrow(data))))
 
+fish <- rbind(data.frame(table(data$IUCN)),data.frame(Var1 = "DD",Freq = length(data$IUCN)-(sum(table(data$IUCN)))))
+fish$className <- rep("marine fishes", nrow(fish))
+colnames(fish)[1:2]<- c("rlCodes","n")
+fish$rlCodes <- as.character(fish$rlCodes)
+data_4_taxa <- gtools::smartbind(all_status,fish)
 
+colnames(data_4_taxa) <- c("taxa", "status", "nb_sp")
+data_4_taxa$status <-as.factor(data_4_taxa$status)
 levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR.cd","NT.or.LR.nt","LC.or.LR.lc","NThr")] <- "Non Threatened"
 
 levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("DD","NA")] <- "No Status"
 
-data_4_taxa[is.na(data_4_taxa$status),]$status <- "No Status"
+#data_4_taxa[is.na(data_4_taxa$status),]$status <- "No Status"
 
 levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR.PE.","CR.PEW.","CR","EN","VU", "Thr")] <- "Threatened"
 
