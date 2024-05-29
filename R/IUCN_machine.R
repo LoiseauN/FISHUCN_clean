@@ -23,13 +23,13 @@ IUCN_machine = function(data_predicted,splits,baseline){
     dplyr::mutate(percentage=(n*100)/(splits*10))%>%
     dplyr::rename(IUCN="score.predictions")
   
-  save(Predicted_percentage, file = "outputs/Predicted_percentage.Rdata")
+  #save(Predicted_percentage, file = "outputs/Predicted_percentage.Rdata")
   
   #Keeping only species where prediction is >80%
   IUCN_machine_preds = Predicted_percentage %>%
     filter(percentage>=baseline)
   
-  save(IUCN_machine_preds, file = here::here("outputs", "IUCN_machine_preds.Rdata"))
+ # save(IUCN_machine_preds, file = here::here("outputs", "IUCN_machine_preds.Rdata"))
   
   return(IUCN_machine_preds)
   
