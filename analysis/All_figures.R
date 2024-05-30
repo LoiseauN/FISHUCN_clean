@@ -28,15 +28,15 @@ reptile_pic <- get_phylopic_image("f2a5ae73-c899-4e47-b0ad-b6eac3a99350", size =
 
 
 #'------------------------------------------------------------------------------@Comparisonothertaxa
-data_4_taxa <- data.frame(taxa   = c(rep("amphibia", nrow(all_status[all_status$className == "amphibia",])),
-                                     rep("mammalia", nrow(all_status[all_status$className == "mammalia",])),
-                                     rep("reptilia", nrow(all_status[all_status$className == "reptilia",])),
-                                     rep("aves", nrow(all_status[all_status$className == "aves",])),
-                                     rep("marine fishes", nrow(data))),
-                          
-                          status = as.factor(c(all_status$rlCodes,
-                                               as.character(data$IUCN))),
-                          nb_sp = c(all_status$n,rep(1,nrow(data))))
+#data_4_taxa <- data.frame(taxa   = c(rep("amphibia", nrow(all_status[all_status$className == "amphibia",])),
+#                                    rep("mammalia", nrow(all_status[all_status$className == "mammalia",])),
+#                                     rep("reptilia", nrow(all_status[all_status$className == "reptilia",])),
+#                                     rep("aves", nrow(all_status[all_status$className == "aves",])),
+#                                     rep("marine fishes", nrow(data))),
+#                          
+#                          status = as.factor(c(all_status$rlCodes,
+#                                               as.character(data$IUCN))),
+#                          nb_sp = c(all_status$n,rep(1,nrow(data))))
 
 fish <- rbind(data.frame(table(data$IUCN)),data.frame(Var1 = "DD",Freq = length(data$IUCN)-(sum(table(data$IUCN)))))
 fish$className <- rep("marine fishes", nrow(fish))
@@ -54,26 +54,48 @@ levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("DD","NA")] <- "No 
 
 levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR.PE.","CR.PEW.","CR","EN","VU", "Thr")] <- "Threatened"
 
-data_4_taxa <- subset(data_4_taxa,data_4_taxa$status != "EX")
+#data_4_taxa <- subset(data_4_taxa,data_4_taxa$status != "EX")
 
 data_4_taxa$taxa <- as.factor(data_4_taxa$taxa)
 
 data_4_taxa <- aggregate(data_4_taxa$nb_sp, list(data_4_taxa$taxa,data_4_taxa$status), sum)
 colnames(data_4_taxa) <- c("taxa", "status", "nb_sp")
 
+
+#For  we add more DD species using list of species because some are messing on IUCN
+reptilia_total <- 12163 
+amphibia_total <-  8744 
+aves_total <-  11162 
+mammalia_total <-  6594 
+
+data_4_taxa[data_4_taxa$taxa == "amphibia" & data_4_taxa$status == "No Status",]$nb_sp <-
+  data_4_taxa[data_4_taxa$taxa == "amphibia" & data_4_taxa$status == "No Status",]$nb_sp + (amphibia_total-sum(data_4_taxa[data_4_taxa$taxa == "amphibia",]$nb_sp))
+
+data_4_taxa[data_4_taxa$taxa == "reptilia" & data_4_taxa$status == "No Status",]$nb_sp <-
+  data_4_taxa[data_4_taxa$taxa == "reptilia" & data_4_taxa$status == "No Status",]$nb_sp + (reptilia_total-sum(data_4_taxa[data_4_taxa$taxa == "reptilia",]$nb_sp))
+
+data_4_taxa[data_4_taxa$taxa == "aves" & data_4_taxa$status == "No Status",]$nb_sp <-
+  data_4_taxa[data_4_taxa$taxa == "aves" & data_4_taxa$status == "No Status",]$nb_sp + (aves_total-sum(data_4_taxa[data_4_taxa$taxa == "aves",]$nb_sp))
+
+data_4_taxa[data_4_taxa$taxa == "mammalia" & data_4_taxa$status == "No Status",]$nb_sp <-
+  data_4_taxa[data_4_taxa$taxa == "mammalia" & data_4_taxa$status == "No Status",]$nb_sp + (mammalia_total-sum(data_4_taxa[data_4_taxa$taxa == "mammalia",]$nb_sp))
+
 data_4_taxa <- data_4_taxa[order(data_4_taxa$taxa),]
-data_4_taxa$total_taxa <- c(rep(sum(data_4_taxa[data_4_taxa$taxa == "amphibians",]$n),3),
+data_4_taxa$total_taxa <- c(rep(sum(data_4_taxa[data_4_taxa$taxa == "amphibia",]$n),3),
                             rep(sum(data_4_taxa[data_4_taxa$taxa == "aves",]$n),3),
-                            rep(sum(data_4_taxa[data_4_taxa$taxa == "mammals",]$n),3),
+                            rep(sum(data_4_taxa[data_4_taxa$taxa == "mammalia",]$n),3),
                             rep(sum(data_4_taxa[data_4_taxa$taxa == "marine fishes",]$n),3),
-                            rep(sum(data_4_taxa[data_4_taxa$taxa == "reptiles",]$n),3))
+                            rep(sum(data_4_taxa[data_4_taxa$taxa == "reptilia",]$n),3))
 
 
 data_4_taxa$Freq  <- (data_4_taxa$nb_sp/data_4_taxa$total_taxa)*100 
 
 data_4_taxa$status <- factor(data_4_taxa$status, levels = c("Threatened", "Non Threatened", "No Status"))
 
-data_4_taxa$taxa <- factor(data_4_taxa$taxa, levels = c("aves", "reptiles", "mammals","amphibians", "marine fishes"))
+data_4_taxa$taxa <- factor(data_4_taxa$taxa, levels = c("aves", "amphibia","mammalia", "reptilia", "marine fishes"))
+
+
+
 
 
 fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) + 
@@ -83,9 +105,9 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
    theme_bw() +
   xlab("")+ylab("Percentage")+
   rphylopic::add_phylopic(aves_pic,     x = 1, y = 50, ysize = 13, alpha = 1)+
-  rphylopic::add_phylopic(reptile_pic,     x = 2, y = 50, ysize = 10, alpha = 1)+
+  rphylopic::add_phylopic(amphibians_pic,     x = 2, y = 50, ysize = 10, alpha = 1)+
   rphylopic::add_phylopic(mammals_pic,   x = 3, y = 50, ysize = 10, alpha = 1)+
-  rphylopic::add_phylopic(amphibians_pic,x = 4, y = 50, ysize = 8, alpha = 1)+
+  rphylopic::add_phylopic(reptile_pic,x = 4, y = 50, ysize = 8, alpha = 1)+
   rphylopic::add_phylopic(fish_pic,      x = 5, y = 50, ysize = 7.5, alpha = 1) +
   theme( legend.position = "bottom",
          axis.text=element_text(size=18),
@@ -96,11 +118,11 @@ fig1 <- ggplot(data_4_taxa, aes(fill=status, y=Freq, x=taxa)) +
 
 grob_aves <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "aves",]$n)), x=0.1,  y=0.95, hjust=0,
                                 gp=gpar(fontsize=12,fontface="bold")))
-grob_reptiles <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "reptiles",]$n)), x=0.1,  y=0.95, hjust=0,
+grob_amphibians  <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "amphibia",]$n)), x=0.1,  y=0.95, hjust=0,
                                    gp=gpar(fontsize=12,fontface="bold")))
-grob_mammals <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "mammals",]$n)), x=0.1,  y=0.95, hjust=0,
+grob_mammals <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "mammalia",]$n)), x=0.1,  y=0.95, hjust=0,
                                   gp=gpar(fontsize=12,fontface="bold")))
-grob_amphibians <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "amphibians",]$n)), x=0.1,  y=0.95, hjust=0,
+grob_reptiles <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "reptilia",]$n)), x=0.1,  y=0.95, hjust=0,
                                      gp=gpar(fontsize=12,fontface="bold")))
 grob_fishes <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa == "marine fishes",]$n)), x=0.1,  y=0.95, hjust=0,
                                  gp=gpar(fontsize=12,fontface="bold")))
@@ -108,11 +130,11 @@ grob_fishes <- grobTree(textGrob(paste0("n = ", sum(data_4_taxa[data_4_taxa$taxa
 # Ajouter au graphique
 fig1 <- fig1 + annotation_custom(grob_aves,xmin = 0.7, xmax = 1.5, ymin = 96, ymax = 103)
 
-fig1 <- fig1 + annotation_custom(grob_reptiles,xmin = 1.7, xmax = 2.5, ymin = 96, ymax = 103)
+fig1 <- fig1 + annotation_custom(grob_amphibians,xmin = 1.7, xmax = 2.5, ymin = 96, ymax = 103)
 
 fig1 <- fig1 + annotation_custom(grob_mammals,xmin = 2.7, xmax = 3.5, ymin = 96, ymax = 103)
 
-fig1 <- fig1 + annotation_custom(grob_amphibians,xmin = 3.7, xmax = 4.5, ymin = 96, ymax = 103)
+fig1 <- fig1 + annotation_custom(grob_reptiles,xmin = 3.7, xmax = 4.5, ymin = 96, ymax = 103)
 
 fig1 <- fig1 + annotation_custom(grob_fishes,xmin = 4.7, xmax = 5.5, ymin = 96, ymax = 103)
 
