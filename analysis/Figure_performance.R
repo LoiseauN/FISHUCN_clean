@@ -47,6 +47,7 @@ plot_performance_RF <- function(data, title){
 dp <- ggplot(data, aes(x=error_type, y=percentage, fill=error_type)) + 
   geom_violin(trim=FALSE)+
   geom_boxplot(width=0.1, fill="white")+
+  ylim(0,100)+
   labs(title=title,x="Prediction", y = "Percentage")
   dp + theme_classic()
 

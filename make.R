@@ -169,10 +169,20 @@ save(test_IUCN,file = here::here("outputs","test_IUCN.Rdata"))
 
 #Give the accuracy ! 
 performance_RF <- IUCN_performance_RF(test_IUCN,10)
-plot_performance_RF(performance_RF)
+plot.RF.perf <- plot_performance_RF(performance_RF, title = "Performance Random Forest")
 
-metric_performance <- IUCN_metric_performance_RF(test_IUCN,10)
-plot_metric_RF(metric_performance)
+metric_performance_RF <- IUCN_metric_performance_RF(test_IUCN,10)
+plot.RF.met <- plot_metric_RF(metric_performance, title = "Metric Random Forest")
+
+metric_performance_RF %>% 
+  group_by(metric) %>% 
+  dplyr::summarize(mean = mean(value),
+                   sd = sd(value))
+
+performance_RF %>% 
+  group_by(error_type) %>% 
+  dplyr::summarize(mean = mean(percentage),
+                   sd = sd(percentage))
 
 #Partial and importance variables
 output_importance_pd <- IUCN_importance_pd(data_splited_deep_RF,data_noNA,10)
@@ -206,6 +216,23 @@ scheduler <- config_lr_scheduler(type = "step",
 pred_deep_cito_test <- IUCN_deep_cito(data_splited_deep_RF,loop = 10)
 save(pred_deep_cito_test,file = here::here("outputs/pred_deep_cito_test.RData"))
 
+#Give the accuracy ! 
+performance_ANN <- IUCN_performance_RF(pred_deep_cito,10)
+plot.ANN.perf <-plot_performance_RF(performance_ANN, title = "Performance ANN")
+
+metric_performance_ANN <- IUCN_metric_performance_RF(pred_deep_cito,10)
+plot.ANN.met <-plot_metric_RF(metric_performance_ANN, title = "Metric ANN")
+
+metric_performance_ANN %>% 
+  group_by(metric) %>% 
+  dplyr::summarize(mean = mean(value))
+
+performance_ANN %>% 
+  group_by(error_type) %>% 
+  dplyr::summarize(mean = mean(percentage),
+                   sd = sd(percentage))
+
+
 #Deep prediction
 IUCN_preds_deep <- IUCN_predict_deep(data_splited_deep_RF,data_noNA,10)
 save(IUCN_preds_deep,file = here::here("outputs/IUCN_preds_deep.RData"))
@@ -214,6 +241,7 @@ save(IUCN_preds_deep,file = here::here("outputs/IUCN_preds_deep.RData"))
 load(file = here::here("outputs/IUCN_preds_deep.RData"))
 IUCN_preds_deep_final <- IUCN_deep(data_predicted = IUCN_preds_deep,
                                    splits = length(data_splited_deep_RF),baseline = 80)
+save(IUCN_preds_deep_final,file = here::here("outputs/IUCN_preds_deep_final.RData"))
 
 #THEN FINAL FUNCTION THAT MAKES COMPLEMENTARITY or CONSENSUS OF BOTH METHODS
 all_predict <- IUCN_complementarity(IUCN_preds_machine_final,IUCN_preds_deep_final)
@@ -241,10 +269,11 @@ number <- have_number(data = dat_network,  prediction = all_predict)
 
 IUCN_status_detailled  <- IUCN_status_detailled[IUCN_status_detailled$species %in% dat_network$species,]
 table(IUCN_status_detailled$IUCN_status)
-
 #process output of zonation
-Zrank_main <- process_out_zonation(nb_scenario = 2)
-head(Zrank_main)
+#Zrank_main <- process_out_zonation(nb_scenario = 2)
+#head(Zrank_main)
+
+colnames(Zrank_main) <- c("ID","IUCN_weigth","PredictProba_IUCN_weigth","Predict_IUCN_same_weigth")
 
 #merge all res
 all_geo_res <- preparallRes(Zrank_main)
@@ -273,5 +302,14 @@ figure6(data = MPA_Protect)
 
 #to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
 figRank(data = all_geo_res, sup = FALSE)
+
 #For Supp
 figRank(data = all_geo_res, sup = TRUE)
+
+#For Supp
+sup_fig_perf <- gridExtra::grid.arrange(plot.RF.perf,plot.ANN.perf,ncol=2)
+save(sup_fig_perf,file=here::here("outputs","sup_fig_perf.png"))
+
+
+
+
