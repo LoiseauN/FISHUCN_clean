@@ -41,13 +41,13 @@ IUCN_performance_RF = function(data,loops){
 
 
 # Violin plot basique
-plot_performance_RF <- function(data){
+plot_performance_RF <- function(data, title){
   data$error_type <- factor(data$error_type , level =c("TP","FP","FN"))
 
 dp <- ggplot(data, aes(x=error_type, y=percentage, fill=error_type)) + 
   geom_violin(trim=FALSE)+
   geom_boxplot(width=0.1, fill="white")+
-  labs(title="Performance",x="Prediction", y = "Percentage")
+  labs(title=title,x="Prediction", y = "Percentage")
   dp + theme_classic()
 
 dp + scale_fill_hp_d(option = "Ravenclaw") + theme_minimal()
@@ -61,10 +61,6 @@ dp + scale_fill_hp_d(option = "Ravenclaw") + theme_minimal()
 
 
 ##Metric
-
-
-
-
 
 IUCN_metric_performance_RF = function(data,loops){ 
   
@@ -91,7 +87,7 @@ IUCN_metric_performance_RF = function(data,loops){
 }
 
 
-plot_metric_RF = function(data){
+plot_metric_RF = function(data, title){
 # Violin plot basique
 dp <- ggplot(data, aes(x=metric, y=value, fill=metric)) + 
   geom_violin(trim=FALSE)+

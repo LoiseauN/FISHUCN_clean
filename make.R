@@ -259,6 +259,7 @@ figure1(data = FB_IUCN_all_marine)
 
 #Figure 3 : gain in categories
 chid_chord(sup = FALSE)
+
 #For Supp
 chid_chord(sup = TRUE)
 
