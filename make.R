@@ -173,7 +173,7 @@ plot.RF.perf <- plot_performance_RF(performance_RF, title = "Performance Random 
 
 metric_performance_RF <- IUCN_metric_performance_RF(test_IUCN,10)
 metric_performance_RF <- metric_performance_RF[metric_performance_RF$metric %in% c("Balanced Accuracy","F1","Precision","Recall"),]
-plot.RF.met <- plot_metric_RF(metric_performance_RF, title = "Metric Random Forest")
+plot.RF.met <- plot_metric_RF(metric_performance_RF, title = "Metrics Random Forest")
 
 metric_performance_RF %>% 
   group_by(metric) %>% 
@@ -223,7 +223,7 @@ plot.ANN.perf <-plot_performance_RF(performance_ANN, title = "Performance ANN")
 
 metric_performance_ANN <- IUCN_metric_performance_RF(pred_deep_cito,10)
 metric_performance_ANN <- metric_performance_ANN[metric_performance_ANN$metric %in% c("Balanced Accuracy","F1","Precision","Recall"),]
-plot.ANN.met <-plot_metric_RF(metric_performance_ANN, title = "Metric ANN")
+plot.ANN.met <-plot_metric_RF(metric_performance_ANN, title = "Metrics ANN")
 
 metric_performance_ANN %>% 
   group_by(metric) %>% 
