@@ -93,7 +93,8 @@ plot_metric_RF = function(data, title){
 dp <- ggplot(data, aes(x=metric, y=value, fill=metric)) + 
   geom_violin(trim=FALSE)+
   geom_boxplot(width=0.1, fill="white")+
-  labs(title="Metric Random Forest",x="Metric", y = "Value")+
+  ylim(0,1)+
+  labs(title=title,x="Metric", y = "Value")+
   scale_fill_hp_d(option = "Ravenclaw") + theme_minimal()
 dp
 }

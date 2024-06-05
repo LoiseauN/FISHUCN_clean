@@ -4,7 +4,7 @@
 #'
 #' @author  Nicolas LOISEAU, \email{nicolas.loiseau1@@gmail.com},
 #'          Raphaël SEGUIN, \email{raphael.seguin46@@gmail.com},
-#'          Valentine FLEURE, \email{valentine.fleure@@gmail.com},
+#'         
 #'
 #' @date 2021/02/17
 #' 
@@ -172,7 +172,8 @@ performance_RF <- IUCN_performance_RF(test_IUCN,10)
 plot.RF.perf <- plot_performance_RF(performance_RF, title = "Performance Random Forest")
 
 metric_performance_RF <- IUCN_metric_performance_RF(test_IUCN,10)
-plot.RF.met <- plot_metric_RF(metric_performance, title = "Metric Random Forest")
+metric_performance_RF <- metric_performance_RF[metric_performance_RF$metric %in% c("Balanced Accuracy","F1","Precision","Recall"),]
+plot.RF.met <- plot_metric_RF(metric_performance_RF, title = "Metric Random Forest")
 
 metric_performance_RF %>% 
   group_by(metric) %>% 
@@ -221,6 +222,7 @@ performance_ANN <- IUCN_performance_RF(pred_deep_cito,10)
 plot.ANN.perf <-plot_performance_RF(performance_ANN, title = "Performance ANN")
 
 metric_performance_ANN <- IUCN_metric_performance_RF(pred_deep_cito,10)
+metric_performance_ANN <- metric_performance_ANN[metric_performance_ANN$metric %in% c("Balanced Accuracy","F1","Precision","Recall"),]
 plot.ANN.met <-plot_metric_RF(metric_performance_ANN, title = "Metric ANN")
 
 metric_performance_ANN %>% 
@@ -310,6 +312,9 @@ figRank(data = all_geo_res, sup = TRUE)
 sup_fig_perf <- gridExtra::grid.arrange(plot.RF.perf,plot.ANN.perf,ncol=2)
 save(sup_fig_perf,file=here::here("outputs","sup_fig_perf.png"))
 
+
+sup_fig_perf <- gridExtra::grid.arrange(plot.RF.met,plot.ANN.met,ncol=2)
+save(sup_fig_perf,file=here::here("outputs","sup_fig_perf.png"))
 
 
 
