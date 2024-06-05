@@ -107,16 +107,16 @@ D.phylogeny <- function(ids,proc,permut,status) {
   
 }
 
-phylo_D_Thr <- D.phylogeny(ids = 1:100,proc=4 ,permut=1000, status = "Threatened")
+phylo_D_Thr <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "Threatened")
 save(phylo_D_Thr,file=here::here("outputs","phylo_D_Thr.RData"))
 
-phylo_D_NonThr <- D.phylogeny(ids = 1:100,proc=4 ,permut=1000, status = "Non_Threatened")
+phylo_D_NonThr <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "Non_Threatened")
 save(phylo_D_NonThr,file=here::here("outputs","phylo_D_NonThr.RData"))
 
-phylo_D_nostatus <- D.phylogeny(ids = 1:100,proc=4 ,permut=1000, status = "No_Status")
+phylo_D_nostatus <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "No_Status")
 save(phylo_D_nostatus,file=here::here("outputs","phylo_D_nostatus.RData"))
 
-phylo_D_unpredictable <- D.phylogeny(ids = 1:100,proc=4 ,permut=1000, status = "Unpredictable")
+phylo_D_unpredictable <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "Unpredictable")
 save(phylo_D_nostatus,file=here::here("outputs","phylo_D_Unpredictable.RData"))
 
 
