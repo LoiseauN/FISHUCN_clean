@@ -275,7 +275,7 @@ table(IUCN_status_detailled$IUCN_status)
 #Zrank_main <- process_out_zonation(nb_scenario = 2)
 #head(Zrank_main)
 
-colnames(Zrank_main) <- c("ID","IUCN_weigth","PredictProba_IUCN_weigth","Predict_IUCN_same_weigth")
+colnames(Zrank_main) <- c("ID","IUCN_weigth","PredictProba_IUCN_weigth","NoWeight","Predict_IUCN_same_weigth")
 
 #merge all res
 all_geo_res <- preparallRes(Zrank_main)
