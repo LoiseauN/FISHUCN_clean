@@ -69,26 +69,26 @@ figRank <- function(data,sup){
     return(dens$z[ii])
   }
   
-  data$Delta_rank_den <- get_density(data$logrichness, data$Delta_rank, n = 100)
+  ##data$Delta_rank_den <- get_density(data$logrichness, data$Delta_rank, n = 100)
   ###use the log of the density to generate a smoother gradient on the figure
-  data$Delta_rank_den_log <- log10(data$Delta_rank_den)
+  ##data$Delta_rank_den_log <- log10(data$Delta_rank_den)
   
-  A_second <- ggplot(data, aes(logrichness, Delta_rank,color = Delta_rank_den_log)) +
-    geom_point(alpha=0.5,size=0.3)+theme_minimal()+
-    scale_colour_gradientn(colours = rev(brewer.pal(n = 8, name = "YlGnBu")))+
-    geom_quantile(quantiles = c(0.1,0.9),method = "rqss",lambda = 10,linetype="solid",linewidth=1.5,colour="#F78B8B",alpha=0.8)+
-    theme(legend.position = "none",panel.grid.major = element_blank(), 
-          panel.grid.minor = element_blank(),
-          axis.title=element_text(size=18),
-          axis.text = element_text(size = 16))+
-    ylab("Rank after - rank before") +
-    xlab("log10(richness)")+
-    ylim(-1000000,1700000)+
-    geom_hline(yintercept=0, linetype="dashed",color="#4a4949")
+  ##A_second <- ggplot(data, aes(logrichness, Delta_rank,color = Delta_rank_den_log)) +
+  ##  geom_point(alpha=0.5,size=0.3)+theme_minimal()+
+  ##  scale_colour_gradientn(colours = rev(brewer.pal(n = 8, name = "YlGnBu")))+
+  ##  geom_quantile(quantiles = c(0.1,0.9),method = "rqss",lambda = 10,linetype="solid",linewidth=1.5,colour="#F78B8B",alpha=0.8)+
+  ##  theme(legend.position = "none",panel.grid.major = element_blank(), 
+  ##        panel.grid.minor = element_blank(),
+  ##        axis.title=element_text(size=18),
+  ##        axis.text = element_text(size = 16))+
+  ##  ylab("Rank after - rank before") +
+  ##  xlab("log10(richness)")+
+  ##  ylim(-1000000,1700000)+
+  ##  geom_hline(yintercept=0, linetype="dashed",color="#4a4949")
   
   ##assemble the figure A and save if needed 
   
-  fig_A <- A_main+annotation_custom(ggplotGrob(A_second), xmin = 2150000, xmax = max(data$rankSc1)+150000,ymin = 100, ymax = 1300000)
+  fig_A <- A_main##+annotation_custom(ggplotGrob(A_second), xmin = 2150000, xmax = max(data$rankSc1)+150000,ymin = 100, ymax = 1300000)
   #ggsave(here::here("tables_figures","fig_7a.png"), plot = fig_A,
   #       width = 10, height = 10, dpi = 200, units = "in", device='png')
   
@@ -128,23 +128,23 @@ figRank <- function(data,sup){
   
   data$logrichness_den <- get_density(data$logrichness, data$lat, n = 100)
   
-  B_second <- ggplot(data, aes(x=logrichness, y=lat, colour = logrichness_den)) +
-    geom_point(alpha=0.5,size=0.3)+theme_minimal()+
-    scale_colour_gradientn(colours = rev(brewer.pal(n = 8, name = "YlGnBu")))+
-    geom_smooth(aes(x = logrichness),orientation = "y",method="gam",linetype="solid",linewidth=1.5,colour="#F78B8B",alpha=0.8)+
-    theme(legend.position = "none",
-          panel.grid.major = element_blank(), 
-          panel.grid.minor = element_blank(),
-          axis.title=element_text(size=16),
-          axis.text = element_text(size = 16))+
-    ylim(-75,85)+
-    scale_y_continuous(breaks=seq(-80,90,20))+
-    xlab("log10(richness)")+ylab("Lattitude")+
-    geom_hline(yintercept = 0,color = "#757575", linetype = "dashed",linewidth = 0.5)
+  ##B_second <- ggplot(data, aes(x=logrichness, y=lat, colour = logrichness_den)) +
+  ##  geom_point(alpha=0.5,size=0.3)+theme_minimal()+
+  ##  scale_colour_gradientn(colours = rev(brewer.pal(n = 8, name = "YlGnBu")))+
+  ##  geom_smooth(aes(x = logrichness),orientation = "y",method="gam",linetype="solid",linewidth=1.5,colour="#F78B8B",alpha=0.8)+
+  ##  theme(legend.position = "none",
+  ##        panel.grid.major = element_blank(), 
+  ##        panel.grid.minor = element_blank(),
+  ##        axis.title=element_text(size=16),
+  ##        axis.text = element_text(size = 16))+
+  ##  ylim(-75,85)+
+  ##  scale_y_continuous(breaks=seq(-80,90,20))+
+  ##  xlab("log10(richness)")+ylab("Lattitude")+
+  ##  geom_hline(yintercept = 0,color = "#757575", linetype = "dashed",linewidth = 0.5)
   
   ##assemble the figure B and save if needed 
   
-  fig_B <-B_main+annotation_custom(ggplotGrob(B_second), xmin = min(data$Delta_rank)-500000, xmax = min(data$Delta_rank)+450000,ymin = 25, ymax = 85)
+  fig_B <-B_main##+annotation_custom(ggplotGrob(B_second), xmin = min(data$Delta_rank)-500000, xmax = min(data$Delta_rank)+450000,ymin = 25, ymax = 85)
   #ggsave(here::here("tables_figures","fig_7b.png"), plot = fig_B,
   #       width = 10, height = 10, dpi = 200, units = "in", device='png')
   
