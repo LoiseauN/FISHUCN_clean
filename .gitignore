@@ -15,3 +15,7 @@ outputs/all_geo_res.RData
 figures/all_map.RData
 outputs/Zrank_main.RData
 outputs/TOREMOVE_Zrank_main.RData
+outputs/output_zonation/InferStatus_Sc1_mai2024_CAZ_maskSea.CAZ_ME.rank.compressed.tif
+outputs/output_zonation/InferStatus_Sc4_mai2024_CAZ_maskSea.CAZ_ME.wrscr.compressed.tif
+outputs/output_zonation/TOREMOVE_InferStatus_Sc1_aout2023_CAZ_maskSea.CAZ_ME.rank.compressed.tif
+outputs/output_zonation/TOREMOVE_InferStatus_Sc4_aout2023_CAZ_maskSea.CAZ_ME.rank.compressed.tif
