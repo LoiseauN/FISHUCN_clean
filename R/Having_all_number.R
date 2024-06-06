@@ -51,9 +51,9 @@ phylo <- data.frame(phylot_TH_mean    = mean(do.call(rbind,phylo_D_Thr)[,1]),
                     phylot_NonTH_mean = mean(do.call(rbind,phylo_D_NonThr)[,1]),
                     phylot_NonTH_sd   = sd(do.call(rbind,phylo_D_NonThr)[,1]),
                     phylot_NS_mean    = mean(do.call(rbind,phylo_D_nostatus)[,1]),
-                    phylot_NS_sd      = sd(do.call(rbind,phylo_D_nostatus)[,1]),
-                    phylot_Unpredic_mean = mean(do.call(rbind,phylo_D_unpredictable)[,1]),
-                    phylot_Unpredic_sd = sd(do.call(rbind,phylo_D_unpredictable)[,1])
+                    phylot_NS_sd      = sd(do.call(rbind,phylo_D_nostatus)[,1])#,
+                    #phylot_Unpredic_mean = mean(do.call(rbind,phylo_D_unpredictable)[,1]),
+                    #phylot_Unpredic_sd = sd(do.call(rbind,phylo_D_unpredictable)[,1])
                     )
 
 

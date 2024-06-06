@@ -48,9 +48,9 @@ colnames(data_4_taxa) <- c("taxa", "status", "nb_sp")
 data_4_taxa$status <-as.factor(data_4_taxa$status)
 levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("LR.cd","NT.or.LR.nt","LC.or.LR.lc","NThr")] <- "Non Threatened"
 
-levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("DD","NA")] <- "No Status"
+levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("DD","NA")] <- "DDNE"
 
-#data_4_taxa[is.na(data_4_taxa$status),]$status <- "No Status"
+#data_4_taxa[is.na(data_4_taxa$status),]$status <- "DDNE"
 
 levels(data_4_taxa$status)[levels(data_4_taxa$status) %in% c("CR.PE.","CR.PEW.","CR","EN","VU", "Thr")] <- "Threatened"
 
@@ -68,17 +68,17 @@ amphibia_total <-  8744
 aves_total <-  11162 
 mammalia_total <-  6594 
 
-data_4_taxa[data_4_taxa$taxa == "amphibia" & data_4_taxa$status == "No Status",]$nb_sp <-
-  data_4_taxa[data_4_taxa$taxa == "amphibia" & data_4_taxa$status == "No Status",]$nb_sp + (amphibia_total-sum(data_4_taxa[data_4_taxa$taxa == "amphibia",]$nb_sp))
+data_4_taxa[data_4_taxa$taxa == "amphibia" & data_4_taxa$status == "DDNE",]$nb_sp <-
+  data_4_taxa[data_4_taxa$taxa == "amphibia" & data_4_taxa$status == "DDNE",]$nb_sp + (amphibia_total-sum(data_4_taxa[data_4_taxa$taxa == "amphibia",]$nb_sp))
 
-data_4_taxa[data_4_taxa$taxa == "reptilia" & data_4_taxa$status == "No Status",]$nb_sp <-
-  data_4_taxa[data_4_taxa$taxa == "reptilia" & data_4_taxa$status == "No Status",]$nb_sp + (reptilia_total-sum(data_4_taxa[data_4_taxa$taxa == "reptilia",]$nb_sp))
+data_4_taxa[data_4_taxa$taxa == "reptilia" & data_4_taxa$status == "DDNE",]$nb_sp <-
+  data_4_taxa[data_4_taxa$taxa == "reptilia" & data_4_taxa$status == "DDNE",]$nb_sp + (reptilia_total-sum(data_4_taxa[data_4_taxa$taxa == "reptilia",]$nb_sp))
 
-data_4_taxa[data_4_taxa$taxa == "aves" & data_4_taxa$status == "No Status",]$nb_sp <-
-  data_4_taxa[data_4_taxa$taxa == "aves" & data_4_taxa$status == "No Status",]$nb_sp + (aves_total-sum(data_4_taxa[data_4_taxa$taxa == "aves",]$nb_sp))
+data_4_taxa[data_4_taxa$taxa == "aves" & data_4_taxa$status == "DDNE",]$nb_sp <-
+  data_4_taxa[data_4_taxa$taxa == "aves" & data_4_taxa$status == "DDNE",]$nb_sp + (aves_total-sum(data_4_taxa[data_4_taxa$taxa == "aves",]$nb_sp))
 
-data_4_taxa[data_4_taxa$taxa == "mammalia" & data_4_taxa$status == "No Status",]$nb_sp <-
-  data_4_taxa[data_4_taxa$taxa == "mammalia" & data_4_taxa$status == "No Status",]$nb_sp + (mammalia_total-sum(data_4_taxa[data_4_taxa$taxa == "mammalia",]$nb_sp))
+data_4_taxa[data_4_taxa$taxa == "mammalia" & data_4_taxa$status == "DDNE",]$nb_sp <-
+  data_4_taxa[data_4_taxa$taxa == "mammalia" & data_4_taxa$status == "DDNE",]$nb_sp + (mammalia_total-sum(data_4_taxa[data_4_taxa$taxa == "mammalia",]$nb_sp))
 
 data_4_taxa <- data_4_taxa[order(data_4_taxa$taxa),]
 data_4_taxa$total_taxa <- c(rep(sum(data_4_taxa[data_4_taxa$taxa == "amphibia",]$n),3),
@@ -90,7 +90,7 @@ data_4_taxa$total_taxa <- c(rep(sum(data_4_taxa[data_4_taxa$taxa == "amphibia",]
 
 data_4_taxa$Freq  <- (data_4_taxa$nb_sp/data_4_taxa$total_taxa)*100 
 
-data_4_taxa$status <- factor(data_4_taxa$status, levels = c("Threatened", "Non Threatened", "No Status"))
+data_4_taxa$status <- factor(data_4_taxa$status, levels = c("Threatened", "Non Threatened", "DDNE"))
 
 data_4_taxa$taxa <- factor(data_4_taxa$taxa, levels = c("aves", "amphibia","mammalia", "reptilia", "marine fishes"))
 
@@ -181,19 +181,19 @@ MPA_FINAL <- rbind(BEFORE,AFTER)
 
 MPA_FINAL$What <- factor(MPA_FINAL$What, levels = c("AFTER","BEFORE"))
 MPA_FINAL$IUCN <- factor(MPA_FINAL$IUCN, levels = c("Threatened","Non Threatened","No Status"))
-levels(MPA_FINAL$IUCN) <- c(levels(MPA_FINAL$IUCN), c("NS","NT","TH"))
-MPA_FINAL$IUCN[MPA_FINAL$IUCN == 'Threatened'] <- 'TH'
-MPA_FINAL$IUCN[MPA_FINAL$IUCN == 'Non Threatened'] <- 'NT'
-MPA_FINAL$IUCN[MPA_FINAL$IUCN == 'No Status'] <- 'NS'
+levels(MPA_FINAL$IUCN) <- c(levels(MPA_FINAL$IUCN), c("DDNE","NT","TH"))
+#MPA_FINAL$IUCN[MPA_FINAL$IUCN == 'Threatened'] <- 'TH'
+#MPA_FINAL$IUCN[MPA_FINAL$IUCN == 'Non Threatened'] <- 'NT'
+MPA_FINAL$IUCN[MPA_FINAL$IUCN == 'No Status'] <- 'DDNE'
 
-MPA_FINAL$IUCN <- factor(MPA_FINAL$IUCN, levels = c("TH","NT","NS"))
-
+#MPA_FINAL$IUCN <- factor(MPA_FINAL$IUCN, levels = c("TH","NT","DDNE"))
+MPA_FINAL$IUCN <- factor(MPA_FINAL$IUCN, levels = c("Threatened","Non Threatened","DDNE"))
 
 #MPA_FINAL$category <- as.factor(paste(MPA_FINAL$IUCN, MPA_FINAL$What, sep="_"))
 #MPA_FINAL$category <- factor(MPA_FINAL$category,levels=c("No Status_BEFORE","No Status_AFTER","Non Threatened_BEFORE","Non Threatened_AFTER","Threatened_BEFORE","Threatened_AFTER")) 
 
 MPA_FINAL$category <- as.factor(paste(MPA_FINAL$IUCN, MPA_FINAL$What, sep="_"))
-MPA_FINAL$category <- factor(MPA_FINAL$category,levels=c("NS_BEFORE","NS_AFTER","NT_BEFORE","NT_AFTER","TH_BEFORE","TH_AFTER")) 
+MPA_FINAL$category <- factor(MPA_FINAL$category,levels=c("DDNE_BEFORE","DDNE_AFTER","Non Threatened_BEFORE","Non Threatened_AFTER","Threatened_BEFORE","Threatened_AFTER")) 
 
 #Target_achievement_I_IV
 a <- ggplot(MPA_FINAL, aes(IUCN, Target_achievement_I_IV, fill = category)) +
@@ -291,8 +291,7 @@ m_All <- kruskal.test(MPA_FINAL$perc_cover ~ MPA_FINAL$IUCN)
 dt_All <- FSA::dunnTest(MPA_FINAL$perc_cover~MPA_FINAL$IUCN)
 dt_All$res
 
-# sample sizes
-table(MPA_FINAL$category)
+
 
 
 

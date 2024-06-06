@@ -119,7 +119,8 @@ save(phylo_D_nostatus,file=here::here("outputs","phylo_D_nostatus.RData"))
 phylo_D_unpredictable <- D.phylogeny(ids = 1:100,proc=5 ,permut=1000, status = "Unpredictable")
 save(phylo_D_nostatus,file=here::here("outputs","phylo_D_Unpredictable.RData"))
 
-
+#mean(do.call(rbind,phylo_D_nostatus)$estimated_D)
+#sd(do.call(rbind,phylo_D_nostatus)$estimated_D)
 colnames(dat_phylo)[1:2] <- c("label","group")
 #
 #for(i in 1:nrow(dat_phylo)){
