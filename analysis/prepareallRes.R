@@ -13,11 +13,17 @@ preparallRes <- function(zonation_output = Zrank_main) {
 files <- list.files(here::here("outputs", "tif_outputs"), pattern = "\\.tif$",
                     full.names = TRUE)
 
+files <- list.files(here::here("outputs", "TOREMOVEtif_outputs"), pattern = "\\.tif$",
+                    full.names = TRUE)
+
+
 #Load zonation outputs
 
 #Combine all TIFF files into a single raster stack
 ras  <- raster::stack(files)
-
+names(ras) <- c("richness_finalNonTHR_consensus","richness_finalNoStatus_consensus","richness_finalNoStatus",
+      "richness_finalTHR_consensus","richness_finalTHR",
+      "richness_initNonTHR","richness_initNoStatus","richness_initTHR")
 #Get the x,y coordinates of all raster cells
 xy   <- raster::xyFromCell(ras, 1:raster::ncell(ras))
 vals <- ras[]
