@@ -47,11 +47,19 @@ plot_performance_RF <- function(data, title){
 dp <- ggplot(data, aes(x=error_type, y=percentage, fill=error_type)) + 
   geom_violin(trim=FALSE)+
   geom_boxplot(width=0.1, fill="white")+
-  ylim(0,100)+
-  labs(title=title,x="Prediction", y = "Percentage")
-  dp + theme_classic()
+  ylim(0,100)+ 
+  labs(title=title,x="Prediction", y = "Percentage")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20),  
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        legend.position = "none")+
+  scale_fill_hp_d(option = "Ravenclaw") 
 
-dp + scale_fill_hp_d(option = "Ravenclaw") + theme_minimal()
+
+
+dp 
 }
 
 
@@ -95,7 +103,13 @@ dp <- ggplot(data, aes(x=metric, y=value, fill=metric)) +
   geom_boxplot(width=0.1, fill="white")+
   ylim(0,1)+
   labs(title=title,x="Metric", y = "Value")+
-  scale_fill_hp_d(option = "Ravenclaw") + theme_minimal()
+  theme_minimal()+
+  theme(axis.text.x = element_text(size = 16),
+        axis.text.y = element_text(size = 20),  
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        legend.position = "none")+
+  scale_fill_hp_d(option = "Ravenclaw") 
 dp
 }
 

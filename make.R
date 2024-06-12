@@ -309,12 +309,13 @@ figRank(data = all_geo_res, sup = FALSE)
 figRank(data = all_geo_res, sup = TRUE)
 
 #For Supp
-sup_fig_perf <- gridExtra::grid.arrange(plot.RF.perf,plot.ANN.perf,ncol=2)
-save(sup_fig_perf,file=here::here("outputs","sup_fig_perf.png"))
+sup_fig_perf <- gridExtra::arrangeGrob(plot.RF.perf,plot.ANN.perf,ncol=2)
+ggsave(here::here("figures","sup_fig_perf.png"), plot = sup_fig_perf,
+       width = 11, height = 12, dpi = 300, units = "in", device='png')
 
-
-sup_fig_perf <- gridExtra::grid.arrange(plot.RF.met,plot.ANN.met,ncol=2)
-save(sup_fig_perf,file=here::here("outputs","sup_fig_perf.png"))
+sup_fig_met<- gridExtra::arrangeGrob(plot.RF.met,plot.ANN.met,ncol=2)
+ggsave(here::here("figures","sup_fig_met.png"), plot = sup_fig_met,
+       width = 12, height = 12, dpi = 300, units = "in", device='png')
 
 
 
