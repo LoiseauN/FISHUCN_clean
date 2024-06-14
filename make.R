@@ -304,7 +304,7 @@ figure6(data = MPA_Protect)
 
 #to test because take time data <- all_geo_res[sample(c(1:nrow(all_geo_res)), 100000, replace = TRUE),]
 figRank(data = all_geo_res, sup = FALSE)
-
+figRank_SUP_secondary(data = all_geo_res)
 #For Supp
 figRank(data = all_geo_res, sup = TRUE)
 

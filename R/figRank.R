@@ -51,8 +51,8 @@ figRank <- function(data,sup){
           axis.title=element_text(size=20),
           axis.text = element_text(size = 18)) +
     geom_abline(intercept = 0, slope = 1,color="#757575",linetype = "dashed",linewidth = 1) +
-    geom_text(x=1500000, y=3500000, label="threat over-estimated", colour = "black",size=8)+
-    geom_text(x=3000000, y=500000, label="threat under-estimated", colour = "black",size=8)
+    geom_text(x=1500000, y=3500000, label="threat under-estimated", colour = "black",size=8)+
+    geom_text(x=3000000, y=500000, label="threat over-estimated", colour = "black",size=8)
   ##secondary figure 
   ##plot logrichness vs Delta_rank and use the as density function to 
   ##color the points
@@ -123,8 +123,8 @@ figRank <- function(data,sup){
     xlab("Rank after - rank before")+ylab("Lattitude")+
     geom_vline(xintercept = 3,color = "#757575", linetype = "dashed",linewidth = 1)+
     geom_hline(yintercept = 0,color = "#757575", linetype = "dashed",linewidth = 1)+
-    geom_text(x=-1200000, y=4, label="threat over-estimated", colour = "black",size=7)+
-    geom_text(x=1500000, y=4, label="threat under-estimated", colour = "black",size=7)
+    geom_text(x=-1000000, y=4, label="threat over-estimated", colour = "black",size=6)+
+    geom_text(x=1550000, y=4, label="threat under-estimated", colour = "black",size=6)
   
   ##Secondary figure 
   ##Plot the latitudinal gradient of species richness and use the density of points as color gradient
