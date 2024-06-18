@@ -105,7 +105,7 @@ figRank <- function(data,sup){
   
   ##Main figure 
   ##plot the delta ranks along the lattitudinal gradient and use the logrichness to color the points 
-  
+  if(sup == FALSE){
   B_main <- ggplot(data, aes(x=deltaneg, y=lat, colour = logrichness)) +
     geom_point()+theme_bw()+
     scale_colour_gradientn(name  ="log10(richness)",colours = rev(brewer.pal(n = 8, name = "RdBu")))+
@@ -124,7 +124,26 @@ figRank <- function(data,sup){
     geom_vline(xintercept = 3,color = "#757575", linetype = "dashed",linewidth = 1)+
     geom_hline(yintercept = 0,color = "#757575", linetype = "dashed",linewidth = 1)+
     geom_text(x=-1000000, y=4, label="threat over-estimated", colour = "black",size=6)+
-    geom_text(x=1550000, y=4, label="threat under-estimated", colour = "black",size=6)
+    geom_text(x=1550000, y=4, label="threat under-estimated", colour = "black",size=6)}
+  else{
+    B_main <- ggplot(data, aes(x=deltaneg, y=lat, colour = logrichness)) +
+      geom_point()+theme_bw()+
+      scale_colour_gradientn(name  ="log10(richness)",colours = rev(brewer.pal(n = 8, name = "RdBu")))+
+      geom_smooth(aes(x = deltaneg),orientation = "y",method="gam",linetype="solid",linewidth=1.7,colour="#5E5E5E",alpha=0.8)+
+      geom_smooth(aes(x = deltaneg),orientation = "y",method="gam",se=F,linetype="solid",linewidth=0.4,colour="white",alpha=0.9)+
+      theme(legend.position = "none",
+            axis.title=element_text(size=20),
+            axis.text = element_text(size = 18))+
+      ylim(-75,85)+
+      xlim(min(data$Delta_rank)-400000,max(data$Delta_rank))+
+      scale_y_continuous(breaks=seq(-80,90,20))+
+      geom_point(aes(x=deltapos, y=lat, colour = logrichness))+
+      geom_smooth(aes(x = deltapos),orientation = "y",method="gam",linetype="solid",linewidth=1.7,colour="#5E5E5E",alpha=0.8)+
+      geom_smooth(aes(x = deltapos),orientation = "y",method="gam",se=F,linetype="solid",linewidth=0.4,colour="white",alpha=0.9)+
+      xlab("Rank after - rank before")+ylab("Lattitude")+
+      geom_vline(xintercept = 3,color = "#757575", linetype = "dashed",linewidth = 1)+
+      geom_hline(yintercept = 0,color = "#757575", linetype = "dashed",linewidth = 1)
+  }
   
   ##Secondary figure 
   ##Plot the latitudinal gradient of species richness and use the density of points as color gradient

@@ -22,9 +22,9 @@ mask.full=raster::raster(here::here("data","mask.full.tif"))
 #My data
 #all_geo_res[is.na(all_geo_res)] <- 0
 
-all_geo_res$deltaTH <- all_geo_res$richness_finalTH - all_geo_res$richness_initTH
-all_geo_res$deltaNT <- all_geo_res$richness_finalNT - all_geo_res$richness_initNT
-all_geo_res$deltaNS <- all_geo_res$richness_finalNS - all_geo_res$richness_initNS
+all_geo_res$deltaTH <- all_geo_res$richness_finalTHR - all_geo_res$richness_initTHR
+all_geo_res$deltaNT <- all_geo_res$richness_finalNonTHR - all_geo_res$richness_initNonTHR
+all_geo_res$deltaNS <- all_geo_res$richness_finalNoStatus - all_geo_res$richness_initNoStatus
 
 all_geo_res <-  all_geo_res %>%
   mutate(cate_DeltaRank_SameWeight = cut(DeltaRank_SameWeight, 100)) 
@@ -43,18 +43,19 @@ all_geo_res$cate_DeltaRank_SameWeight %>%
 
 
 
-var = c(# "deltaTH",
-  #"deltaNT",
-  #"deltaNS",
-        #"richness_finalNT",
-        # "richness_finalNS",
-        #"richness_finalTH",
-        #"richness_initNT",
-        #"richness_initNS",
-        #"richness_initTH",
-  "DeltaRank_SameWeight")
+var = c( "deltaTH",
+  "deltaNT",
+  "deltaNS"#,
+  #"richness_finalNonTHR",
+  # "richness_finalNoStatus",
+  # "richness_finalTHR",
+  #  "richness_initNonTHR",
+  #  "richness_initNoStatus",
+  #  "richness_initTHR",
+  #     "DeltaRank_SameWeight")
 #  "cate_DeltaRank_SameWeight")
-#,        "richness_unpredictable")
+#,        "richness_unpredictable"
+)
 
 
 all_map <- lapply(1:length(var),function(x){
@@ -99,19 +100,19 @@ print(paste0(x,", ", round(x/length(var),1)*100, "%"))
     mask.full.polygon$mask.full[mask.full.polygon$mask.full == -1000000] <- NA}
   
 #'--------------------------------------------------------@Threatened
-if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {  
+if (var[x] =="richness_initTHR" || var[x] =="richness_finalTHR" )  {  
   
   map <- ggplot(world) +
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
     scale_colour_gradientn(name  = "Richness TH",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-             limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
-                      max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)))) +                                       
+             limits = c(min(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)), 
+                      max(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)))) +                                       
     
     scale_fill_gradientn(name  = "Richness TH",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-             limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
-                      max(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)))) +
+             limits = c(min(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)), 
+                      max(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)))) +
 
     #scale_fill_hp(option = "Ravenclaw", 
            #       limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
@@ -144,24 +145,24 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
           guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
           size = guide_legend(title.position="top", title.hjust = 0.5))
   
-  if (var[x] =="richness_initTH")   { ggsave(file = here::here("figures/IUCN_InitialThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+  if (var[x] =="richness_initTHR")   { ggsave(file = here::here("figures/IUCN_InitialThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
   
-  if (var[x] =="richness_finalTH")  { ggsave(file = here::here("figures/IUCN_FinalThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+  if (var[x] =="richness_finalTHR")  { ggsave(file = here::here("figures/IUCN_FinalThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
   
   }
   
 #'--------------------------------------------------------@Non-Threatened
- if (var[x] =="richness_initNT" || var[x] == "richness_finalNT")  { 
+ if (var[x] =="richness_initNonTHR" || var[x] == "richness_finalNonTHR")  { 
   map <- ggplot(world)+
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
   scale_colour_gradientn(name  = "Richness NT", 
                          colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-                         limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
-                                    max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT))))+                                       
+                         limits = c(min(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR)), 
+                                    max(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR))))+                                       
   scale_fill_gradientn(name  = "Richness NT", 
                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)],
-                       limits = c(min(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)), 
-                                 max(c(all_geo_res$richness_initNT,all_geo_res$richness_finalNT)))) +
+                       limits = c(min(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR)), 
+                                 max(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR)))) +
   geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -185,26 +186,26 @@ if (var[x] =="richness_initTH" || var[x] =="richness_finalTH" )  {
           guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
           size = guide_legend(title.position="top", title.hjust = 0.5))
   
-if (var[x] =="richness_initNT")   {ggsave(file = here::here("figures/IUCN_InitialNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+if (var[x] =="richness_initNonTHR")   {ggsave(file = here::here("figures/IUCN_InitialNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 
-if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+if (var[x] =="richness_finalNonTHR")  {ggsave(file = here::here("figures/IUCN_FinalNonThreatened.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 }
 
 #'--------------------------------------------------------@No-Status
 
 
- if  (var[x] =="richness_initNS" || var[x] == "richness_finalNS")  {  
+ if  (var[x] =="richness_initNoStatus" || var[x] == "richness_finalNoStatus")  {  
    map <- ggplot(world) +
      geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
      scale_colour_gradientn(name  = "Richness NS",
        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-                     limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
-                               max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS))))+                                       
+                     limits = c(min(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus)), 
+                               max(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus))))+                                       
      
      scale_fill_gradientn(name  = "Richness NS",
        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-                     limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
-                               max(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)))) +
+                     limits = c(min(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus)), 
+                               max(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus)))) +
      
     # scale_fill_hp(option = "Ravenclaw", 
      #              limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 
@@ -237,9 +238,9 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
            guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
            size = guide_legend(title.position="top", title.hjust = 0.5))
    
-   if (var[x] =="richness_initNS")   { ggsave(file = here::here("figures/IUCN_InitialNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+   if (var[x] =="richness_initNoStatus")   { ggsave(file = here::here("figures/IUCN_InitialNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
    
-   if (var[x] =="richness_finalNS")  { ggsave(file = here::here("figures/IUCN_FinalNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
+   if (var[x] =="richness_finalNoStatus")  { ggsave(file = here::here("figures/IUCN_FinalNonStatus.png"),map,width = 12, height = 8, units= "in",dpi= 300)}
 #rm(map)
 }
   
@@ -249,9 +250,9 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
   #'--------------------------------------------------------@DeltaRICHNESS
   if  (var[x] =="deltaTH" || var[x] == "deltaNT" || var[x] == "deltaNS")  {  
   
-    if (var[x] =="deltaTH")   { title = "TH after- TH before"}
-  if (var[x] =="deltaNT")  {title = "NT after- NT before"}
-  if (var[x] =="deltaNS")  { title = "NS after- NS before"}
+    if (var[x] =="deltaTH")   { title = "Threatened after - before"}
+  if (var[x] =="deltaNT")  {title = "Non Threatened after - before"}
+  if (var[x] =="deltaNS")  { title = "DDNE after - before"}
    
     if  (var[x] =="deltaTH" || var[x] == "deltaNT"  ) {colormap = c("white",colorRampPalette(brewer.pal(n = 8, name = "Oranges"))(100))}
     if  (var[x] =="deltaNS") { colormap = c("white",rev(colorRampPalette(brewer.pal(n = 8, name = "Blues"))(100)))}
@@ -356,12 +357,12 @@ if (var[x] =="richness_finalNT")  {ggsave(file = here::here("figures/IUCN_FinalN
      guides(colour = guide_colourbar(title.position="top", title.hjust = 0.5),
             size = guide_legend(title.position="top", title.hjust = 0.5))
    
-   ggsave(file = here::here("figures/cate_Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)
+   #ggsave(file = here::here("figures/cate_Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)
    
    
    
- pal.bands(c(rev(colorRampPalette(brewer.pal(n = 8, name = "Blues"))(334)),'white',colorRampPalette(brewer.pal(n = 8, name = "Oranges"))(164)),
-           main = "Rank after - rank before",)
+ pals::pal.bands(c(rev(colorRampPalette(brewer.pal(n = 8, name = "Blues"))(334)),'white',colorRampPalette(brewer.pal(n = 8, name = "Oranges"))(164)),
+           main = "Rank after - rank before")
    
    
 if (var[x] =="DeltaRank_SameWeight")   { ggsave(file = here::here("figures/Figure6b.png"),map,width = 12, height = 8, units= "in",dpi= 300)}

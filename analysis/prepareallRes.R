@@ -8,22 +8,24 @@
 #' @date 
 
 #Read in all TIFF files of richness per status
-preparallRes <- function(zonation_output = Zrank_main) { 
+preparallRes <- function(zonation_output = Zrank_main, sup) { 
 
-files <- list.files(here::here("outputs", "tif_outputs"), pattern = "\\.tif$",
-                    full.names = TRUE)
+  if(sup == FALSE){files <- list.files(here::here("outputs", "tif_outputs"), pattern = "\\.tif$",
+                                      full.names = TRUE)}
+  
+  if(sup == TRUE){files <- list.files(here::here("outputs", "tif_outputs_supplementary"), pattern = "\\.tif$",
+                                      full.names = TRUE)}
 
-files <- list.files(here::here("outputs", "TOREMOVEtif_outputs"), pattern = "\\.tif$",
-                    full.names = TRUE)
+#files <- list.files(here::here("outputs", "TOREMOVEtif_outputs"), pattern = "\\.tif$",
+#                    full.names = TRUE)
 
 
 #Load zonation outputs
 
 #Combine all TIFF files into a single raster stack
 ras  <- raster::stack(files)
-names(ras) <- c("richness_finalNonTHR_consensus","richness_finalNoStatus_consensus","richness_finalNoStatus",
-      "richness_finalTHR_consensus","richness_finalTHR",
-      "richness_initNonTHR","richness_initNoStatus","richness_initTHR")
+names(ras) <- c("richness_finalNonTHR","richness_finalNoStatus","richness_finalTHR",
+"richness_initNonTHR","richness_initNoStatus","richness_initTHR")
 #Get the x,y coordinates of all raster cells
 xy   <- raster::xyFromCell(ras, 1:raster::ncell(ras))
 vals <- ras[]
@@ -45,18 +47,17 @@ dat_sf <- sf::st_transform(dat_sf, crs = 4326)
 dat <- data.frame(sf::st_coordinates(dat_sf), sf::st_drop_geometry(dat_sf))
 
 #Rename the columns
-colnames(dat)<- c("long","lat","ID",
-                 "richness_finalNT",
-                  "richness_finalNS",
-                  "richness_finalTH",
-                  "richness_initNT",
-                  "richness_initNS",
-                  "richness_initTH",
-                  "richness")
+colnames(dat)[1:3]<- c("long","lat","ID")#,
+                 #"richness_finalNT",
+                 # "richness_finalNS",
+                 # "richness_finalTH",
+                 # "richness_initNT",
+                 # "richness_initNS",
+                 # "richness_initTH",
+                 # "richness")
 
 #Merge data with zonation outputs : Zrank_main
-all_geo_res <- merge(dat,zonation_output, by ="ID",all.x = T)
-
+if(sup == FALSE) {all_geo_res <- merge(dat,zonation_output, by ="ID",all.x = T)
 #Compute difference in zonation rank
 #compute delta rank 
 #we will use rank after - rank before which lead to positive value when
@@ -70,5 +71,9 @@ all_geo_res$DeltaRank_SameWeight <- all_geo_res$Predict_IUCN_same_weigth-all_geo
 
 #Save the final dataset
 #save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
+}else
+{(all_geo_res  <- dat)
+    }
+
 return(all_geo_res)
 }

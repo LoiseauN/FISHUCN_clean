@@ -278,8 +278,12 @@ table(IUCN_status_detailled$IUCN_status)
 colnames(Zrank_main) <- c("ID","IUCN_weigth","PredictProba_IUCN_weigth","NoWeight","Predict_IUCN_same_weigth")
 
 #merge all res
-all_geo_res <- preparallRes(Zrank_main)
+all_geo_res <- preparallRes(Zrank_main, sup = FALSE)
 save(all_geo_res,file=here::here("outputs","all_geo_res.RData"))
+
+all_geo_res_consensus <- preparallRes(Zrank_main, sup = TRUE)
+save(all_geo_res_consensus,file=here::here("outputs","all_geo_res_consensus.RData"))
+
 
 #------------------Figure------------------------
 #Figure 1 : barplot distribution IUCN cadtegories for different taxa
