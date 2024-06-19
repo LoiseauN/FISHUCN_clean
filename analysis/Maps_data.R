@@ -104,12 +104,12 @@ if (var[x] =="richness_initTHR" || var[x] =="richness_finalTHR" )  {
   
   map <- ggplot(world) +
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-    scale_colour_gradientn(name  = "Richness TH",
+    scale_colour_gradientn(name  = "Richness Threatened",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
              limits = c(min(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)), 
                       max(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)))) +                                       
     
-    scale_fill_gradientn(name  = "Richness TH",
+    scale_fill_gradientn(name  = "Richness Threatened",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
              limits = c(min(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)), 
                       max(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)))) +
@@ -155,11 +155,11 @@ if (var[x] =="richness_initTHR" || var[x] =="richness_finalTHR" )  {
  if (var[x] =="richness_initNonTHR" || var[x] == "richness_finalNonTHR")  { 
   map <- ggplot(world)+
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-  scale_colour_gradientn(name  = "Richness NT", 
+  scale_colour_gradientn(name  = "Richness Not-Threatened", 
                          colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
                          limits = c(min(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR)), 
                                     max(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR))))+                                       
-  scale_fill_gradientn(name  = "Richness NT", 
+  scale_fill_gradientn(name  = "Richness Not-Threatened", 
                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)],
                        limits = c(min(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR)), 
                                  max(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR)))) +

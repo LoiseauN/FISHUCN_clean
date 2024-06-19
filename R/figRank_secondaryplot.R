@@ -11,7 +11,7 @@ figRank_SUP_secondary <- function(data){
   
   
   data <- na.omit(data)
-  data <- data[sample(c(1:nrow(data)), 10000, replace = TRUE),]
+  #data <- data[sample(c(1:nrow(data)), 10000, replace = TRUE),]
   #compute log richness and order
   data$logrichness <- log10(data$richness)
   data <- data[data$richness>0,]
