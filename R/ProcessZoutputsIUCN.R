@@ -3,12 +3,12 @@
 # set wd for Z outputs
 source(here::here("R","zonation_function.R"))
 
-process_out_zonation <- function(nb_scenario = 2){ 
+process_out_zonation <- function(nb_scenario = 3){ 
 
     # nb_scenario = number of scenario
 path = here::here("outputs", "output_zonation")
 
-res <- do.call(cbind,lapply(1:2, function(x){ 
+res <- do.call(cbind,lapply(1:3, function(x){ 
   
 ## 3. Maps #####
 # produce rasters with (arbitrary threshold) top priority cells within & outside PAs
@@ -23,7 +23,7 @@ mask <- raster(here::here("outputs", "output_zonation","maskSea.tif"))
 #setwd("ZonationOUT/")
 #source("../scripts/functions.R")
 
-rank.files <- list.files(path, pattern = "rank.compressed.tif$",full.names=TRUE)
+rank.files <- list.files(path, pattern = "CAZ_maskSea.tif$",full.names=TRUE)
 
 R0 <- raster(rank.files[x])
 
@@ -47,7 +47,8 @@ rastCells <- rast[which(Zvalues[]<2)]
 
 ranking = data.frame(ID = rastCells,RankingScenario = RankingScenario )
 if (x == 1) {colnames(ranking)[2] <- "IUCN_weigth"}
-else{colnames(ranking)[2]  <- "Predict_IUCN_same_weigth"}
+if (x == 2) {colnames(ranking)[2] <- "weight_zonation_IUCN_and_Predict"}
+if (x == 3){colnames(ranking)[3]  <- "Predict_IUCN_same_weigth"}
 
 return(ranking)
 }))

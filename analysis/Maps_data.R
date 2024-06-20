@@ -43,15 +43,15 @@ all_geo_res$cate_DeltaRank_SameWeight %>%
 
 
 
-var = c( "deltaTH",
-  "deltaNT",
-  "deltaNS"#,
-  #"richness_finalNonTHR",
-  # "richness_finalNoStatus",
-  # "richness_finalTHR",
-  #  "richness_initNonTHR",
-  #  "richness_initNoStatus",
-  #  "richness_initTHR",
+var = c( #"deltaTH",
+  # "deltaNT",
+  #"deltaNS"#,
+  "richness_finalNonTHR",
+   "richness_finalNoStatus",
+   "richness_finalTHR",
+    "richness_initNonTHR",
+    "richness_initNoStatus",
+    "richness_initTHR"# ,
   #     "DeltaRank_SameWeight")
 #  "cate_DeltaRank_SameWeight")
 #,        "richness_unpredictable"
@@ -106,13 +106,13 @@ if (var[x] =="richness_initTHR" || var[x] =="richness_finalTHR" )  {
     geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
     scale_colour_gradientn(name  = "Richness Threatened",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-             limits = c(min(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)), 
-                      max(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)))) +                                       
+             limits = c(min(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR),na.rm = T), 
+                      max(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR),na.rm = T))) +                                       
     
     scale_fill_gradientn(name  = "Richness Threatened",
       colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-             limits = c(min(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)), 
-                      max(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR)))) +
+             limits = c(min(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR),na.rm = T), 
+                      max(c(all_geo_res$richness_initTHR,all_geo_res$richness_finalTHR),na.rm = T))) +
 
     #scale_fill_hp(option = "Ravenclaw", 
            #       limits = c(min(c(all_geo_res$richness_initTH,all_geo_res$richness_finalTH)), 
@@ -157,12 +157,12 @@ if (var[x] =="richness_initTHR" || var[x] =="richness_finalTHR" )  {
   geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
   scale_colour_gradientn(name  = "Richness Not-Threatened", 
                          colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-                         limits = c(min(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR)), 
-                                    max(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR))))+                                       
+                         limits = c(min(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR),na.rm = T), 
+                                    max(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR),na.rm = T)))+                                       
   scale_fill_gradientn(name  = "Richness Not-Threatened", 
                         colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)],
-                       limits = c(min(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR)), 
-                                 max(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR)))) +
+                       limits = c(min(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR),na.rm = T), 
+                                 max(c(all_geo_res$richness_initNonTHR,all_geo_res$richness_finalNonTHR),na.rm = T))) +
   geom_sf(data = world, fill = "white", color = "#bebebe", size = 0.1) +
   geom_graticules(mol) +
   geom_mapframe(mol, colour = "white", size = 2.0) +
@@ -197,15 +197,15 @@ if (var[x] =="richness_finalNonTHR")  {ggsave(file = here::here("figures/IUCN_Fi
  if  (var[x] =="richness_initNoStatus" || var[x] == "richness_finalNoStatus")  {  
    map <- ggplot(world) +
      geom_sf(data = mask.full.polygon, aes(fill = mask.full, color = mask.full))+ #aes(fill = scale(mask.full), color = scale(mask.full))) +
-     scale_colour_gradientn(name  = "Richness NS",
+     scale_colour_gradientn(name  = "Richness DDNE",
        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-                     limits = c(min(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus)), 
-                               max(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus))))+                                       
+                     limits = c(min(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus),na.rm = T), 
+                               max(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus),na.rm = T)))+                                       
      
-     scale_fill_gradientn(name  = "Richness NS",
+     scale_fill_gradientn(name  = "Richness DDNE",
        colours = colorRampPalette(rev(brewer.pal(n = 8, name = "RdBu")))(100)[-c(2:15, 85:100)], 
-                     limits = c(min(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus)), 
-                               max(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus)))) +
+                     limits = c(min(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus),na.rm = T), 
+                               max(c(all_geo_res$richness_initNoStatus,all_geo_res$richness_finalNoStatus),na.rm = T))) +
      
     # scale_fill_hp(option = "Ravenclaw", 
      #              limits = c(min(c(all_geo_res$richness_initNS,all_geo_res$richness_finalNS)), 

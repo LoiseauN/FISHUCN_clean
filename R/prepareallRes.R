@@ -1,3 +1,4 @@
+TO REMOVE
 #' Merging all resultats
 #'
 #' This script to merge all data for each cell. 
