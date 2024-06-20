@@ -17,8 +17,10 @@ outputs/Zrank_main.RData
 outputs/TOREMOVE_Zrank_main.RData
 outputs/tif_outputs_supplementary
 outputs/tif_outputs/richness_finalNonTHR
-outputs/output_zonation/InferStatus_Sc1_mai2024_CAZ_maskSea.CAZ_ME.rank.compressed.tif
-outputs/output_zonation/InferStatus_Sc4_mai2024_CAZ_maskSea.CAZ_ME.wrscr.compressed.tif
+outputs/output_zonation/InferStatus_Sc1_mai2024_CAZ_maskSea
+outputs/output_zonation/InferStatus_Sc4_mai2024_CAZ_maskSea
 outputs/output_zonation/TOREMOVE_InferStatus_Sc1_aout2023_CAZ_maskSea.CAZ_ME.rank.compressed.tif
 outputs/output_zonation/TOREMOVE_InferStatus_Sc4_aout2023_CAZ_maskSea.CAZ_ME.rank.compressed.tif
+outputs/output_zonation/InferStatus_Sc4_mai2024_CAZ_maskSea
+
 .DS_Store
