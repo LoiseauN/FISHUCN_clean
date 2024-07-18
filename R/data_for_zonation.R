@@ -28,9 +28,12 @@ data_zonation$proba_select <- as.numeric(data_zonation$percentage)/100
 rescale_threat <-  subset(data_zonation, data_zonation$predict_complementary =="Thr" & is.na(data_zonation$IUCN_cat))
 rescale_non_threat <-  subset(data_zonation, data_zonation$predict_complementary =="NThr" & is.na(data_zonation$IUCN_cat))
 
-rescale_threat$proba_rescale <-  rescale(a=2,b=5,x=rescale_threat$proba_select)
-rescale_non_threat$proba_rescale <-  rescale(a=1,b=2,x=1-rescale_non_threat$proba_select)
+#rescale_threat$proba_rescale <-  scales::rescale(a=2,b=5,x=rescale_threat$proba_select)
+#rescale_non_threat$proba_rescale <-  scales::rescale(a=1,b=2,x=1-rescale_non_threat$proba_select)
   
+rescale_threat$proba_rescale <-  datawizard::rescale(rescale_threat$proba_select, to = c(2, 5))
+rescale_non_threat$proba_rescale <-  datawizard::rescale(1-rescale_non_threat$proba_select, to = c(1, 2))
+
   rescale_data <- data.frame(species = c(rescale_threat$species ,
                                          rescale_non_threat$species),
                             proba_rescale = c(rescale_threat$proba_rescale ,
