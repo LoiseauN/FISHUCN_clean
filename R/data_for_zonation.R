@@ -25,6 +25,12 @@ data_zonation<- data_zonation %>%
   left_join(data_predict,by="species")
 data_zonation$proba_select <- as.numeric(data_zonation$percentage)/100
 
+for(i in 1:nrow(data_zonation)){
+  if(data_zonation$agree[i] %in% "ONLY_DEEP") {data_zonation$proba_select[i]  <- as.numeric(data_zonation$proba[i]) 
+  }else{}
+  
+}
+
 rescale_threat <-  subset(data_zonation, data_zonation$predict_complementary =="Thr" & is.na(data_zonation$IUCN_cat))
 rescale_non_threat <-  subset(data_zonation, data_zonation$predict_complementary =="NThr" & is.na(data_zonation$IUCN_cat))
 
@@ -41,6 +47,8 @@ rescale_non_threat$proba_rescale <-  datawizard::rescale(1-rescale_non_threat$pr
   
   data_zonation<- data_zonation %>%
     left_join(rescale_data,by="species")
+  
+  
 
 # SCENARIO 1: 
 # 1 for everyone
