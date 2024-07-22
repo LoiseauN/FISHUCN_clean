@@ -24,7 +24,7 @@ pkgs <- c("arm", "beepr", "caper", "caret", "cluster", "doParallel", "dplyr",
            "rphylopic", "rredlist", "scales", "stringr", "taxize", "tidymodels",
            "tidyverse", "viridis", "XML", "circlize","edarf","rgdal",
           "sp","rgeos","sf","wesanderson","ggpubr", "harrypotter",
-          "randomForest","caret","ROCR","RColorBrewer","tidyr",
+          "randomForest","caret","ROCR","RColorBrewer","tidyr","magrittr",
           "RColorBrewer","rnaturalearth","rnaturalearthdata","torch","cito","segregation")
 
 nip <- pkgs[!(pkgs %in% utils::installed.packages())]

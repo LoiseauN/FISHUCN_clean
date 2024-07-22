@@ -1,8 +1,4 @@
 
-library(ggplot2)
-library(magrittr)
-
-
 # --- Stat tests: --------------------------------------------------------------
 # 1. Test if there is a difference between before and after within each category
 # The data are not normally distributed so I used a Wilcoxon test. And in fact
